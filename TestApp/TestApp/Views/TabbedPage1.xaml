@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TestApp.Views.TabbedPage1">
+  <!--Pages can be added as references or inline-->
+    <ContentPage Title="Расписание" >
+        <StackLayout>
+            <Label Text="Какой то лейбл 1"/>
+            <Label Text="Какой то лейбл 2"/>
+            <Label Text="Какой то лейбл 3"/>
+            <Label Text="Какой то лейбл 4"/>
+            <Button Text="КнопОчка"/>
+        </StackLayout>
+    </ContentPage>
+    <ContentPage Title="Документы">
+        <StackLayout>
+            <Label Text="Инфа о документе 1"/>
+            <Label Text="Инфа о документе 2"/>
+            <Label Text="Инфа о документе 3"/>
+            <Label Text="Инфа о документе 4"/>
+            <Button Text="КнопОчка"/>
+        </StackLayout>
+    </ContentPage>
+</TabbedPage>

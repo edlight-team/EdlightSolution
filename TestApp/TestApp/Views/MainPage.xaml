@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TestApp.ViewModels"
+             x:Class="TestApp.Views.MainPage" BackgroundColor="Black">
+
+    <ContentPage.BindingContext>
+        <vm:MainPageViewModel/>
+    </ContentPage.BindingContext>
+    
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="25"/>
+            </Grid.ColumnDefinitions>
+
+            <Image Source="dstu.png" Grid.Row="0" Grid.Column="1"/>
+            <Expander Grid.Row="1" Grid.Column="1" IsExpanded="True">
+                <Expander.Header>
+                    <Entry WidthRequest="250" Placeholder="Логин / Почта"
+                   HorizontalTextAlignment="Center" FontSize="Large" Keyboard="Email" Text="{Binding Model.Login}" TextColor="White"/>
+                </Expander.Header>
+                <Label Text="{Binding Model.Error}" TextColor="PaleVioletRed" HorizontalTextAlignment="Center"/>
+            </Expander>
+            <Entry Grid.Row="2" Grid.Column="1" WidthRequest="250" Placeholder="Пароль" IsPassword="True"
+                   HorizontalTextAlignment="Center" FontSize="Large" Text="{Binding Model.Password}"/>
+            <Button Grid.Row="3" Grid.Column="1" Text="Авторизация" Command="{Binding AuthCommand}" CornerRadius="15"/>
+            
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

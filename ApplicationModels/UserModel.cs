@@ -13,6 +13,13 @@ namespace ApplicationModels
         private string id;
         private string login;
         private string password;
+        private string name;
+        private string surname;
+        private string patronymic;
+        private string sex;
+        private int age;
+        private string[] role;
+
         #endregion
         #region props
         [BsonId]
@@ -32,6 +39,32 @@ namespace ApplicationModels
         [BsonElement(nameof(Password))]
         [JsonProperty(nameof(Password))]
         public string Password { get => password; set => SetProperty(ref password, value); }
+
+        [BsonElement(nameof(Name))]
+        [JsonProperty(nameof(Name))]
+        public string Name { get => name; set => SetProperty(ref name, value); }
+
+        [BsonElement(nameof(Surname))]
+        [JsonProperty(nameof(Surname))]
+        public string Surname { get => surname; set => SetProperty(ref surname, value); }
+
+        [BsonElement(nameof(Patrnymic))]
+        [BsonIgnoreIfNull]
+        [JsonProperty(nameof(Patrnymic))]
+        public string Patrnymic { get => patronymic; set => SetProperty(ref patronymic, value); }
+
+        [BsonElement(nameof(Sex))]
+        [JsonProperty(nameof(Sex))]
+        public string Sex { get => sex; set => SetProperty(ref sex, value); }
+
+        [BsonElement(nameof(Age))]
+        [JsonProperty(nameof(Age))]
+        public int Age { get => age; set => SetProperty(ref age, value); }
+
+        [BsonElement(nameof(Role))]
+        [BsonIgnoreIfNull]
+        [JsonProperty(nameof(Role))]
+        public string[] Role { get => role; set => SetProperty(ref role, value); }
         #endregion
         #region ctor
         public UserModel()

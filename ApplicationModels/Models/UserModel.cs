@@ -1,11 +1,10 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using Prism.Mvvm;
 
-namespace ApplicationModels
+namespace ApplicationModels.Models
 {
     public class UserModel : BindableBase, IDataErrorInfo
     {
@@ -34,7 +33,8 @@ namespace ApplicationModels
                 RaisePropertyChanged(nameof(Error));
                 return login;
             }
-            set => SetProperty(ref login, value); }
+            set => SetProperty(ref login, value);
+        }
 
         [BsonElement(nameof(Password))]
         [JsonProperty(nameof(Password))]
@@ -67,10 +67,7 @@ namespace ApplicationModels
         public string[] Role { get => role; set => SetProperty(ref role, value); }
         #endregion
         #region ctor
-        public UserModel()
-        {
-            _id = ObjectId.GenerateNewId().ToString();
-        } 
+        public UserModel() => _id = ObjectId.GenerateNewId().ToString();
         #endregion
         #region errors
 
@@ -108,7 +105,7 @@ namespace ApplicationModels
                 }
                 return error;
             }
-        } 
+        }
         #endregion
     }
 }

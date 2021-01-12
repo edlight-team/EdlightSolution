@@ -3,9 +3,9 @@ using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using Prism.Mvvm;
 
-namespace ApplicationModels
+namespace ApplicationModels.Models
 {
-    class GroupModel : BindableBase
+    public class GroupModel : BindableBase
     {
         #region feilds
         private string id;
@@ -15,7 +15,7 @@ namespace ApplicationModels
         #endregion
         #region props
         [BsonId]
-        public string ID { get => id; set => SetProperty(ref id, value); }
+        public string _id { get => id; set => SetProperty(ref id, value); }
 
         [BsonElement(nameof(Title))]
         [JsonProperty(nameof(Title))]
@@ -32,10 +32,7 @@ namespace ApplicationModels
         public string[] StudentsID { get => studentsID; set => SetProperty(ref studentsID, value); }
         #endregion
         #region ctor
-        public GroupModel()
-        {
-            ID = ObjectId.GenerateNewId().ToString();
-        }
+        public GroupModel() => _id = ObjectId.GenerateNewId().ToString();
         #endregion
     }
 }

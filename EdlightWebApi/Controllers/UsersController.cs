@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ApplicationModels;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
@@ -15,10 +14,7 @@ namespace EdlightWebApi.Controllers
     {
         // GET: api/<UsersController>
         [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        public IEnumerable<string> Get() => new string[] { "value1", "value2" };
 
         // GET api/<UsersController>/5
         [HttpGet("login={login}&auth_token={AuthToken}")]

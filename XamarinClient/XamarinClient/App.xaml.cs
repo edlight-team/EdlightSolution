@@ -1,4 +1,5 @@
 ﻿using Xamarin.Forms;
+using XamarinClient.Views;
 
 namespace XamarinClient
 {
@@ -8,7 +9,7 @@ namespace XamarinClient
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new ShellView();
         }
 
         protected override void OnStart()

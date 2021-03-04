@@ -25,7 +25,6 @@ namespace XamarinClient.Droid
 		
 		public static void UpdateIdValues()
 		{
-			global::Plugin.LocalNotifications.Resource.Drawable.plugin_lc_smallicon = global::XamarinClient.Droid.Resource.Drawable.plugin_lc_smallicon;
 			global::Xamarin.Essentials.Resource.Attribute.alpha = global::XamarinClient.Droid.Resource.Attribute.alpha;
 			global::Xamarin.Essentials.Resource.Attribute.coordinatorLayoutStyle = global::XamarinClient.Droid.Resource.Attribute.coordinatorLayoutStyle;
 			global::Xamarin.Essentials.Resource.Attribute.font = global::XamarinClient.Droid.Resource.Attribute.font;
@@ -8359,13 +8358,10 @@ namespace XamarinClient.Droid
 			public const int notify_panel_notification_icon_bg = 2131165300;
 			
 			// aapt resource value: 0x7F070075
-			public const int plugin_lc_smallicon = 2131165301;
+			public const int tooltip_frame_dark = 2131165301;
 			
 			// aapt resource value: 0x7F070076
-			public const int tooltip_frame_dark = 2131165302;
-			
-			// aapt resource value: 0x7F070077
-			public const int tooltip_frame_light = 2131165303;
+			public const int tooltip_frame_light = 2131165302;
 			
 			static Drawable()
 			{

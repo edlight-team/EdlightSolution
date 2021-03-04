@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="EdlightMobileClient.Views.AuthPage"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:EdlightMobileClient.ViewModels"
+             xmlns:yummy="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             x:DataType="viewmodels:AuthPageViewModel"
+             NavigationPage.HasNavigationBar="false">
+    <yummy:PancakeView BackgroundGradientEndPoint="1,0" BackgroundGradientStartPoint="0,0">
+        <yummy:PancakeView.BackgroundGradientStops>
+            <yummy:GradientStopCollection>
+                <yummy:GradientStop Offset="0" Color="#ED765E" />
+                <yummy:GradientStop Offset="1" Color="#FEA858" />
+            </yummy:GradientStopCollection>
+        </yummy:PancakeView.BackgroundGradientStops>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3.5*" />
+                <RowDefinition Height="4*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="3.5*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="25" />
+            </Grid.ColumnDefinitions>
+
+            <Image Grid.Row="1"
+                   Grid.Column="1"
+                   Margin="20"
+                   Source="Logo.png" />
+            <Entry Grid.Row="2"
+                   Grid.Column="1"
+                   FontSize="Large"
+                   HorizontalTextAlignment="Center"
+                   Keyboard="Email"
+                   Placeholder="Логин / Почта"
+                   Text="{Binding Model.Login}"
+                   TextColor="#EAE5C9"
+                   WidthRequest="250" />
+            <Entry Grid.Row="3"
+                   Grid.Column="1"
+                   FontSize="Large"
+                   HorizontalTextAlignment="Center"
+                   IsPassword="True"
+                   Placeholder="Пароль"
+                   Text="{Binding Model.Password}"
+                   TextColor="#EAE5C9"
+                   WidthRequest="250" />
+
+            <Button Grid.Row="4"
+                    Grid.Column="1"
+                    BackgroundColor="#4B086D"
+                    Command="{Binding AuthCommand}"
+                    CornerRadius="15"
+                    Text="Авторизация"
+                    TextColor="#EAE5C9" />
+
+        </Grid>
+    </yummy:PancakeView>
+</ContentPage>

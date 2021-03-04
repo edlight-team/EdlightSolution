@@ -1,0 +1,80 @@
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using ApplicationModels.Models;
+using ApplicationServices.HashingServices;
+using DryIoc;
+using Newtonsoft.Json;
+using Prism.Commands;
+using Prism.Ioc;
+using Prism.Navigation;
+using StaticCollections;
+using Xamarin.Forms;
+
+namespace EdlightMobileClient.ViewModels
+{
+    public class AuthPageViewModel : ViewModelBase
+    {
+        private readonly IHashingService hashing;
+
+        private UserModel model;
+        public UserModel Model
+        {
+            get => model ??= new();
+            set => SetProperty(ref model, value);
+        }
+        public DelegateCommand AuthCommand { get; }
+        public AuthPageViewModel(INavigationService navigationService, IHashingService hashing)
+            : base(navigationService)
+        {
+#if DEBUG
+            Model.Login = "admin";
+            Model.Password = "admin";
+#endif
+            this.hashing = hashing;
+            AuthCommand = new DelegateCommand(OnAuthCommand);
+        }
+        private async void OnAuthCommand()
+        {
+            try
+            {
+                HttpClient client = new();
+                client.Timeout = TimeSpan.FromSeconds(5);
+                HttpRequestMessage request = new();
+                request.RequestUri = new Uri($"{StaticStrings.BaseURL}/api/users/login={Model.Login}&auth_token=5B6253853ACCF8B8E4FEE1F67C46D");
+                request.Method = HttpMethod.Get;
+                request.Headers.Add("Accept", "application/json");
+
+                HttpResponseMessage response = await client.SendAsync(request);
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Ошибка", response.Content.ReadAsStringAsync().Result, "Ок");
+                    return;
+                }
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Ошибка", response.Content.ReadAsStringAsync().Result, "Ок");
+                    return;
+                }
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    HttpContent responseContent = response.Content;
+                    string json = await responseContent.ReadAsStringAsync();
+                    UserModel user = JsonConvert.DeserializeObject<UserModel>(json);
+                    string hashPass = hashing.GetHash(Model.Password);
+                    if (user.Password != hashPass)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Ошибка", "Пароль не подходит", "Ок");
+                        return;
+                    }
+                    await Application.Current.MainPage.DisplayAlert("Успех", "Пароль подходит", "Ок");
+                    //await Application.Current.MainPage.Navigation.PushModalAsync(new OnLoginExecutedView());
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "Ок");
+            }
+        }
+    }
+}

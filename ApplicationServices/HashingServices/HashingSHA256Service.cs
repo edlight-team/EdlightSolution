@@ -8,7 +8,7 @@ namespace ApplicationServices.HashingServices
         public string GetHash(string text)
         {
             SHA256Managed sha256Managed = new SHA256Managed();
-            byte[] hash = sha256Managed.ComputeHash(new UTF8Encoding().GetBytes("заебумба" + text));
+            byte[] hash = sha256Managed.ComputeHash(new UTF8Encoding().GetBytes(text + "EDLight-is beatifull"));
             string hashString = string.Empty;
             foreach (byte i in hash)
             {

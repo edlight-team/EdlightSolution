@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data;
+using System.Data.OleDb;
 using System.Linq;
 using ApplicationModels.Models;
+using EdlightDBConnector;
+using EdlightDBConnector.DBModelsExecuter;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace EdlightWebApi.Controllers
 {
@@ -13,10 +13,6 @@ namespace EdlightWebApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        // GET: api/<UsersController>
-        [HttpGet]
-        public IEnumerable<string> Get() => new string[] { "value1", "value2" };
-
         // GET api/<UsersController>/5
         [HttpGet("login={login}&auth_token={AuthToken}")]
         public object Get(string login, string AuthToken)
@@ -25,36 +21,30 @@ namespace EdlightWebApi.Controllers
             {
                 return BadRequest("Неверный токен авторизации");
             }
-            IMongoCollection<UserModel> collection = GetMongoCollection();
-            UserModel user = collection.Find(u => u.Login == login).FirstOrDefault();
-            if (user is null)
+            DBConnector dbConnector = new DBConnector();
+            var connection = dbConnector.CreateConnection(Environment.CurrentDirectory + "\\EdlightDB.accdb", doOpenConnection: true);
+            DBUsersExecuter dBUsers = new DBUsersExecuter();
+            var users = dBUsers.GetUsers(connection);
+            var userByLogin = users.FirstOrDefault(u => u.Login == login);
+            if (userByLogin is null)
             {
                 return NotFound("Пользователь не найден");
             }
-            return user;
+            return userByLogin;
         }
 
         [HttpPost]
         public int PostUser([FromBody] UserModel user)
         {
-            IMongoCollection<UserModel> collection = GetMongoCollection();
             try
             {
-                collection.InsertOne(user);
+
             }
             catch (Exception)
             {
                 return 0;
             }
             return 1;
-        }
-
-        private IMongoCollection<UserModel> GetMongoCollection()
-        {
-            string connectionString = "mongodb://localhost:27017";
-            MongoClient client = new MongoClient(connectionString);
-            IMongoDatabase database = client.GetDatabase("EdlightDB");
-            return database.GetCollection<UserModel>("Users");
         }
     }
 }

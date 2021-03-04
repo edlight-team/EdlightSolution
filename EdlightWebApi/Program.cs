@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using StaticCollections;
 
 namespace EdlightWebApi
 {
@@ -11,7 +12,7 @@ namespace EdlightWebApi
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>().UseEnvironment("Production");
+                    webBuilder.UseStartup<Startup>().UseUrls(StaticStrings.BaseURL);
                 });
     }
 }

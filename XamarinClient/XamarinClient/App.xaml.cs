@@ -8,7 +8,6 @@ namespace XamarinClient
         public App()
         {
             InitializeComponent();
-
             MainPage = new ShellView();
         }
 

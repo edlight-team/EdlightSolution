@@ -48,15 +48,5 @@
     <Compile Include="EdlightProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DatabaseHost\DatabaseHost.csproj">
-      <Project>{3F738A52-A76E-4D30-AD89-9F272E9EF6A6}</Project>
-      <Name>DatabaseHost</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DatabaseModels\DatabaseModels.csproj">
-      <Project>{A752C839-BB6E-44B6-913C-C8C82E2E7CF2}</Project>
-      <Name>DatabaseModels</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

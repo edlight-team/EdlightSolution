@@ -1,1 +1,0 @@
-dotnet run -p C:\Users\Admin\Documents\Programming\C#\EdlightSolution\EdlightWebApi

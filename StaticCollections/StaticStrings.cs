@@ -2,6 +2,6 @@
 {
     public static class StaticStrings
     {
-        public static readonly string BaseURL = "http://192.168.0.14:80";
+        public static readonly string BaseURL = "http://62.173.147.98:500";
     }
 }

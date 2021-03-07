@@ -1,6 +1,8 @@
 using ApplicationServices.HashingServices;
 using EdlightMobileClient.ViewModels;
+using EdlightMobileClient.ViewModels.Shell;
 using EdlightMobileClient.Views;
+using EdlightMobileClient.Views.Shell;
 using Prism;
 using Prism.Ioc;
 using Xamarin.Essentials.Implementation;
@@ -28,6 +30,7 @@ namespace EdlightMobileClient
 
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<AuthPage, AuthPageViewModel>();
+            containerRegistry.RegisterForNavigation<ShellTabbedPage, ShellTabbedPageViewModel>();
         }
     }
 }

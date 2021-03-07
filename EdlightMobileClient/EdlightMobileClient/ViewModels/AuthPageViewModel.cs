@@ -15,17 +15,7 @@ namespace EdlightMobileClient.ViewModels
 {
     public class AuthPageViewModel : ViewModelBase
     {
-        private readonly IHashingService hashing;
-
-        private UserModel model;
-        public UserModel Model
-        {
-            get => model ??= new();
-            set => SetProperty(ref model, value);
-        }
-        public DelegateCommand AuthCommand { get; }
-        public AuthPageViewModel(INavigationService navigationService, IHashingService hashing)
-            : base(navigationService)
+        public AuthPageViewModel(INavigationService navigationService, IHashingService hashing) : base(navigationService)
         {
 #if DEBUG
             Model.Login = "admin";
@@ -34,6 +24,13 @@ namespace EdlightMobileClient.ViewModels
             this.hashing = hashing;
             AuthCommand = new DelegateCommand(OnAuthCommand);
         }
+
+        private readonly IHashingService hashing;
+
+        private UserModel model;
+        public UserModel Model { get => model ??= new(); set => SetProperty(ref model, value); }
+
+        public DelegateCommand AuthCommand { get; }
         private async void OnAuthCommand()
         {
             try
@@ -67,8 +64,7 @@ namespace EdlightMobileClient.ViewModels
                         await Application.Current.MainPage.DisplayAlert("Ошибка", "Пароль не подходит", "Ок");
                         return;
                     }
-                    await Application.Current.MainPage.DisplayAlert("Успех", "Пароль подходит", "Ок");
-                    //await Application.Current.MainPage.Navigation.PushModalAsync(new OnLoginExecutedView());
+                    await NavigationService.NavigateAsync("NavigationPage/ShellTabbedPage");
                 }
             }
             catch (Exception ex)

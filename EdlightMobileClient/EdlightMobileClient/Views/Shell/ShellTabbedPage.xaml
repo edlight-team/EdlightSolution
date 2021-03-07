@@ -1,11 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<CarouselPage x:Class="EdlightMobileClient.Views.Shell.ShellTabbedPage"
-              xmlns="http://xamarin.com/schemas/2014/forms"
-              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-              NavigationPage.HasBackButton="False"
-              NavigationPage.HasNavigationBar="False">
+<TabbedPage x:Class="EdlightMobileClient.Views.Shell.ShellTabbedPage"
+            xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+            android:TabbedPage.ToolbarPlacement="Bottom"
+            NavigationPage.HasBackButton="False"
+            NavigationPage.HasNavigationBar="False">
     <!--  Pages can be added as references or inline  -->
-    <ContentPage Title="Tab 1" />
-    <ContentPage Title="Tab 2" />
-    <ContentPage Title="Tab 3" />
-</CarouselPage>
+    <ContentPage Title="Schedule" IconImageSource="schedule.png">
+        <Label Text="SchedulePage" />
+    </ContentPage>
+    <ContentPage Title="Profile" IconImageSource="profile.png">
+        <Label Text="ProfilePage" />
+    </ContentPage>
+    <ContentPage Title="Settings" IconImageSource="settings.png">
+        <Label Text="SettingsPage" />
+    </ContentPage>
+</TabbedPage>

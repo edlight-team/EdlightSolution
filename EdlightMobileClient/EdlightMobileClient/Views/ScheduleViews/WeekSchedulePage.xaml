@@ -4,7 +4,7 @@
              xmlns:prism="http://prismlibrary.com"
              xmlns:uc="clr-namespace:EdlightMobileClient.UserControls"
              prism:ViewModelLocator.AutowireViewModel="True"
-             x:Class="EdlightMobileClient.Views.WeekSchedulePage"
+             x:Class="EdlightMobileClient.Views.ScheduleViews.WeekSchedulePage"
              NavigationPage.HasNavigationBar="false"
              x:Name="weekSchedulePage">
     <ContentPage.Resources>

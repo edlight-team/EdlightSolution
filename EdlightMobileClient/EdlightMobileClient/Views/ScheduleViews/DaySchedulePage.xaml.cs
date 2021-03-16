@@ -1,6 +1,6 @@
 ﻿using Xamarin.Forms;
 
-namespace EdlightMobileClient.Views
+namespace EdlightMobileClient.Views.ScheduleViews
 {
     public partial class DaySchedulePage : CarouselPage
     {

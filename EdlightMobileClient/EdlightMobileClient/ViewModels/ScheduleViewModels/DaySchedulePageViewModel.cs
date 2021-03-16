@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EdlightMobileClient.ViewModels
+namespace EdlightMobileClient.ViewModels.ScheduleViewModels
 {
     public class DaySchedulePageViewModel : ViewModelBase
     {

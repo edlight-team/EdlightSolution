@@ -1,7 +1,9 @@
 using ApplicationServices.HashingServices;
 using EdlightMobileClient.ViewModels;
+using EdlightMobileClient.ViewModels.ScheduleViewModels;
 using EdlightMobileClient.ViewModels.Shell;
 using EdlightMobileClient.Views;
+using EdlightMobileClient.Views.ScheduleViews;
 using EdlightMobileClient.Views.Shell;
 using Prism;
 using Prism.Ioc;

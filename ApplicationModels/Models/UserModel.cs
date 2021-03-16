@@ -1,7 +1,7 @@
-﻿using System;
-using System.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Prism.Mvvm;
+using System;
+using System.ComponentModel;
 
 namespace ApplicationModels.Models
 {

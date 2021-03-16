@@ -1,14 +1,12 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using ApplicationModels.Models;
+﻿using ApplicationModels.Models;
 using ApplicationServices.HashingServices;
-using DryIoc;
 using Newtonsoft.Json;
 using Prism.Commands;
-using Prism.Ioc;
 using Prism.Navigation;
 using StaticCollections;
+using System;
+using System.Net;
+using System.Net.Http;
 using Xamarin.Forms;
 
 namespace EdlightMobileClient.ViewModels

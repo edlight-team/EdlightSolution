@@ -1,7 +1,7 @@
-using System;
 using Android.App;
 using Android.Runtime;
 using SVG.Forms.Plugin.Droid;
+using System;
 
 namespace EdlightMobileClient.Droid
 {
@@ -13,6 +13,7 @@ namespace EdlightMobileClient.Droid
         public MainApplication(IntPtr javaReference, JniHandleOwnership transfer)
             : base(javaReference, transfer)
         {
+
         }
 
         public override void OnCreate()

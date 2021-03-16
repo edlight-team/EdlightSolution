@@ -31,6 +31,8 @@ namespace EdlightMobileClient
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<AuthPage, AuthPageViewModel>();
             containerRegistry.RegisterForNavigation<ShellTabbedPage, ShellTabbedPageViewModel>();
+            containerRegistry.RegisterForNavigation<WeekSchedulePage, WeekSchedulePageViewModel>();
+            containerRegistry.RegisterForNavigation<DaySchedulePage, DaySchedulePageViewModel>();
         }
     }
 }

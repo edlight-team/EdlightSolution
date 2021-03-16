@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="EdlightMobileClient.Views.DaySchedulePage"
+             NavigationPage.HasNavigationBar="false"
+             ItemsSource="{Binding SelectedWeek}">
+    <CarouselPage.ItemTemplate>
+        <DataTemplate>
+            <ContentPage>
+                <ContentPage.Resources>
+                    <ResourceDictionary>
+                        <Color x:Key="HeaderBackgroundColor">#4D54D8</Color>
+                        <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="{StaticResource HeaderBackgroundColor}"/>
+                        <Style x:Key="BoxViewHeaderStyle"
+                               TargetType="BoxView">
+                            <Setter Property="HorizontalOptions" Value="Fill"/>
+                            <Setter Property="VerticalOptions" Value="Fill"/>
+                            <Setter Property="Background" Value="{StaticResource HeaderBackgroundBrush}"/>
+                        </Style>
+                        <Style x:Key="LabelHeaderStyle"
+                               TargetType="Label">
+                            <Setter Property="HorizontalOptions" Value="Center"/>
+                            <Setter Property="VerticalOptions" Value="Center"/>
+                            <Setter Property="FontSize" Value="20"/>
+                        </Style>
+                    </ResourceDictionary>
+                </ContentPage.Resources>
+                <StackLayout>
+                    <Grid HeightRequest="40">
+                        <BoxView Style="{StaticResource BoxViewHeaderStyle}"/>
+                        <Label Style="{StaticResource LabelHeaderStyle}"
+                               Text="{Binding Date, StringFormat='{0:dddd dd.MM}'}"/>
+                    </Grid>
+                    <StackLayout BindableLayout.ItemsSource="{Binding Schedule}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="2*"/>
+                                        <RowDefinition Height="3*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0"
+                                           Grid.Column="0"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           Margin="0, 0, 0, -10"
+                                           FontSize="18"
+                                           Text="{Binding TimeLesson.StartClass,StringFormat='{0:HH:mm}'}"/>
+                                    <Label Grid.Row="1"
+                                           Grid.Column="0"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Start"
+                                           Margin="0, 0, 0, 10"
+                                           FontSize="18"
+                                           Text="{Binding TimeLesson.EndClass,StringFormat='{0:HH:mm}'}"/>
+                                    <Label Grid.Row="0"
+                                           Grid.Column="1"
+                                           HorizontalOptions="Start"
+                                           VerticalOptions="Center"
+                                           FontSize="20"
+                                           Margin="0, 0, 0, -10"
+                                           Text="{Binding AcademicDescipline}"/>
+                                    <Label Grid.Row="1"
+                                           Grid.Column="1"
+                                           HorizontalOptions="Start"
+                                           VerticalOptions="Start"
+                                           FontSize="20"
+                                           Margin="0, 0, 0, 10"
+                                           Text="{Binding Teacher}"/>
+                                    <Label Grid.Row="0"
+                                           Grid.RowSpan="2"
+                                           Grid.Column="2"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           FontSize="18"
+                                           Text="{Binding TypeClass}"/>
+                                    <Label Grid.Row="0"
+                                           Grid.RowSpan="2"
+                                           Grid.Column="3"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           FontSize="18"
+                                           Text="{Binding Audience}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </StackLayout>
+            </ContentPage>
+        </DataTemplate>
+    </CarouselPage.ItemTemplate>
+</CarouselPage>

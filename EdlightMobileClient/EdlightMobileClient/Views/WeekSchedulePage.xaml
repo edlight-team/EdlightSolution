@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             xmlns:uc="clr-namespace:EdlightMobileClient.UserControls"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="EdlightMobileClient.Views.WeekSchedulePage"
+             NavigationPage.HasNavigationBar="false"
+             x:Name="weekSchedulePage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="HeaderBackgroundColor">#4D54D8</Color>
+            <Color x:Key="MainBackgroundColor">AliceBlue</Color>
+            <Color x:Key="DayButtonMainColor">#FFBB73</Color>
+            <Color x:Key="BlackColor">#000000</Color>
+            <Color x:Key="BlackAmberColor">#0a0a0a</Color>
+            <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="{StaticResource HeaderBackgroundColor}"/>
+            <SolidColorBrush x:Key="MainBackgroundBrush" Color="{StaticResource MainBackgroundColor}"/>
+            <SolidColorBrush x:Key="DayButtonMainBrush" Color="{StaticResource DayButtonMainColor}"/>
+            <Style x:Key="BoxViewDayStyle" TargetType="BoxView">
+                <Setter Property="Background" Value="{StaticResource DayButtonMainBrush}"/>
+                <Setter Property="HorizontalOptions" Value="Fill"/>
+                <Setter Property="VerticalOptions" Value="Fill"/>
+                <Setter Property="CornerRadius" Value="8"/>
+            </Style>
+            <Style x:Key="LabelDayStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource BlackColor}"/>
+                <Setter Property="HorizontalOptions" Value="Start"/>
+                <Setter Property="VerticalOptions" Value="End"/>
+                <Setter Property="FontSize" Value="30"/>
+            </Style>
+            <Style x:Key="LabelDateStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource BlackAmberColor}"/>
+                <Setter Property="HorizontalOptions" Value="Start"/>
+                <Setter Property="VerticalOptions" Value="Start"/>
+                <Setter Property="FontSize" Value="20"/>
+            </Style>
+            <Style x:Key="LabelStartLessonsStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource BlackAmberColor}"/>
+                <Setter Property="HorizontalOptions" Value="End"/>
+                <Setter Property="VerticalOptions" Value="End"/>
+                <Setter Property="FontSize" Value="25"/>
+            </Style>
+            <Style x:Key="LabelBreakLessonsStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource BlackAmberColor}"/>
+                <Setter Property="HorizontalOptions" Value="End"/>
+                <Setter Property="VerticalOptions" Value="Start"/>
+                <Setter Property="FontSize" Value="22"/>
+            </Style>
+            <Style x:Key="ButtonSelectionWeek" TargetType="Button">
+                <Setter Property="HorizontalOptions" Value="Fill"/>
+                <Setter Property="VerticalOptions" Value="Fill"/>
+                <Setter Property="Background" Value="{StaticResource HeaderBackgroundBrush}"/>
+                <Setter Property="TextColor" Value="{StaticResource BlackAmberColor}"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Background="{StaticResource HeaderBackgroundBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="5*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="0"
+                        Style="{StaticResource ButtonSelectionWeek}"
+                        Text="Back"
+                        Command="{Binding LastWeekCommand}"/>
+                <Button Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="2"
+                        Style="{StaticResource ButtonSelectionWeek}"
+                        Text="Next"
+                        Command="{Binding NextWeekCommand}"/>
+                <Label Grid.Row="0"
+                       Grid.Column="1"
+                       Text="{Binding SelectedWeekHeaderDates}"
+                       FontSize="20"
+                       HorizontalOptions="Center"
+                       VerticalOptions="End"
+                       Margin="0, 0, 0, -15"/>
+                <Label Grid.Row="1"
+                       Grid.Column="1"
+                       Text="неделя"
+                       FontSize="18"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Start"
+                       Margin="0, 0, 0, -10">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding SelectedWeekIsEven}"
+                                     Value="true">
+                            <Setter Property="Text" Value="верхняя неделя"/>
+                        </DataTrigger>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding SelectedWeekIsEven}"
+                                     Value="false">
+                            <Setter Property="Text" Value="нижняяя неделя"/>
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </Grid>
+            <StackLayout Grid.Row="1"
+                         Background="{StaticResource MainBackgroundBrush}"
+                         BindableLayout.ItemsSource="{Binding SelectedWeek}"
+                         Padding="10, 8, 10, 8">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <uc:ContentButton HeightRequest="80"
+                                            HorizontalOptions="Fill"
+                                            VerticalOptions="Fill"
+                                            Command="{Binding BindingContext.NavigateCommand, Source={x:Reference weekSchedulePage}}"
+                                            CommandParameter="{Binding Index}">
+                            <Grid>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="4*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <BoxView Grid.Row="0"
+                                             Grid.RowSpan="2"
+                                             Grid.Column="0"
+                                             Grid.ColumnSpan="2"
+                                             Style="{StaticResource BoxViewDayStyle}"/>
+                                    <Label Grid.Row="0"
+                                           Grid.Column="0"
+                                           Style="{StaticResource LabelDayStyle}"
+                                           Margin="20, 0, 0, -15"
+                                           Text="{Binding Date, StringFormat='{0:dddd}'}"/>
+                                    <Label Grid.Row="1"
+                                           Grid.Column="0"
+                                           Style="{StaticResource LabelDateStyle}"
+                                           Margin="25, 0, 0, -10"
+                                           Text="{Binding Date, StringFormat='{0:dd.MM}'}"/>
+                                    <Label Grid.Row="0"
+                                           Grid.Column="1"
+                                           Style="{StaticResource LabelStartLessonsStyle}"
+                                           Margin="0, 0, 15, -10"
+                                           Text="{Binding StartClasses, StringFormat='{0:HH.mm}'}"/>
+                                    <Label Grid.Row="1"
+                                           Grid.Column="1"
+                                           Style="{StaticResource LabelBreakLessonsStyle}"
+                                           Margin="0, 0, 15, 10"
+                                           Text="{Binding EndClasses, StringFormat='{0:HH.mm}'}"/>
+                                </Grid>
+                            </Grid>
+                        </uc:ContentButton>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

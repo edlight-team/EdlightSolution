@@ -3,13 +3,12 @@
             xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+            xmlns:viewsschedule="clr-namespace:EdlightMobileClient.Views.ScheduleViews"
             android:TabbedPage.ToolbarPlacement="Bottom"
             NavigationPage.HasBackButton="False"
             NavigationPage.HasNavigationBar="False">
     <!--  Pages can be added as references or inline  -->
-    <ContentPage Title="Schedule" IconImageSource="schedule.png">
-        <Label Text="SchedulePage" />
-    </ContentPage>
+    <viewsschedule:WeekSchedulePage IconImageSource="schedule.png"/>
     <ContentPage Title="Profile" IconImageSource="profile.png">
         <Label Text="ProfilePage" />
     </ContentPage>

@@ -62,7 +62,7 @@ namespace EdlightMobileClient.ViewModels
                         await Application.Current.MainPage.DisplayAlert("Ошибка", "Пароль не подходит", "Ок");
                         return;
                     }
-                    await NavigationService.NavigateAsync("NavigationPage/ShellTabbedPage");
+                    await NavigationService.NavigateAsync("NavigationPage/ShellTabbedPage?selectedTab=WeekSchedulePage");
                 }
             }
             catch (Exception ex)

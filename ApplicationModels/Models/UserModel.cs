@@ -20,6 +20,7 @@ namespace ApplicationModels.Models
 
         #endregion
         #region props
+        [JsonProperty(nameof(ID))]
         public Guid ID { get => id; set => SetProperty(ref id, value); }
 
         [JsonProperty(nameof(Login))]

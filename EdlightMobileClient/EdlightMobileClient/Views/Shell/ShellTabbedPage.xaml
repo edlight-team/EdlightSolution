@@ -8,11 +8,14 @@
             NavigationPage.HasBackButton="False"
             NavigationPage.HasNavigationBar="False">
     <!--  Pages can be added as references or inline  -->
-    <viewsschedule:WeekSchedulePage IconImageSource="schedule.png"/>
+    <viewsschedule:WeekSchedulePage Title="Расписание" IconImageSource="schedule.png" />
     <ContentPage Title="Profile" IconImageSource="profile.png">
         <Label Text="ProfilePage" />
     </ContentPage>
     <ContentPage Title="Settings" IconImageSource="settings.png">
         <Label Text="SettingsPage" />
+    </ContentPage>
+    <ContentPage Title="Chat" IconImageSource="chat.png">
+        <Label Text="ChatPage" />
     </ContentPage>
 </TabbedPage>

@@ -19,10 +19,10 @@ namespace ApplicationModels.Models
         public Guid Id { get => id; set => SetProperty(ref id, value); }
 
         [JsonProperty(nameof(PermissionName))]
-        public string PermissionName { get => permissionName; set => SetProperty(ref permissionName, value); }
+        public string PermissionName { get => permissionName ??= string.Empty; set => SetProperty(ref permissionName, value); }
 
         [JsonProperty(nameof(PermissionDescription))]
-        public string PermissionDescription { get => permissionDescription; set => SetProperty(ref permissionDescription, value); }
+        public string PermissionDescription { get => permissionDescription ??= string.Empty; set => SetProperty(ref permissionDescription, value); }
 
         #endregion
     }

@@ -1,4 +1,4 @@
-﻿namespace ApplicationServices.HashingServices
+﻿namespace ApplicationServices.HashingService
 {
     public interface IHashingService
     {

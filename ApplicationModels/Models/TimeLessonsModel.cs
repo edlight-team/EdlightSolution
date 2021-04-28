@@ -22,19 +22,19 @@ namespace ApplicationModels.Models
         public Guid Id { get => id; set => SetProperty(ref id, value); }
 
         [JsonProperty(nameof(ClassNumber))]
-        public string ClassNumber { get => classNumber; set => SetProperty(ref classNumber, value); }
+        public string ClassNumber { get => classNumber ??= string.Empty; set => SetProperty(ref classNumber, value); }
 
         [JsonProperty(nameof(StartClass))]
-        public string StartClass { get => startClass; set => SetProperty(ref startClass, value); }
+        public string StartClass { get => startClass ??= string.Empty; set => SetProperty(ref startClass, value); }
 
         [JsonProperty(nameof(StartBreak))]
-        public string StartBreak { get => startBreak; set => SetProperty(ref startBreak, value); }
+        public string StartBreak { get => startBreak ??= string.Empty; set => SetProperty(ref startBreak, value); }
 
         [JsonProperty(nameof(EndBreak))]
-        public string EndBreak { get => endBreak; set => SetProperty(ref endBreak, value); }
+        public string EndBreak { get => endBreak ??= string.Empty; set => SetProperty(ref endBreak, value); }
 
         [JsonProperty(nameof(EndClass))]
-        public string EndClass { get => endClass; set => SetProperty(ref endClass, value); }
+        public string EndClass { get => endClass ??= string.Empty; set => SetProperty(ref endClass, value); }
 
         #endregion
     }

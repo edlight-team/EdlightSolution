@@ -15,11 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationModels", "Applic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationServices", "ApplicationServices\ApplicationServices.csproj", "{E41AAC81-C245-4A3B-8AFA-33120C36B53A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{69BC8BDD-F4F1-4A39-9E62-9094C33305BA}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdlightMobileClient", "EdlightMobileClient\EdlightMobileClient\EdlightMobileClient.csproj", "{C53AC813-8AE9-4C89-A48D-B73907D20239}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdlightMobileClient.Android", "EdlightMobileClient\EdlightMobileClient.Android\EdlightMobileClient.Android.csproj", "{011B19F9-412F-405A-9FC8-4EACA634039A}"

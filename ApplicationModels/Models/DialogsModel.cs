@@ -18,7 +18,7 @@ namespace ApplicationModels.Models
         public Guid Id { get => id; set => SetProperty(ref id, value); }
 
         [JsonProperty(nameof(TitleDialog))]
-        public string TitleDialog { get => titleDialog; set => SetProperty(ref titleDialog, value); }
+        public string TitleDialog { get => titleDialog ??= string.Empty; set => SetProperty(ref titleDialog, value); }
 
         #endregion
     }

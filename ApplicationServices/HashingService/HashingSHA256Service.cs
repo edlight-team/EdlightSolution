@@ -1,13 +1,13 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace ApplicationServices.HashingServices
+namespace ApplicationServices.HashingService
 {
     public class HashingSHA256Service : IHashingService
     {
         public string GetHash(string text)
         {
-            SHA256Managed sha256Managed = new SHA256Managed();
+            SHA256Managed sha256Managed = new();
             byte[] hash = sha256Managed.ComputeHash(new UTF8Encoding().GetBytes(text + "EDLight-is beatifull"));
             string hashString = string.Empty;
             foreach (byte i in hash)

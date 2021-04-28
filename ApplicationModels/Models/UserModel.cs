@@ -25,19 +25,19 @@ namespace ApplicationModels.Models
         public Guid ID { get => id; set => SetProperty(ref id, value); }
 
         [JsonProperty(nameof(Login))]
-        public string Login { get => login; set => SetProperty(ref login, value); }
+        public string Login { get => login ??= string.Empty; set => SetProperty(ref login, value); }
 
         [JsonProperty(nameof(Password))]
-        public string Password { get => password; set => SetProperty(ref password, value); }
+        public string Password { get => password ??= string.Empty; set => SetProperty(ref password, value); }
 
         [JsonProperty(nameof(Name))]
-        public string Name { get => name; set => SetProperty(ref name, value); }
+        public string Name { get => name ??= string.Empty; set => SetProperty(ref name, value); }
 
         [JsonProperty(nameof(Surname))]
-        public string Surname { get => surname; set => SetProperty(ref surname, value); }
+        public string Surname { get => surname ??= string.Empty; set => SetProperty(ref surname, value); }
 
         [JsonProperty(nameof(Patrnymic))]
-        public string Patrnymic { get => patronymic; set => SetProperty(ref patronymic, value); }
+        public string Patrnymic { get => patronymic ??= string.Empty; set => SetProperty(ref patronymic, value); }
 
         [JsonProperty(nameof(Sex))]
         public int Sex { get => sex; set => SetProperty(ref sex, value); }

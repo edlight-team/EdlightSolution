@@ -28,7 +28,7 @@ namespace ApplicationModels.Models
         public Guid IdUserSender { get => idUserSender; set => SetProperty(ref idUserSender, value); }
 
         [JsonProperty(nameof(TextMessage))]
-        public string TextMessage { get => textMessage; set => SetProperty(ref textMessage, value); }
+        public string TextMessage { get => textMessage ??= string.Empty; set => SetProperty(ref textMessage, value); }
 
         [JsonProperty(nameof(IsRead))]
         public bool IsRead { get => isRead; set => SetProperty(ref isRead, value); }

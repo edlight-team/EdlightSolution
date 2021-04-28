@@ -3,17 +3,23 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ApplicationServices.WebApiService
 {
     public class WebApiServiceImplementation : IWebApiService
     {
-        private static readonly string WebApiBaseURL = "http://62.173.147.98:500";
+#if DEBUG
+        //private static readonly string WebApiBaseURL = "http://192.168.0.100:1000/api/";
+        private static readonly string WebApiBaseURL = "http://62.173.154.96:600/api/";
+#else
+        private static readonly string WebApiBaseURL = "http://62.173.154.96:600/api/";
+#endif
         private WebRequest CreateRequest(string api, string method)
         {
             WebRequest request = WebRequest.CreateHttp(WebApiBaseURL + api);
-            request.Timeout = 60000;
+            request.Timeout = 10000;
             request.Method = method;
             return request;
         }
@@ -31,9 +37,16 @@ namespace ApplicationServices.WebApiService
         }
         public async Task<TData> PostModel<TData>(TData item, string apiName)
         {
-            WebRequest request = CreateRequest(apiName, WebRequestMethods.Http.Get);
+            WebRequest request = CreateRequest(apiName, WebRequestMethods.Http.Post);
 
+            string data = JsonConvert.SerializeObject(item);
+            byte[] data_bytes = Encoding.UTF8.GetBytes(data);
+            request.ContentType = "application/json";
+            request.ContentLength = data_bytes.Length;
 
+            using Stream requestStream = await request.GetRequestStreamAsync();
+            await requestStream.WriteAsync(data_bytes, 0, data_bytes.Length);
+            requestStream.Close();
 
             WebResponse response = await request.GetResponseAsync();
             using Stream response_stream = response.GetResponseStream();
@@ -44,13 +57,40 @@ namespace ApplicationServices.WebApiService
 
             return JsonConvert.DeserializeObject<TData>(result);
         }
-        public Task<TData> PutModel<TData>(TData item, string apiName)
+        public async Task<TData> PutModel<TData>(TData item, string apiName)
         {
-            throw new NotImplementedException();
+            WebRequest request = CreateRequest(apiName, WebRequestMethods.Http.Put);
+
+            string data = JsonConvert.SerializeObject(item);
+            byte[] data_bytes = Encoding.UTF8.GetBytes(data);
+            request.ContentType = "application/json";
+            request.ContentLength = data_bytes.Length;
+
+            using Stream requestStream = await request.GetRequestStreamAsync();
+            await requestStream.WriteAsync(data_bytes, 0, data_bytes.Length);
+            requestStream.Close();
+
+            WebResponse response = await request.GetResponseAsync();
+            using Stream response_stream = response.GetResponseStream();
+            using StreamReader reader = new(response_stream);
+            string result = string.Empty;
+            result = await reader.ReadToEndAsync();
+            reader.Close();
+
+            return JsonConvert.DeserializeObject<TData>(result);
         }
-        public Task<int> DeleteModel<TData>(Guid id, string apiName)
+        public async Task<int> DeleteModel(Guid id, string apiName)
         {
-            throw new NotImplementedException();
+            WebRequest request = CreateRequest(apiName, "DELETE");
+            request.Headers.Add("id", id.ToString());
+            WebResponse response = await request.GetResponseAsync();
+            using Stream response_stream = response.GetResponseStream();
+            using StreamReader reader = new(response_stream);
+            string result = string.Empty;
+            result = await reader.ReadToEndAsync();
+            reader.Close();
+
+            return int.Parse(result);
         }
     }
 }

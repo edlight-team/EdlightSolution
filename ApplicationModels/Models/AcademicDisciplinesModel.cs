@@ -18,7 +18,7 @@ namespace ApplicationModels.Models
         public Guid Id { get => id; set => SetProperty(ref id, value); }
 
         [JsonProperty(nameof(Title))]
-        public string Title { get => title; set => SetProperty(ref title, value); }
+        public string Title { get => title ??= string.Empty; set => SetProperty(ref title, value); }
 
         #endregion
     }

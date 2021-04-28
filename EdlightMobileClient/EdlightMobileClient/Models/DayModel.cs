@@ -1,7 +1,6 @@
 ﻿using EdlightMobileClient.Collections;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace EdlightMobileClient.Models
 {

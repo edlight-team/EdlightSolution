@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EdlightMobileClient.Collections
+﻿namespace EdlightMobileClient.Collections
 {
     public interface IIndexable
     {

@@ -1,19 +1,25 @@
 ﻿using Newtonsoft.Json;
 using Prism.Mvvm;
+using System;
 
 namespace ApplicationModels.Models
 {
-    public class RoleModel : BindableBase
+    public class TypeClassesModel : BindableBase
     {
         #region fields
-        private string id;
+
+        private Guid id;
         private string title;
+
         #endregion
         #region props
-        public string _id { get => id; set => SetProperty(ref id, value); }
+
+        [JsonProperty(nameof(Id))]
+        public Guid Id { get => id; set => SetProperty(ref id, value); }
 
         [JsonProperty(nameof(Title))]
         public string Title { get => title; set => SetProperty(ref title, value); }
+
         #endregion
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EdlightMobileClient.Models
+﻿namespace EdlightMobileClient.Models
 {
     public class Schedule
     {

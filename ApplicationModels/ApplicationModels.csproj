@@ -49,9 +49,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\GroupModel.cs" />
-    <Compile Include="Models\RoleModel.cs" />
+    <Compile Include="Models\AcademicDisciplinesModel.cs" />
+    <Compile Include="Models\AudiencesModel.cs" />
+    <Compile Include="Models\DialogsModel.cs" />
+    <Compile Include="Models\GroupsModel.cs" />
+    <Compile Include="Models\LessonsGroupsModel.cs" />
+    <Compile Include="Models\LessonsModel.cs" />
+    <Compile Include="Models\MessagesModel.cs" />
+    <Compile Include="Models\PermissionsModel.cs" />
+    <Compile Include="Models\RolesModel.cs" />
+    <Compile Include="Models\RolesPermissionsModel.cs" />
+    <Compile Include="Models\StudentsGroupsModel.cs" />
+    <Compile Include="Models\TimeLessonsModel.cs" />
+    <Compile Include="Models\TypeClassesModel.cs" />
     <Compile Include="Models\UserModel.cs" />
+    <Compile Include="Models\UsersDialogsModel.cs" />
+    <Compile Include="Models\UsersRolesModel.cs" />
+    <Compile Include="Models\WeekDaysModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

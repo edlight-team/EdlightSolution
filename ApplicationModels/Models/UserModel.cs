@@ -8,6 +8,7 @@ namespace ApplicationModels.Models
     public class UserModel : BindableBase, IDataErrorInfo
     {
         #region fields
+
         private Guid id;
         private string login;
         private string password;
@@ -16,10 +17,10 @@ namespace ApplicationModels.Models
         private string patronymic;
         private int sex;
         private int age;
-        private string[] role;
 
         #endregion
         #region props
+
         [JsonProperty(nameof(ID))]
         public Guid ID { get => id; set => SetProperty(ref id, value); }
 
@@ -44,13 +45,13 @@ namespace ApplicationModels.Models
         [JsonProperty(nameof(Age))]
         public int Age { get => age; set => SetProperty(ref age, value); }
 
-        [JsonProperty(nameof(Role))]
-        public string[] Role { get => role; set => SetProperty(ref role, value); }
         #endregion
         #region errors
 
         [JsonIgnore]
         public string Error { get; }
+
+        [JsonIgnore]
         public string this[string columnName]
         {
             get

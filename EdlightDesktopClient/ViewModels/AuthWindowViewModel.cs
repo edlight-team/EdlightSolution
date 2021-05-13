@@ -1,4 +1,5 @@
-﻿using ApplicationExceptions.Exceptions;
+﻿using ApplicationEnums;
+using ApplicationExceptions.Exceptions;
 using ApplicationModels.Models;
 using ApplicationServices.HashingService;
 using ApplicationServices.WebApiService;
@@ -86,8 +87,8 @@ namespace EdlightDesktopClient.ViewModels
             try
             {
                 Loader = new("Выполняется загрузка");
-#if DEBUG
-                await Task.Delay(1000);
+#if !DEBUG
+                await Task.Delay(500);
 #endif
                 var users = await api.GetModels<UserModel>(WebApiTableNames.Users);
                 var target_user = users.FirstOrDefault(u => u.Login == Login);

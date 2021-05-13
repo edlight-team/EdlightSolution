@@ -14,14 +14,14 @@ namespace EdlightMobileClient.ViewModels
 {
     public class AuthPageViewModel : ViewModelBase
     {
-        public AuthPageViewModel(INavigationService navigationService, IHashingService hashing, IWebApiService api) : base(navigationService)
+        public AuthPageViewModel(INavigationService navigationService, IHashingService hashing) : base(navigationService)
         {
 #if DEBUG
             Model.Login = "admin";
             Model.Password = "admin";
 #endif
             this.hashing = hashing;
-            this.api = api;
+            //this.api = api;
             AuthCommand = new DelegateCommand(OnAuthCommand);
         }
 

@@ -23,7 +23,7 @@ namespace ApplicationServices.WebApiService
             request.Method = method;
             return request;
         }
-        public async Task<IEnumerable<TData>> GetModels<TData>(string apiName)
+        public async Task<List<TData>> GetModels<TData>(string apiName)
         {
             WebRequest request = CreateRequest(apiName, WebRequestMethods.Http.Get);
             WebResponse response = await request.GetResponseAsync();
@@ -33,7 +33,7 @@ namespace ApplicationServices.WebApiService
             result = await reader.ReadToEndAsync();
             reader.Close();
 
-            return JsonConvert.DeserializeObject<IEnumerable<TData>>(result);
+            return JsonConvert.DeserializeObject<List<TData>>(result);
         }
         public async Task<TData> PostModel<TData>(TData item, string apiName)
         {
@@ -91,6 +91,18 @@ namespace ApplicationServices.WebApiService
             reader.Close();
 
             return int.Parse(result);
+        }
+        public async Task<string> DeleteAll(string Target = null)
+        {
+            WebRequest request = CreateRequest("Database", WebRequestMethods.Http.Get);
+            if (Target != null) request.Headers.Add(nameof(Target), Target);
+            WebResponse response = await request.GetResponseAsync();
+            using Stream response_stream = response.GetResponseStream();
+            using StreamReader reader = new(response_stream);
+            string result = string.Empty;
+            result = await reader.ReadToEndAsync();
+            reader.Close();
+            return result;
         }
     }
 }

@@ -16,9 +16,6 @@ namespace ApiTest
         private static readonly Guid[] TestGuids = new Guid[] {
             Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()
         };
-        private static readonly int[] TestIntegers = new int[]{
-            11, 22, 33, 44, 55, 66, 77, 88
-        };
         private static readonly DateTime[] TestDateTimes = new DateTime[] {
             Convert.ToDateTime("01.01.2020 14:50:55"), Convert.ToDateTime("01.02.2020 02:12:22"),
         };
@@ -39,7 +36,7 @@ namespace ApiTest
         #endregion
         #region service and constructor
         private readonly IWebApiService api;
-        public TestClass() => api = new WebApiServiceImplementation(); 
+        public TestClass() => api = new WebApiServiceImplementation();
         #endregion
         #region test methods
         [TestMethod]
@@ -122,21 +119,21 @@ namespace ApiTest
             DialogsModel model = new();
             model.TitleDialog = TestStrings[0];
 
-            var posted = api.PostModel(model,  WebApiTableNames.Dialogs).Result;
+            var posted = api.PostModel(model, WebApiTableNames.Dialogs).Result;
 
             Assert.AreEqual(posted.TitleDialog, TestStrings[0]);
 
             posted.TitleDialog = TestStrings[1];
 
-            var putted = api.PutModel(posted,  WebApiTableNames.Dialogs).Result;
+            var putted = api.PutModel(posted, WebApiTableNames.Dialogs).Result;
 
             Assert.AreEqual(putted.TitleDialog, TestStrings[1]);
 
-            var deleted_count = api.DeleteModel(putted.Id,  WebApiTableNames.Dialogs).Result;
+            var deleted_count = api.DeleteModel(putted.Id, WebApiTableNames.Dialogs).Result;
 
             Assert.AreEqual(deleted_count, 1);
 
-            var models = new List<DialogsModel>(api.GetModels<DialogsModel>( WebApiTableNames.Dialogs).Result);
+            var models = new List<DialogsModel>(api.GetModels<DialogsModel>(WebApiTableNames.Dialogs).Result);
 
             Assert.AreEqual(models.Count, 0);
         }
@@ -146,21 +143,21 @@ namespace ApiTest
             GroupsModel model = new();
             model.Group = TestStrings[0];
 
-            var posted = api.PostModel(model,  WebApiTableNames.Groups).Result;
+            var posted = api.PostModel(model, WebApiTableNames.Groups).Result;
 
             Assert.AreEqual(posted.Group, TestStrings[0]);
 
             posted.Group = TestStrings[1];
 
-            var putted = api.PutModel(posted,  WebApiTableNames.Groups).Result;
+            var putted = api.PutModel(posted, WebApiTableNames.Groups).Result;
 
             Assert.AreEqual(putted.Group, TestStrings[1]);
 
-            var deleted_count = api.DeleteModel(putted.Id,  WebApiTableNames.Groups).Result;
+            var deleted_count = api.DeleteModel(putted.Id, WebApiTableNames.Groups).Result;
 
             Assert.AreEqual(deleted_count, 1);
 
-            var models = new List<GroupsModel>(api.GetModels<GroupsModel>( WebApiTableNames.Groups).Result);
+            var models = new List<GroupsModel>(api.GetModels<GroupsModel>(WebApiTableNames.Groups).Result);
 
             Assert.AreEqual(models.Count, 0);
         }
@@ -172,22 +169,22 @@ namespace ApiTest
             model.IdGroup = TestGuids[0];
             model.IdLesson = TestGuids[1];
 
-            var posted = api.PostModel(model,  WebApiTableNames.LessonsGroups).Result;
+            var posted = api.PostModel(model, WebApiTableNames.LessonsGroups).Result;
 
             Assert.AreEqual(posted.IdGroup, TestGuids[0]);
             Assert.AreEqual(posted.IdLesson, TestGuids[1]);
 
             posted.IdGroup = TestGuids[2];
 
-            var putted = api.PutModel(posted,  WebApiTableNames.LessonsGroups).Result;
+            var putted = api.PutModel(posted, WebApiTableNames.LessonsGroups).Result;
 
             Assert.AreEqual(putted.IdGroup, TestGuids[2]);
 
-            var deleted_count = api.DeleteModel(putted.Id,  WebApiTableNames.LessonsGroups).Result;
+            var deleted_count = api.DeleteModel(putted.Id, WebApiTableNames.LessonsGroups).Result;
 
             Assert.AreEqual(deleted_count, 1);
 
-            var models = new List<LessonsGroupsModel>(api.GetModels<LessonsGroupsModel>( WebApiTableNames.LessonsGroups).Result);
+            var models = new List<LessonsGroupsModel>(api.GetModels<LessonsGroupsModel>(WebApiTableNames.LessonsGroups).Result);
 
             Assert.AreEqual(models.Count, 0);
         }
@@ -203,7 +200,7 @@ namespace ApiTest
             model.IdAudience = TestGuids[5];
             model.EvenNumberedWeek = TestBooleans[0];
 
-            var posted = api.PostModel(model,  WebApiTableNames.Lessons).Result;
+            var posted = api.PostModel(model, WebApiTableNames.Lessons).Result;
 
             Assert.AreEqual(posted.IdWeekDay, TestGuids[0]);
             Assert.AreEqual(posted.EvenNumberedWeek, TestBooleans[0]);
@@ -211,16 +208,16 @@ namespace ApiTest
             posted.IdWeekDay = TestGuids[1];
             posted.EvenNumberedWeek = TestBooleans[1];
 
-            var putted = api.PutModel(posted,  WebApiTableNames.Lessons).Result;
+            var putted = api.PutModel(posted, WebApiTableNames.Lessons).Result;
 
             Assert.AreEqual(putted.IdWeekDay, TestGuids[1]);
             Assert.AreEqual(putted.EvenNumberedWeek, TestBooleans[1]);
 
-            var deleted_count = api.DeleteModel(putted.Id,  WebApiTableNames.Lessons).Result;
+            var deleted_count = api.DeleteModel(putted.Id, WebApiTableNames.Lessons).Result;
 
             Assert.AreEqual(deleted_count, 1);
 
-            var models = new List<LessonsModel>(api.GetModels<LessonsModel>( WebApiTableNames.Lessons).Result);
+            var models = new List<LessonsModel>(api.GetModels<LessonsModel>(WebApiTableNames.Lessons).Result);
 
             Assert.AreEqual(models.Count, 0);
         }

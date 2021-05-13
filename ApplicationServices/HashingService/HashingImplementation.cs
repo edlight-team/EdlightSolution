@@ -1,10 +1,12 @@
-﻿using System.Security.Cryptography;
+﻿using BotCrypt;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace ApplicationServices.HashingService
 {
-    public class HashingSHA256Service : IHashingService
+    public class HashingImplementation : IHashingService
     {
+        private readonly string password = "EdLiGhTCrYpToPaSsWoRd!!____DSTU";
         public string GetHash(string text)
         {
             SHA256Managed sha256Managed = new();
@@ -17,5 +19,7 @@ namespace ApplicationServices.HashingService
 
             return hashString;
         }
+        public string EncodeString(string source) => Crypter.EncryptString(password, source);
+        public string DecodeString(string source) => Crypter.DecryptString(password, source);
     }
 }

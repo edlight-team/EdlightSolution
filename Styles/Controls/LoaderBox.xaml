@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="Styles.Controls.LoaderBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Name="Loader">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="10*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="5*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0"
+                Grid.RowSpan="4"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Opacity="0.8"
+                Style="{DynamicResource RoundedBackgroundBorder}">
+            <Border.Effect>
+                <BlurEffect KernelType="Gaussian" Radius="25" />
+            </Border.Effect>
+        </Border>
+        <Viewbox Grid.Row="1"
+                 Grid.Column="1"
+                 Stretch="Uniform">
+            <Canvas Canvas.Left="0"
+                    Canvas.Top="0"
+                    Width="500"
+                    Height="500">
+                <Canvas.RenderTransform>
+                    <TranslateTransform X="0" Y="0" />
+                </Canvas.RenderTransform>
+                <Canvas>
+                    <Path Fill="{DynamicResource InnerElementBackgroundBrush}" RenderTransformOrigin="0.5,0.5">
+                        <Path.RenderTransform>
+                            <RotateTransform Angle="0" />
+                        </Path.RenderTransform>
+                        <Path.Style>
+                            <Style TargetType="Path">
+                                <Style.Triggers>
+                                    <EventTrigger RoutedEvent="Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard TargetProperty="RenderTransform.Angle">
+                                                <DoubleAnimation RepeatBehavior="Forever"
+                                                                 To="360"
+                                                                 Duration="0:0:1" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
+                        <Path.Data>
+                            <PathGeometry Figures="M 343.688 77.75 324.283 58.312 c 76.812 27.875 132.688 99.688 136.938 185 h 46.281 L 429.751 321.062 352 243.313 h 44.688 c -4.188 -57.5 -42.094 -105.5 -94 -124.563 z m 45.062 224.938 c -19.031 51.906 -67.062 89.813 -124.562 94 V 352 l -77.75 77.75 77.75 77.75 v -46.281 c 85.313 -4.25 157.125 -60.125 185 -136.969 L 429.75 343.688 Z M 204.813 388.75 C 152.907 369.719 115 321.688 110.813 264.188 h 44.688 L 77.75 186.438 0 264.188 h 46.281 c 4.281 85.313 60.156 157.125 136.969 185 L 163.813 429.75 Z M 118.75 204.813 c 19.063 -51.906 67.063 -89.813 124.563 -94 v 44.688 L 321.063 77.75 243.313 0 V 46.281 C 158 50.562 86.188 106.438 58.313 183.25 L 77.75 163.813 Z m 39 48.937 c 0 53.031 42.969 96 96 96 53.031 0 96 -42.969 96 -96 0 -53.031 -42.969 -96 -96 -96 -53.031 0 -96 42.969 -96 96 z" FillRule="NonZero" />
+                        </Path.Data>
+                    </Path>
+                </Canvas>
+            </Canvas>
+        </Viewbox>
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="3"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="14"
+                   FontWeight="Bold"
+                   Style="{DynamicResource SimpleTextBlock}"
+                   Text="{Binding ElementName=Loader, Path=Message, UpdateSourceTrigger=PropertyChanged}"
+                   TextWrapping="Wrap" />
+    </Grid>
+</UserControl>

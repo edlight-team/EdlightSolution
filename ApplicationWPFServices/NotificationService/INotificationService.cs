@@ -1,4 +1,4 @@
-﻿namespace ApplicationServices.NotificationService
+﻿namespace ApplicationWPFServices.NotificationService
 {
     public interface INotificationService
     {

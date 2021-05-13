@@ -1,5 +1,6 @@
 ﻿using ApplicationModels.Models;
-using ApplicationServices.HashingServices;
+using ApplicationServices.HashingService;
+using ApplicationServices.WebApiService;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Navigation;
@@ -13,17 +14,19 @@ namespace EdlightMobileClient.ViewModels
 {
     public class AuthPageViewModel : ViewModelBase
     {
-        public AuthPageViewModel(INavigationService navigationService, IHashingService hashing) : base(navigationService)
+        public AuthPageViewModel(INavigationService navigationService, IHashingService hashing, IWebApiService api) : base(navigationService)
         {
 #if DEBUG
             Model.Login = "admin";
             Model.Password = "admin";
 #endif
             this.hashing = hashing;
+            this.api = api;
             AuthCommand = new DelegateCommand(OnAuthCommand);
         }
 
         private readonly IHashingService hashing;
+        private readonly IWebApiService api;
 
         private UserModel model;
         public UserModel Model { get => model ??= new(); set => SetProperty(ref model, value); }
@@ -33,6 +36,9 @@ namespace EdlightMobileClient.ViewModels
         {
             try
             {
+                //ToDo: Переделай вместо этого на api.GetModels..........
+                //Пример в EdlightSolution -> ClientDesktop -> EdlightDesktopClient -> ViewModels -> AuthWindowViewModel
+
                 HttpClient client = new();
                 client.Timeout = TimeSpan.FromSeconds(5);
                 HttpRequestMessage request = new();

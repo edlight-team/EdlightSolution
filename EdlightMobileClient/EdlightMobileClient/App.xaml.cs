@@ -1,4 +1,4 @@
-using ApplicationServices.HashingServices;
+using ApplicationServices.HashingService;
 using EdlightMobileClient.ViewModels;
 using EdlightMobileClient.ViewModels.ScheduleViewModels;
 using EdlightMobileClient.ViewModels.Shell;
@@ -28,7 +28,7 @@ namespace EdlightMobileClient
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
-            containerRegistry.Register<IHashingService, HashingSHA256Service>();
+            containerRegistry.Register<IHashingService, HashingImplementation>();
 
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<AuthPage, AuthPageViewModel>();

@@ -1,4 +1,4 @@
-﻿using ApplicationServices.MemoryService;
+﻿using ApplicationWPFServices.MemoryService;
 using EdlightDesktopClient.BaseMethods;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -42,7 +42,7 @@ namespace EdlightDesktopClient.ViewModels
 
             this.memory = memory;
 
-            MinimizeCommand = new DelegateCommand(()=> CurrentState = StaticCommands.ChangeWindowState(CurrentState));
+            MinimizeCommand = new DelegateCommand(() => CurrentState = StaticCommands.ChangeWindowState(CurrentState));
             CloseCommand = new DelegateCommand(StaticCommands.Shutdown);
         }
 

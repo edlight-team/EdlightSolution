@@ -1,8 +1,8 @@
-﻿using ApplicationServices.NotificationService.Windows.ViewModels;
+﻿using ApplicationWPFServices.NotificationService.Windows.ViewModels;
 using System;
 using System.Windows;
 
-namespace ApplicationServices.NotificationService.Windows.Views
+namespace ApplicationWPFServices.NotificationService.Windows.Views
 {
     /// <summary>
     /// Логика взаимодействия для ErrorWindow.xaml

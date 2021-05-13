@@ -4,14 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E41AAC81-C245-4A3B-8AFA-33120C36B53A}</ProjectGuid>
+    <ProjectGuid>{B4A94C54-EF41-4133-B9F2-84DA4A8FDF1D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ApplicationServices</RootNamespace>
-    <AssemblyName>ApplicationServices</AssemblyName>
+    <RootNamespace>ApplicationWPFServices</RootNamespace>
+    <AssemblyName>ApplicationWPFServices</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +22,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,15 +30,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BotCrypt, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BotCrypt.1.0.2\lib\netstandard2.0\BotCrypt.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Prism, Version=8.0.0.1909, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
@@ -57,21 +50,25 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HashingService\HashingImplementation.cs" />
-    <Compile Include="HashingService\IHashingService.cs" />
+    <Compile Include="MemoryService\IMemoryService.cs" />
+    <Compile Include="MemoryService\MemoryAlliases.cs" />
+    <Compile Include="MemoryService\MemoryImplementation.cs" />
+    <Compile Include="NotificationService\INotificationService.cs" />
+    <Compile Include="NotificationService\NotificationImplementation.cs" />
+    <Compile Include="NotificationService\Windows\ViewModels\ErrorWindowViewModel.cs" />
+    <Compile Include="NotificationService\Windows\Views\ErrorWindow.xaml.cs">
+      <DependentUpon>ErrorWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebApiService\IWebApiService.cs" />
-    <Compile Include="WebApiService\WebApiServiceImplementation.cs" />
-    <Compile Include="WebApiService\WebApiTableNames.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="NotificationService\Windows\Views\ErrorWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Styles\Styles.csproj">
-      <Project>{85aa63c8-3100-4151-a96f-eac74682cfe3}</Project>
-      <Name>Styles</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

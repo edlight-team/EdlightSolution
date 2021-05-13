@@ -1,8 +1,8 @@
-﻿using ApplicationServices.NotificationService.Windows.Views;
+﻿using ApplicationWPFServices.NotificationService.Windows.Views;
 using Prism.Commands;
 using Prism.Mvvm;
 
-namespace ApplicationServices.NotificationService.Windows.ViewModels
+namespace ApplicationWPFServices.NotificationService.Windows.ViewModels
 {
     public class ErrorWindowViewModel : BindableBase
     {

@@ -122,6 +122,10 @@
       <Project>{e41aac81-c245-4a3b-8afa-33120c36b53a}</Project>
       <Name>ApplicationServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ApplicationWPFServices\ApplicationWPFServices.csproj">
+      <Project>{B4A94C54-EF41-4133-B9F2-84DA4A8FDF1D}</Project>
+      <Name>ApplicationWPFServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Styles\Styles.csproj">
       <Project>{85aa63c8-3100-4151-a96f-eac74682cfe3}</Project>
       <Name>Styles</Name>

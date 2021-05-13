@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Caching;
 
-namespace ApplicationServices.MemoryService
+namespace ApplicationWPFServices.MemoryService
 {
     public class MemoryImplementation : IMemoryService
     {

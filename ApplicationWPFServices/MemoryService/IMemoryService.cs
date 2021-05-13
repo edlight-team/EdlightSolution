@@ -1,4 +1,4 @@
-﻿namespace ApplicationServices.MemoryService
+﻿namespace ApplicationWPFServices.MemoryService
 {
     public interface IMemoryService
     {

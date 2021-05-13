@@ -1,6 +1,6 @@
-﻿using ApplicationServices.NotificationService.Windows.Views;
+﻿using ApplicationWPFServices.NotificationService.Windows.Views;
 
-namespace ApplicationServices.NotificationService
+namespace ApplicationWPFServices.NotificationService
 {
     public class NotificationImplementation : INotificationService
     {

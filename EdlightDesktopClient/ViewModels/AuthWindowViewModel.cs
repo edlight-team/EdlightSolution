@@ -1,9 +1,9 @@
 ﻿using ApplicationExceptions.Exceptions;
 using ApplicationModels.Models;
 using ApplicationServices.HashingService;
-using ApplicationServices.MemoryService;
-using ApplicationServices.NotificationService;
 using ApplicationServices.WebApiService;
+using ApplicationWPFServices.MemoryService;
+using ApplicationWPFServices.NotificationService;
 using EdlightDesktopClient.BaseMethods;
 using EdlightDesktopClient.Views;
 using Prism.Commands;

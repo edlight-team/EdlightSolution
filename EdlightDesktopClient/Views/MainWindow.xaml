@@ -85,6 +85,7 @@
             </Button>
         </StackPanel>
         <!--#endregion-->
+        <!--#region tabs-->
         <TabControl Grid.Row="2"
                     Grid.Column="1"
                     Margin="5"
@@ -149,6 +150,23 @@
                 </TabItem.Header>
                 <ContentControl prism:RegionManager.RegionName="SettingsRegion" />
             </TabItem>
+            <TabItem Margin="0"
+                     Template="{DynamicResource SimpleTabItem}"
+                     Visibility="{Binding GroupsVisibility, UpdateSourceTrigger=PropertyChanged}">
+                <TabItem.Header>
+                    <StackPanel Width="100"
+                                Height="25"
+                                Cursor="Hand"
+                                Orientation="Vertical">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Text="Группы" />
+                    </StackPanel>
+                </TabItem.Header>
+                <ContentControl prism:RegionManager.RegionName="GroupsRegion" />
+            </TabItem>
         </TabControl>
+        <!--#endregion-->
     </Grid>
 </Window>

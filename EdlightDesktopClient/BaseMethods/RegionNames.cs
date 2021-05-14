@@ -18,5 +18,9 @@
         /// Настройки
         /// </summary>
         internal static string SettingsRegion = nameof(SettingsRegion);
+        /// <summary>
+        /// Группы
+        /// </summary>
+        internal static string GroupsRegion = nameof(GroupsRegion);
     }
 }

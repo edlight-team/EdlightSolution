@@ -15,7 +15,7 @@ namespace ApplicationWPFServices.MemoryService
         }
         public TData GetItem<TData>(string alias)
         {
-            var data = cache.Get(alias);
+            object data = cache.Get(alias);
             if (data is TData item)
             {
                 return item;

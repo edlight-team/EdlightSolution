@@ -8,5 +8,7 @@
              d:DataContext="{d:DesignInstance vm:ProfileMainViewModel}"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d">
-    <Grid />
+    <Grid>
+        <Border Background="Red" CornerRadius="0,15,15,15" />
+    </Grid>
 </UserControl>

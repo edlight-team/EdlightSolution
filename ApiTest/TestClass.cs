@@ -33,6 +33,7 @@ namespace ApiTest
             Convert.ToDateTime("01.01.2000 22:00:35").ToLongTimeString(),
         };
         private static readonly bool[] TestBooleans = new bool[] { true, false };
+        private static readonly int[] TestIntegers = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         #endregion
         #region service and constructor
         private readonly IWebApiService api;
@@ -512,6 +513,110 @@ namespace ApiTest
             Assert.AreEqual(deleted_count, 1);
 
             var models = new List<WeekDaysModel>(api.GetModels<WeekDaysModel>(WebApiTableNames.WeekDays).Result);
+
+            Assert.AreEqual(models.Count, 0);
+        }
+        [TestMethod]
+        public void TestTestHeaders()
+        {
+            TestHeadersModel model = new();
+            model.TestID = TestGuids[0];
+            model.GroupID = TestGuids[1];
+            model.TestName = TestStrings[0];
+            model.TestType = TestStrings[1];
+            model.TestTime = TestTimes[0];
+            model.CountQuestions = TestIntegers[0];
+
+            var posted = api.PostModel(model, WebApiTableNames.TestHeaders).Result;
+
+            Assert.AreEqual(posted.TestID, TestGuids[0]);
+            Assert.AreEqual(posted.GroupID, TestGuids[1]);
+            Assert.AreEqual(posted.TestName, TestStrings[0]);
+            Assert.AreEqual(posted.TestType, TestStrings[1]);
+            Assert.AreEqual(posted.TestTime, TestTimes[0]);
+            Assert.AreEqual(posted.CountQuestions, TestIntegers[0]);
+
+            posted.TestID = TestGuids[2];
+            posted.GroupID = TestGuids[3];
+            posted.TestName = TestStrings[2];
+            posted.TestType = TestStrings[3];
+            posted.TestTime = TestTimes[1];
+            posted.CountQuestions = TestIntegers[1];
+
+            var putted = api.PutModel(posted, WebApiTableNames.TestHeaders).Result;
+
+            Assert.AreEqual(putted.TestID, TestGuids[2]);
+            Assert.AreEqual(putted.GroupID, TestGuids[3]);
+            Assert.AreEqual(putted.TestName, TestStrings[2]);
+            Assert.AreEqual(putted.TestType, TestStrings[3]);
+            Assert.AreEqual(putted.TestTime, TestTimes[1]);
+            Assert.AreEqual(putted.CountQuestions, TestIntegers[1]);
+
+            var deleted_count = api.DeleteModel(putted.ID, WebApiTableNames.TestHeaders).Result;
+
+            Assert.AreEqual(deleted_count, 1);
+
+            var models = new List<TestHeadersModel>(api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders).Result);
+
+            Assert.AreEqual(models.Count, 0);
+        }
+        [TestMethod]
+        public void TestTestResults()
+        {
+            TestResultsModel model = new();
+            model.TestID = TestGuids[0];
+            model.UserID = TestGuids[1];
+            model.TestCompleted = TestBooleans[0];
+            model.CorrectAnswers = TestIntegers[0];
+
+            var posted = api.PostModel(model, WebApiTableNames.TestResults).Result;
+
+            Assert.AreEqual(posted.TestID, TestGuids[0]);
+            Assert.AreEqual(posted.UserID, TestGuids[1]);
+            Assert.AreEqual(posted.TestCompleted, TestBooleans[0]);
+            Assert.AreEqual(posted.CorrectAnswers, TestIntegers[0]);
+
+            posted.TestID = TestGuids[2];
+            posted.UserID = TestGuids[3];
+            posted.TestCompleted = TestBooleans[1];
+            posted.CorrectAnswers = TestIntegers[1];
+
+            var putted = api.PutModel(posted, WebApiTableNames.TestResults).Result;
+
+            Assert.AreEqual(putted.TestID, TestGuids[2]);
+            Assert.AreEqual(putted.UserID, TestGuids[3]);
+            Assert.AreEqual(putted.TestCompleted, TestBooleans[1]);
+            Assert.AreEqual(putted.CorrectAnswers, TestIntegers[1]);
+
+            var deleted_count = api.DeleteModel(putted.ID, WebApiTableNames.TestResults).Result;
+
+            Assert.AreEqual(deleted_count, 1);
+
+            var models = new List<TestResultsModel>(api.GetModels<TestResultsModel>(WebApiTableNames.TestResults).Result);
+
+            Assert.AreEqual(models.Count, 0);
+        }
+        [TestMethod]
+        public void TestTests()
+        {
+            TestsModel model = new();
+            model.Questions = TestStrings[0];
+
+            var posted = api.PostModel(model, WebApiTableNames.Tests).Result;
+
+            Assert.AreEqual(posted.Questions, TestStrings[0]);
+
+            posted.Questions = TestStrings[1];
+
+            var putted = api.PutModel(posted, WebApiTableNames.Tests).Result;
+
+            Assert.AreEqual(putted.Questions, TestStrings[1]);
+
+            var deleted_count = api.DeleteModel(putted.ID, WebApiTableNames.Tests).Result;
+
+            Assert.AreEqual(deleted_count, 1);
+
+            var models = new List<TestsModel>(api.GetModels<TestsModel>(WebApiTableNames.Tests).Result);
 
             Assert.AreEqual(models.Count, 0);
         }

@@ -19,5 +19,8 @@
         public static string UsersDialogs = nameof(UsersDialogs);
         public static string UsersRoles = nameof(UsersRoles);
         public static string WeekDays = nameof(WeekDays);
+        public static string Tests = nameof(Tests);
+        public static string TestHeaders = nameof(TestHeaders);
+        public static string TestResults = nameof(TestResults);
     }
 }

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Xamarin.Essentials">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft\Xamarin\NuGet\xamarin.essentials\1.6.1\lib\netstandard2.0\Xamarin.Essentials.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

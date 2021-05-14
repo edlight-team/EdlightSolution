@@ -57,9 +57,13 @@
     <Compile Include="Models\LessonsModel.cs" />
     <Compile Include="Models\MessagesModel.cs" />
     <Compile Include="Models\PermissionsModel.cs" />
+    <Compile Include="Models\QuestionsModel.cs" />
     <Compile Include="Models\RolesModel.cs" />
     <Compile Include="Models\RolesPermissionsModel.cs" />
     <Compile Include="Models\StudentsGroupsModel.cs" />
+    <Compile Include="Models\TestHeadersModel.cs" />
+    <Compile Include="Models\TestsModel.cs" />
+    <Compile Include="Models\TestResultsModel.cs" />
     <Compile Include="Models\TimeLessonsModel.cs" />
     <Compile Include="Models\TypeClassesModel.cs" />
     <Compile Include="Models\UserModel.cs" />

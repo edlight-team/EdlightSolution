@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:prism="http://prismlibrary.com"
+              prism:ViewModelLocator.AutowireViewModel="True"
+              x:Class="EdlightMobileClient.Views.EducationViews.TestingPage"
+              NavigationPage.HasBackButton="False"
+              NavigationPage.HasNavigationBar="False"
+              ItemsSource="{Binding Questions}"
+              x:Name="testingPage">
+    <CarouselPage.ItemTemplate>
+        <DataTemplate>
+            <ContentPage>
+                <Grid Padding="10, 10, 10, 10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <StackLayout Grid.Row="0"
+                                 Orientation="Horizontal"
+                                 HorizontalOptions="End">
+                        <Label Text="{Binding NumberQuestion}"
+                               FontSize="20"/>
+                        <Label Text="/"
+                               FontSize="20"/>
+                        <Label Text="{Binding BindingContext.TestHeader.CountQuestions, Source={x:Reference testingPage}}"
+                               FontSize="20"/>
+                    </StackLayout>
+                    <Label Grid.Row="1"
+                           Text="{Binding Question}"
+                           FontSize="20"/>
+                    <ListView Grid.Row="2"
+                              Margin="10, 0, 10, 0"
+                              ItemsSource="{Binding AnswerOptions}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <ViewCell.View>
+                                        <StackLayout Orientation="Horizontal">
+                                            <CheckBox/>
+                                            <Label Text="{Binding}"
+                                                   FontSize="20"/>
+                                        </StackLayout>
+                                    </ViewCell.View>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Button Grid.Row="4"
+                            HeightRequest="50"
+                            WidthRequest="100"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"
+                            Text="Завершить тест"
+                            Clicked="Button_Clicked"
+                            Command="{Binding BindingContext.NavigateCommand, Source={x:Reference testingPage}}"/>
+                </Grid>
+            </ContentPage>
+        </DataTemplate>
+    </CarouselPage.ItemTemplate>
+</CarouselPage>

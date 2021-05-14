@@ -1,8 +1,12 @@
 using ApplicationServices.HashingService;
+using ApplicationServices.WebApiService;
+using ApplicationXamarinServices.MemoryService;
 using EdlightMobileClient.ViewModels;
+using EdlightMobileClient.ViewModels.EducationViewModels;
 using EdlightMobileClient.ViewModels.ScheduleViewModels;
 using EdlightMobileClient.ViewModels.Shell;
 using EdlightMobileClient.Views;
+using EdlightMobileClient.Views.EducationViews;
 using EdlightMobileClient.Views.ScheduleViews;
 using EdlightMobileClient.Views.Shell;
 using Prism;
@@ -28,13 +32,18 @@ namespace EdlightMobileClient
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
+            containerRegistry.Register<IMemoryService, MemoryImplementation>();
             containerRegistry.Register<IHashingService, HashingImplementation>();
+            containerRegistry.Register<IWebApiService, WebApiServiceImplementation>();
 
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<AuthPage, AuthPageViewModel>();
             containerRegistry.RegisterForNavigation<ShellTabbedPage, ShellTabbedPageViewModel>();
             containerRegistry.RegisterForNavigation<WeekSchedulePage, WeekSchedulePageViewModel>();
             containerRegistry.RegisterForNavigation<DaySchedulePage, DaySchedulePageViewModel>();
+            containerRegistry.RegisterForNavigation<ListTestsPage, ListTestsPageViewModel>();
+            containerRegistry.RegisterForNavigation<StartEndTestPage, StartEndTestPageViewModel>();
+            containerRegistry.RegisterForNavigation<TestingPage, TestingPageViewModel>();
         }
     }
 }

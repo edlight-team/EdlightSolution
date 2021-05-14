@@ -9,6 +9,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ApplicationModels\ApplicationModels.csproj" />
+    <ProjectReference Include="..\ApplicationServices\ApplicationServices.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Xamarin.Essentials">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft\Xamarin\NuGet\xamarin.essentials\1.6.1\lib\netstandard2.0\Xamarin.Essentials.dll</HintPath>
     </Reference>

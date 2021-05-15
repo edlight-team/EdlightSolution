@@ -28,23 +28,7 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
         #region constructor
         public TestingPageViewModel(INavigationService navigationService) : base(navigationService)
         {
-            QuestionsModel questionOne = new()
-            {
-                NumberQuestion = 1,
-                Question = "Вопрос",
-                AnswerOptions = new string[]
-                {
-                    "ответ 1",
-                    "ответ 2",
-                    "ответ 3",
-                    "ответ 4"
-                },
-                CorrectAnswerIndex = 1
-            };
             Questions = new();
-            Questions.Add(questionOne);
-            Questions.Add(questionOne);
-            Questions.Add(questionOne);
 
             NavigateCommand = new DelegateCommand(EndTest);
         }

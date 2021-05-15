@@ -41,15 +41,19 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
             this.memory = memory;
             this.accessManager = accessManager;
 
+            TestHeaders = new();
+
             NavigateCommand = new DelegateCommand<object>(NavidateToStarEndTestPage);
 
-            Task.Run(async () => await OnLoaded());
+            Task onloaded_task = Task.Run(async () => await OnLoaded());
+            onloaded_task.Wait();
 
+            Task addHeader_task;
             if (IsTeacher)
-                Task.Run(async () => await AddTeaherTestHeaders());
+                addHeader_task = Task.Run(async () => await AddTeaherTestHeaders());
             else
-                Task.Run(async () => await AddStudentsTestHeaders());
-
+                addHeader_task = Task.Run(async () => await AddStudentsTestHeaders());
+            addHeader_task.Wait();
         }
         #endregion
         #region methods
@@ -92,17 +96,31 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
 
         private async Task AddTeaherTestHeaders()
         {
-            List<TestHeadersModel> testHeaders = await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders, $"TeacherID = '{userModel.ID}'");
-            foreach (var item in testHeaders)
-                this.testHeaders.Add(item);
+            try
+            {
+                List<TestHeadersModel> testHeaders = await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders, $"TeacherID = '{userModel.ID}'");
+                foreach (var item in testHeaders)
+                    this.testHeaders.Add(item);
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         private async Task AddStudentsTestHeaders()
         {
-            List<StudentsGroupsModel> studentsGroups = await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups, $"IdStudent = '{userModel.ID}'");
-            List<TestHeadersModel> testHeaders = await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders, $"GroupID = '{studentsGroups[0].IdGroup}'");
-            foreach (var item in testHeaders)
-                this.testHeaders.Add(item);
+            try
+            {
+                List<StudentsGroupsModel> studentsGroups = await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups, $"IdStudent = '{userModel.ID}'");
+                List<TestHeadersModel> testHeaders = await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders, $"GroupID = '{studentsGroups[0].IdGroup}'");
+                foreach (var item in testHeaders)
+                    this.testHeaders.Add(item);
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
         #endregion
     }

@@ -10,7 +10,7 @@
               x:Name="testingPage">
     <CarouselPage.ItemTemplate>
         <DataTemplate>
-            <ContentPage>
+            <ContentPage x:Name="testContent">
                 <Grid Padding="10, 10, 10, 10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
@@ -40,7 +40,7 @@
                                 <ViewCell>
                                     <ViewCell.View>
                                         <StackLayout Orientation="Horizontal">
-                                            <CheckBox/>
+                                            <CheckBox />
                                             <Label Text="{Binding}"
                                                    FontSize="20"/>
                                         </StackLayout>

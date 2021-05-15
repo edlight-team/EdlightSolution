@@ -38,8 +38,12 @@ namespace EdlightMobileClient.ViewModels
         public AuthPageViewModel(INavigationService navigationService, IWebApiService api, IMemoryService memory, IHashingService hashing) : base(navigationService)
         {
 #if DEBUG
-            Model.Login = "admin";
-            Model.Password = "admin";
+            //Model.Login = "admin";
+            //Model.Password = "admin";
+            Model.Login = "student";
+            Model.Password = "student";
+            //Model.Login = "teacher";
+            //Model.Password = "teacher";
 #endif
             this.hashing = hashing;
             this.api = api;
@@ -59,7 +63,7 @@ namespace EdlightMobileClient.ViewModels
                 if (target_user.Password != hashing.EncodeString(model.Password))
                     throw new Exception();
 
-                memory.StoreItem(MemoryAlliases.CurrentUser, users);
+                memory.StoreItem(MemoryAlliases.CurrentUser, target_user);
 
                 await NavigationService.NavigateAsync("ShellTabbedPage?selectedTab=WeekSchedulePage");
             }

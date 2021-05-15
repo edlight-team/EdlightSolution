@@ -17,7 +17,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ApplicationModels\ApplicationModels.csproj" />
     <ProjectReference Include="..\..\ApplicationServices\ApplicationServices.csproj" />
-    <ProjectReference Include="..\..\ApplicationXamarinServices\ApplicationXamarinServices.csproj" />
     <ProjectReference Include="..\..\ApplicationXamarinService\ApplicationXamarinService.csproj" />
     <ProjectReference Include="..\..\StaticCollections\StaticCollections.csproj" />
     <ProjectReference Include="..\..\Styles\Styles.csproj" />

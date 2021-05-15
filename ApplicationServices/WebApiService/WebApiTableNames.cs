@@ -17,5 +17,8 @@
         public static string Users = nameof(Users);
         public static string UsersDialogs = nameof(UsersDialogs);
         public static string UsersRoles = nameof(UsersRoles);
+        public static string TestHeaders = nameof(TestHeaders);
+        public static string TestResults = nameof(TestResults);
+        public static string Tests = nameof(Tests);
     }
 }

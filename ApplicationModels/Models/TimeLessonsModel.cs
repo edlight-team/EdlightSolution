@@ -9,32 +9,36 @@ namespace ApplicationModels.Models
         #region fields
 
         private Guid id;
-        private string classNumber;
-        private string startClass;
-        private string startBreak;
-        private string endBreak;
-        private string endClass;
+        private string startTime;
+        private string endTime;
+        private string breakTime;
 
         #endregion
         #region props
 
+        /// <summary>
+        /// ИД
+        /// </summary>
         [JsonProperty(nameof(Id))]
         public Guid Id { get => id; set => SetProperty(ref id, value); }
 
-        [JsonProperty(nameof(ClassNumber))]
-        public string ClassNumber { get => classNumber ??= string.Empty; set => SetProperty(ref classNumber, value); }
+        /// <summary>
+        /// Начало
+        /// </summary>
+        [JsonProperty(nameof(StartTime))]
+        public string StartTime { get => startTime ??= string.Empty; set => SetProperty(ref startTime, value); }
 
-        [JsonProperty(nameof(StartClass))]
-        public string StartClass { get => startClass ??= string.Empty; set => SetProperty(ref startClass, value); }
+        /// <summary>
+        /// Конец
+        /// </summary>
+        [JsonProperty(nameof(EndTime))]
+        public string EndTime { get => endTime ??= string.Empty; set => SetProperty(ref endTime, value); }
 
-        [JsonProperty(nameof(StartBreak))]
-        public string StartBreak { get => startBreak ??= string.Empty; set => SetProperty(ref startBreak, value); }
-
-        [JsonProperty(nameof(EndBreak))]
-        public string EndBreak { get => endBreak ??= string.Empty; set => SetProperty(ref endBreak, value); }
-
-        [JsonProperty(nameof(EndClass))]
-        public string EndClass { get => endClass ??= string.Empty; set => SetProperty(ref endClass, value); }
+        /// <summary>
+        /// Время перерыва
+        /// </summary>
+        [JsonProperty(nameof(BreakTime))]
+        public string BreakTime { get => breakTime ??= string.Empty; set => SetProperty(ref breakTime, value); }
 
         #endregion
     }

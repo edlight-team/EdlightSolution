@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3BC9C9C3-3EE8-476B-AFEE-6C113A9D5650}</ProjectGuid>
+    <ProjectGuid>{8BF4E71A-B668-4732-9856-CD5B1182B963}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ApplicationModels</RootNamespace>
-    <AssemblyName>ApplicationModels</AssemblyName>
+    <RootNamespace>ApplicationEventsWPF</RootNamespace>
+    <AssemblyName>ApplicationEventsWPF</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -21,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,12 +29,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Prism, Version=8.0.0.1909, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Core.8.0.0.1909\lib\net47\Prism.dll</HintPath>
     </Reference>
@@ -49,25 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\AcademicDisciplinesModel.cs" />
-    <Compile Include="Models\AudiencesModel.cs" />
-    <Compile Include="Models\DialogsModel.cs" />
-    <Compile Include="Models\GroupsModel.cs" />
-    <Compile Include="Models\LessonsModel.cs" />
-    <Compile Include="Models\MessagesModel.cs" />
-    <Compile Include="Models\PermissionsModel.cs" />
-    <Compile Include="Models\QuestionsModel.cs" />
-    <Compile Include="Models\RolesModel.cs" />
-    <Compile Include="Models\RolesPermissionsModel.cs" />
-    <Compile Include="Models\StudentsGroupsModel.cs" />
-    <Compile Include="Models\TestHeadersModel.cs" />
-    <Compile Include="Models\TestsModel.cs" />
-    <Compile Include="Models\TestResultsModel.cs" />
-    <Compile Include="Models\TimeLessonsModel.cs" />
-    <Compile Include="Models\TypeClassesModel.cs" />
-    <Compile Include="Models\UserModel.cs" />
-    <Compile Include="Models\UsersDialogsModel.cs" />
-    <Compile Include="Models\UsersRolesModel.cs" />
+    <Compile Include="Events\DateChangedEvent.cs" />
+    <Compile Include="Events\GridChildChangedEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

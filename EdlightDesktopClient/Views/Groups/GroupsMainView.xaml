@@ -9,6 +9,8 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d">
     <Grid>
-        <Border Background="Yellow" CornerRadius="0,15,15,15" />
+        <Border BorderBrush="{DynamicResource ActiveBackgroundTabHeaderBtush}"
+                BorderThickness="1"
+                CornerRadius="0,15,15,15" />
     </Grid>
 </UserControl>

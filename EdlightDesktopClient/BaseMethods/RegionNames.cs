@@ -22,5 +22,9 @@
         /// Группы
         /// </summary>
         internal static string GroupsRegion = nameof(GroupsRegion);
+        /// <summary>
+        /// Регион просмотра расписания по дате
+        /// </summary>
+        internal static string ScheduleDateViewRegion = nameof(ScheduleDateViewRegion);
     }
 }

@@ -198,7 +198,13 @@ namespace DbConsoleFiller
             questions.Question = "Вопрос1";
             questions.NumberQuestion = 1;
             questions.CorrectAnswerIndex = 1;
-            questions.AnswerOptions = new string[] { "ответ1", "ответ2", "ответ3", "ответ4" };
+            questions.AnswerOptions = new System.Collections.ObjectModel.ObservableCollection<TestAnswer>()
+            {
+                new TestAnswer(){ Answer= "ответ1"},
+                new TestAnswer(){ Answer= "ответ2"},
+                new TestAnswer(){ Answer= "ответ3"},
+                new TestAnswer(){ Answer= "ответ4"}
+            };
             list.Add(questions);
             questions.Question = "Вопрос2";
             questions.NumberQuestion = 2;

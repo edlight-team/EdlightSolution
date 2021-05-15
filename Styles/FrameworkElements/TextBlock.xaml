@@ -47,6 +47,19 @@
         <Setter Property="CaretBrush" Value="{DynamicResource PrimaryFontBrush}" />
     </Style>
 
+    <Style x:Key="SimpleToolTip" TargetType="ToolTip">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <Border DockPanel.Dock="Top" Style="{DynamicResource ItemMainFillWithExtraBorder}">
+                        <DockPanel Margin="10">
+                            <ContentPresenter Content="{TemplateBinding Content}" />
+                        </DockPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style x:Key="{x:Type TextBlock}" TargetType="{x:Type TextBlock}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Focusable" Value="False" />

@@ -26,6 +26,12 @@ namespace EdlightDesktopClient
     /// </summary>
     public partial class App
     {
+        public App() => Current.Dispatcher.UnhandledException += DispatcherUnhandledExceptionHandler;
+        private void DispatcherUnhandledExceptionHandler(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            HandyControl.Controls.Growl.ErrorGlobal(e.Exception.Message);
+            e.Handled = true;
+        }
         protected override Window CreateShell() => Container.Resolve<AuthWindow>();
         protected override void ConfigureViewModelLocator()
         {
@@ -39,6 +45,8 @@ namespace EdlightDesktopClient
             ViewModelLocationProvider.Register(typeof(ScheduleMainView).ToString(), () => Container.Resolve<ScheduleMainViewModel>());
             ViewModelLocationProvider.Register(typeof(SettingsMainView).ToString(), () => Container.Resolve<SettingsMainViewModel>());
             ViewModelLocationProvider.Register(typeof(GroupsMainView).ToString(), () => Container.Resolve<GroupsMainViewModel>());
+
+            ViewModelLocationProvider.Register(typeof(ScheduleDateViewer).ToString(), () => Container.Resolve<ScheduleDateViewerViewModel>());
         }
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {

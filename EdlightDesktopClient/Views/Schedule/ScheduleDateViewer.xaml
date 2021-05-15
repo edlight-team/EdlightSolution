@@ -1,0 +1,135 @@
+﻿<UserControl x:Class="EdlightDesktopClient.Views.Schedule.ScheduleDateViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:behaviors="clr-namespace:Styles.Behaviors;assembly=Styles"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels.Schedule"
+             behaviors:LoadedBehavior.Command="{Binding LoadedCommand}"
+             d:DataContext="{d:DesignInstance vm:ScheduleDateViewerViewModel}"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d">
+    <Grid>
+        <!--#region Разметка-->
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="1" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <!--#endregion-->
+        <!--#region Горизонтальный делитель-->
+
+        <Border Grid.Column="1" Background="{DynamicResource ActiveBackgroundTabHeaderBtush}" />
+
+        <!--#endregion-->
+        <!--#region Разметка времени-->
+
+        <ScrollViewer Name="TimeZonesScroll"
+                      Grid.Column="0"
+                      ScrollChanged="TimeZonesScrollChanged"
+                      VerticalScrollBarVisibility="Hidden">
+            <ItemsControl ItemsSource="{Binding TimeZones}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Height="17">
+                            <TextBlock Margin="5,0,5,0" Text="{Binding}">
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource SimpleTextBlock}" TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <Trigger Property="Text" Value="5">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                            <Trigger Property="Text" Value="10">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                            <Trigger Property="Text" Value="15">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                            <Trigger Property="Text" Value="20">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                            <Trigger Property="Text" Value="25">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                            <Trigger Property="Text" Value="30">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                            <Trigger Property="Text" Value="35">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                            <Trigger Property="Text" Value="40">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                            <Trigger Property="Text" Value="45">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                            <Trigger Property="Text" Value="50">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                            <Trigger Property="Text" Value="55">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <Border Height="1"
+                                    VerticalAlignment="Bottom"
+                                    Background="{DynamicResource ActiveBackgroundTabHeaderBtush}"
+                                    Opacity="0.3" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!--#endregion-->
+        <!--#region Список занятий-->
+
+        <ScrollViewer Name="CardsListScroll"
+                      Grid.Column="2"
+                      ScrollChanged="CardsListScrollChanged"
+                      VerticalScrollBarVisibility="Visible">
+            <Grid>
+                <!--#region Сетка в расписании-->
+                <ItemsControl ItemsSource="{Binding TimeZones}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="17">
+                                <Border Height="1"
+                                        VerticalAlignment="Bottom"
+                                        Background="{DynamicResource ActiveBackgroundTabHeaderBtush}"
+                                        Opacity="0.3" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <!--#endregion-->
+                <!--#region Занятия-->
+
+                <Grid Name="ItemsGrid"
+                      Grid.Column="2"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Top" />
+
+                <!--#endregion-->
+            </Grid>
+        </ScrollViewer>
+
+        <!--#endregion-->
+    </Grid>
+</UserControl>

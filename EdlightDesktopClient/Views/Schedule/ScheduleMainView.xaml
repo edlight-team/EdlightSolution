@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels.Schedule"
@@ -9,6 +10,167 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d">
     <Grid>
-        <Border Background="Blue" CornerRadius="0,15,15,15" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55" />
+            <RowDefinition Height="1" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--#region Рамка-->
+
+        <Border Grid.Row="0"
+                Grid.RowSpan="3"
+                BorderBrush="{DynamicResource ActiveBackgroundTabHeaderBtush}"
+                BorderThickness="1"
+                CornerRadius="0,15,15,15" />
+
+        <!--#endregion-->
+        <!--#region Дата-->
+
+        <StackPanel Grid.Row="0"
+                    Margin="25,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+
+            <!--#region Предыдущий-->
+
+            <Button Command="{Binding PrevDayCommand}" Style="{DynamicResource SimpleButtonWithBorder}">
+                <Button.ToolTip>
+                    <ToolTip HorizontalOffset="15"
+                             Placement="Left"
+                             Style="{DynamicResource SimpleToolTip}"
+                             VerticalOffset="25">
+                        <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Предыдущий день" />
+                    </ToolTip>
+                </Button.ToolTip>
+                <ContentControl Width="18"
+                                Height="18"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Back}" />
+            </Button>
+
+            <!--#endregion-->
+            <!--#region Установка даты-->
+
+            <TextBlock Margin="10,0,10,0"
+                       Style="{DynamicResource SimpleTextBlock}"
+                       Text="Дата: " />
+
+            <hc:DatePicker Width="125"
+                           Margin="10,0,10,0"
+                           Background="Transparent"
+                           CaretBrush="{DynamicResource PrimaryFontBrush}"
+                           Foreground="{DynamicResource PrimaryFontBrush}"
+                           SelectedDate="{Binding CurrentDate, UpdateSourceTrigger=PropertyChanged}"
+                           SelectionBrush="AliceBlue" />
+
+            <!--#endregion-->
+            <!--#region Сегодня-->
+
+            <Button Command="{Binding TodayCommand}" Style="{DynamicResource SimpleButtonWithBorder}">
+                <Button.ToolTip>
+                    <ToolTip HorizontalOffset="0"
+                             Placement="Right"
+                             Style="{DynamicResource SimpleToolTip}"
+                             VerticalOffset="25">
+                        <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Сегодня" />
+                    </ToolTip>
+                </Button.ToolTip>
+                <ContentControl Width="18"
+                                Height="18"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Today}" />
+            </Button>
+
+            <!--#endregion-->
+            <!--#region Следующий-->
+
+            <Button Margin="10,0,10,0"
+                    Command="{Binding NextDayCommand}"
+                    Style="{DynamicResource SimpleButtonWithBorder}">
+                <Button.ToolTip>
+                    <ToolTip HorizontalOffset="0"
+                             Placement="Right"
+                             Style="{DynamicResource SimpleToolTip}"
+                             VerticalOffset="25">
+                        <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Следующий день" />
+                    </ToolTip>
+                </Button.ToolTip>
+                <ContentControl Width="18"
+                                Height="18"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Forward}" />
+            </Button>
+
+            <!--#endregion-->
+
+        </StackPanel>
+
+        <!--#endregion-->
+        <!--#region Сплиттер-->
+
+        <Border Grid.Row="1" Background="{DynamicResource ActiveBackgroundTabHeaderBtush}" />
+
+        <!--#endregion-->
+        <!--#region Расписание-->
+
+        <Grid Grid.Row="2">
+            <!--#region Разметка-->
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="55" />
+                <RowDefinition Height="1" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="1" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <!--#endregion-->
+            <!--#region Рамка-->
+
+            <Border Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Background="{DynamicResource ActiveBackgroundTabHeaderBtush}" />
+
+            <!--#endregion-->
+            <!--#region Кнопки управления-->
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3"
+                        Orientation="Horizontal">
+                <Button Width="125"
+                        Margin="10,0,0,0"
+                        Command="{Binding AddCardCommand}"
+                        Style="{DynamicResource SimpleButtonWithBorder}">
+                    <TextBlock HorizontalAlignment="Center"
+                               Style="{DynamicResource SimpleTextBlock}"
+                               Text="Новая запись" />
+                </Button>
+                <Button Width="125"
+                        Margin="10,0,0,0"
+                        IsEnabled="False"
+                        Style="{DynamicResource SimpleButtonWithBorder}">
+                    <TextBlock HorizontalAlignment="Center"
+                               Style="{DynamicResource SimpleTextBlock}"
+                               Text="Отменить занятие" />
+                </Button>
+            </StackPanel>
+
+            <!--#endregion-->
+            <!--#region Просмотр расписания-->
+            <ContentControl Grid.Row="2"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            prism:RegionManager.RegionName="ScheduleDateViewRegion" />
+            <!--#endregion-->
+        </Grid>
+
+        <!--#endregion-->
     </Grid>
 </UserControl>

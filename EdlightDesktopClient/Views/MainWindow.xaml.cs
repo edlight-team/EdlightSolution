@@ -13,6 +13,10 @@ namespace EdlightDesktopClient.Views
             InitializeComponent();
             Height = SystemParameters.FullPrimaryScreenHeight;
         }
-        private void BorderMouseDown(object sender, MouseButtonEventArgs e) => DragMove();
+        private void BorderMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.RightButton == MouseButtonState.Pressed) return;
+            DragMove();
+        }
     }
 }

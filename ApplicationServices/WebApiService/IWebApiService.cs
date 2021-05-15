@@ -6,6 +6,7 @@ namespace ApplicationServices.WebApiService
 {
     public interface IWebApiService
     {
+        Task<List<TData>> GetModels<TData>(string apiName, string condition);
         Task<List<TData>> GetModels<TData>(string apiName);
         Task<TData> PostModel<TData>(TData item, string apiName);
         Task<TData> PutModel<TData>(TData item, string apiName);

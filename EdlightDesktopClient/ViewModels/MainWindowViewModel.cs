@@ -70,12 +70,14 @@ namespace EdlightDesktopClient.ViewModels
             container.RegisterType<object, ProfileMainView>(nameof(ProfileMainView));
             container.RegisterType<object, SettingsMainView>(nameof(SettingsMainView));
             container.RegisterType<object, GroupsMainView>(nameof(GroupsMainView));
+            container.RegisterType<object, ScheduleDateViewer>(nameof(ScheduleDateViewer));
 
             manager.RegisterViewWithRegion(BaseMethods.RegionNames.LearnRegion, typeof(LearnMainView));
             manager.RegisterViewWithRegion(BaseMethods.RegionNames.ProfileRegion, typeof(ProfileMainView));
             manager.RegisterViewWithRegion(BaseMethods.RegionNames.ScheduleRegion, typeof(ScheduleMainView));
             manager.RegisterViewWithRegion(BaseMethods.RegionNames.SettingsRegion, typeof(SettingsMainView));
             manager.RegisterViewWithRegion(BaseMethods.RegionNames.GroupsRegion, typeof(GroupsMainView));
+            manager.RegisterViewWithRegion(BaseMethods.RegionNames.ScheduleDateViewRegion, typeof(ScheduleDateViewer));
         }
         private async void OnLoaded()
         {

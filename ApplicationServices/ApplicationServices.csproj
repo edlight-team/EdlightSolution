@@ -59,6 +59,8 @@
   <ItemGroup>
     <Compile Include="HashingService\HashingImplementation.cs" />
     <Compile Include="HashingService\IHashingService.cs" />
+    <Compile Include="PermissionService\IPermissionService.cs" />
+    <Compile Include="PermissionService\PermissionImplementation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebApiService\IWebApiService.cs" />
     <Compile Include="WebApiService\WebApiServiceImplementation.cs" />
@@ -68,6 +70,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ApplicationModels\ApplicationModels.csproj">
+      <Project>{3BC9C9C3-3EE8-476B-AFEE-6C113A9D5650}</Project>
+      <Name>ApplicationModels</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Styles\Styles.csproj">
       <Project>{85aa63c8-3100-4151-a96f-eac74682cfe3}</Project>
       <Name>Styles</Name>

@@ -10,8 +10,8 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Styles.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using Unity;
 
@@ -67,6 +67,10 @@ namespace EdlightDesktopClient.ViewModels
 #if DEBUG
             Login = "admin";
             Password = "admin";
+            Login = "student";
+            Password = "student";
+            Login = "valgan";
+            Password = "valgan";
 #endif
 
             CloseCommand = new DelegateCommand(StaticCommands.Shutdown);
@@ -86,11 +90,11 @@ namespace EdlightDesktopClient.ViewModels
             try
             {
                 Loader = new("Выполняется загрузка");
-#if DEBUG
-                await Task.Delay(1000);
+#if !DEBUG
+                await Task.Delay(500);
 #endif
-                var users = await api.GetModels<UserModel>(WebApiTableNames.Users);
-                var target_user = users.FirstOrDefault(u => u.Login == Login);
+                List<UserModel> users = await api.GetModels<UserModel>(WebApiTableNames.Users);
+                UserModel target_user = users.FirstOrDefault(u => u.Login == Login);
                 if (target_user == null)
                     throw new NotFoundException("Пользователь не найден в системе. \r\nПовторите попытку или обратитесь в тех.поддержку edlight@list.ru");
                 if (target_user.Password != hashing.EncodeString(Password))
@@ -99,7 +103,7 @@ namespace EdlightDesktopClient.ViewModels
                 memory.StoreItem(MemoryAlliases.CurrentUser, target_user);
                 Loader = new();
                 AuthVisibility = Visibility.Collapsed;
-                var shell = container.Resolve<MainWindow>();
+                MainWindow shell = container.Resolve<MainWindow>();
                 shell.Show();
             }
             catch (NotFoundException nfe) { notification.ShowError(nfe.Message); }

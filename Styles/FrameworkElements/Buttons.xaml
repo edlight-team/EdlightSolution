@@ -46,4 +46,8 @@
         </Setter>
     </Style>
 
+    <Style x:Key="{x:Type ContentControl}" TargetType="{x:Type ContentControl}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Focusable" Value="False" />
+    </Style>
 </ResourceDictionary>

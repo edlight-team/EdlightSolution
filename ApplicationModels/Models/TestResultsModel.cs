@@ -14,6 +14,8 @@ namespace ApplicationModels.Models
         public Guid id;
         private Guid testID;
         private Guid userID;
+        private string studentName;
+        private string studentSurname;
         private int correctAnswers;
         private bool testCompleted;
         #endregion
@@ -26,6 +28,12 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(UserID))]
         public Guid UserID { get => userID; set => SetProperty(ref userID, value); }
+
+        [JsonProperty(nameof(StudentName))]
+        public string StudentName { get => studentName; set => SetProperty(ref studentName, value); }
+
+        [JsonProperty(nameof(StudentSurname))]
+        public string StudentSurname { get => studentSurname; set => SetProperty(ref studentSurname, value); }
 
         [JsonProperty(nameof(CorrectAnswers))]
         public int CorrectAnswers { get => correctAnswers; set => SetProperty(ref correctAnswers, value); }

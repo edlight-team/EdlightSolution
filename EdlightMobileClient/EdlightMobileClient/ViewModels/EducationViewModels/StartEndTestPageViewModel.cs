@@ -1,4 +1,6 @@
 ﻿using ApplicationModels.Models;
+using ApplicationServices.WebApiService;
+using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
@@ -10,6 +12,9 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
 {
     public class StartEndTestPageViewModel : ViewModelBase
     {
+        #region services
+        private IWebApiService api;
+        #endregion
         #region fields
         private TestHeadersModel testHeader;
         private TestResultsModel result;
@@ -22,18 +27,22 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
         public DelegateCommand<object> NavigateCommand { get; private set; }
         #endregion
         #region consrtuctor
-        public StartEndTestPageViewModel(INavigationService navigationService) : base(navigationService)
+        public StartEndTestPageViewModel(INavigationService navigationService, IWebApiService api) : base(navigationService)
         {
+            this.api = api;
             NavigateCommand = new DelegateCommand<object>(NaviagteToTestingPage);
         }
         #endregion
         #region methods
         public async void NaviagteToTestingPage(object parametr)
         {
+            List<TestsModel> tests = await api.GetModels<TestsModel>(WebApiTableNames.Tests, $"ID = '{testHeader.TestID}'");
+            List<QuestionsModel> questions = JsonConvert.DeserializeObject<List<QuestionsModel>>(tests[0].Questions);
             NavigationParameters navigationParams = new()
             {
                 { "header", testHeader },
-                { "result", result }
+                { "result", result },
+                { "questions", questions }
             };
             await NavigationService.NavigateAsync("TestingPage", navigationParams);
         }

@@ -1,7 +1,7 @@
 using ApplicationServices.HashingService;
 using ApplicationServices.WebApiService;
-using ApplicationXamarinServices.MemoryService;
-using ApplicationXamarinServices.PermissionService;
+using ApplicationXamarinService.MemoryService;
+using ApplicationXamarinService.PermissionService;
 using EdlightMobileClient.ViewModels;
 using EdlightMobileClient.ViewModels.EducationViewModels;
 using EdlightMobileClient.ViewModels.ScheduleViewModels;
@@ -46,6 +46,7 @@ namespace EdlightMobileClient
             containerRegistry.RegisterForNavigation<ListTestsPage, ListTestsPageViewModel>();
             containerRegistry.RegisterForNavigation<StartEndTestPage, StartEndTestPageViewModel>();
             containerRegistry.RegisterForNavigation<TestingPage, TestingPageViewModel>();
+            containerRegistry.RegisterForNavigation<ListTestResult, ListTestResultViewModel>();
         }
     }
 }

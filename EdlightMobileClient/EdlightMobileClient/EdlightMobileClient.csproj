@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\ApplicationModels\ApplicationModels.csproj" />
     <ProjectReference Include="..\..\ApplicationServices\ApplicationServices.csproj" />
     <ProjectReference Include="..\..\ApplicationXamarinServices\ApplicationXamarinServices.csproj" />
+    <ProjectReference Include="..\..\ApplicationXamarinService\ApplicationXamarinService.csproj" />
     <ProjectReference Include="..\..\StaticCollections\StaticCollections.csproj" />
     <ProjectReference Include="..\..\Styles\Styles.csproj" />
   </ItemGroup>
@@ -30,6 +31,9 @@
 
   <ItemGroup>
     <EmbeddedResource Update="UserControls\ContentButton.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\EducationViews\ListTestResult.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\EducationViews\ListTestsPage.xaml">

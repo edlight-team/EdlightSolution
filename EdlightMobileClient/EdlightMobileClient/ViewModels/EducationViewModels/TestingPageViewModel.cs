@@ -67,6 +67,9 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
             base.OnNavigatedTo(parameters);
             TestHeader = parameters.GetValue<TestHeadersModel>("header");
             Result = parameters.GetValue<TestResultsModel>("result");
+            List<QuestionsModel> questions = parameters.GetValue<List<QuestionsModel>>("questions");
+            foreach (var item in questions)
+                Questions.Add(item);
         }
         #endregion
     }

@@ -1,7 +1,7 @@
 ﻿using ApplicationModels.Models;
 using ApplicationServices.WebApiService;
-using ApplicationXamarinServices.MemoryService;
-using ApplicationXamarinServices.PermissionService;
+using ApplicationXamarinService.MemoryService;
+using ApplicationXamarinService.PermissionService;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -44,6 +44,12 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
             NavigateCommand = new DelegateCommand<object>(NavidateToStarEndTestPage);
 
             Task.Run(async () => await OnLoaded());
+
+            if (IsTeacher)
+                Task.Run(async () => await AddTeaherTestHeaders());
+            else
+                Task.Run(async () => await AddStudentsTestHeaders());
+
         }
         #endregion
         #region methods
@@ -51,12 +57,26 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
         {
             if (parametr is TestHeadersModel testHeader)
             {
-                NavigationParameters navigationParams = new()
+                if (isTeacher)
                 {
-                    { "header", testHeader },
-                    { "result", new TestResultsModel() { CorrectAnswers=0,TestCompleted=false} }
-                };
-                await NavigationService.NavigateAsync("StartEndTestPage", navigationParams);
+                    List<TestResultsModel> testResults = await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults, $"TestID = '{testHeader.TestID}'");
+                    NavigationParameters navigationParams = new()
+                    {
+                        { "header", testHeader },
+                        { "result", testResults }
+                    };
+                    await NavigationService.NavigateAsync("ListTestResult", navigationParams);
+                }
+                else
+                {
+                    List<TestResultsModel> testResults = await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults, $"TestID = '{testHeader.TestID}' and UserID = '{userModel.ID}'");
+                    NavigationParameters navigationParams = new()
+                    {
+                        { "header", testHeader },
+                        { "result", testResults[0] }
+                    };
+                    await NavigationService.NavigateAsync("StartEndTestPage", navigationParams);
+                }
             }
         }
 
@@ -70,26 +90,19 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
                 IsTeacher = true;
         }
 
-        private async Task GetTeaherTestHeader()
+        private async Task AddTeaherTestHeaders()
         {
-            List<TestHeadersModel> testHeaders = await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders);
+            List<TestHeadersModel> testHeaders = await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders, $"TeacherID = '{userModel.ID}'");
             foreach (var item in testHeaders)
-            {
-                if (item.TeacherID == userModel.ID)
-                    this.testHeaders.Add(item);
-            }
+                this.testHeaders.Add(item);
         }
 
-        private async Task GetStudentsTestHeader()
+        private async Task AddStudentsTestHeaders()
         {
-            List<StudentsGroupsModel> studentsGroups = await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups);
-            StudentsGroupsModel groupID = studentsGroups.Where(s => s.IdStudent == userModel.ID).FirstOrDefault();
-            List<TestHeadersModel> testHeaders = await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders);
+            List<StudentsGroupsModel> studentsGroups = await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups, $"IdStudent = '{userModel.ID}'");
+            List<TestHeadersModel> testHeaders = await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders, $"GroupID = '{studentsGroups[0].IdGroup}'");
             foreach (var item in testHeaders)
-            {
-                if (item.GroupID == groupID.IdGroup)
-                    this.testHeaders.Add(item);
-            }
+                this.testHeaders.Add(item);
         }
         #endregion
     }

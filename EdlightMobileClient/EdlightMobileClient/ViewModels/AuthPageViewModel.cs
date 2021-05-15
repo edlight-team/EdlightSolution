@@ -1,7 +1,7 @@
 ﻿using ApplicationModels.Models;
 using ApplicationServices.HashingService;
 using ApplicationServices.WebApiService;
-using ApplicationXamarinServices.MemoryService;
+using ApplicationXamarinService.MemoryService;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Navigation;
@@ -51,7 +51,6 @@ namespace EdlightMobileClient.ViewModels
         #region methods
         private async void OnAuthCommand()
         {
-
             try
             {
                 var users = await api.GetModels<UserModel>(WebApiTableNames.Users);
@@ -60,7 +59,9 @@ namespace EdlightMobileClient.ViewModels
                 if (target_user.Password != hashing.EncodeString(model.Password))
                     throw new Exception();
 
-                memory.StoreItem(MemoryAlliases.CurrentUser, target_user);
+                memory.StoreItem(MemoryAlliases.CurrentUser, users);
+
+                UserModel userModel = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
 
                 await NavigationService.NavigateAsync("ShellTabbedPage?selectedTab=WeekSchedulePage");
             }

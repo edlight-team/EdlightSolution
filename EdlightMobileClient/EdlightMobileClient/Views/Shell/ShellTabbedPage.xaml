@@ -11,4 +11,5 @@
     <!--  Pages can be added as references or inline  -->
     <viewsschedule:WeekSchedulePage Title="Расписание" IconImageSource="schedule.png" />
     <vieweduction:ListTestsPage Title="Обучение"/>
+    <vieweduction:ListTestResult Title="Тест"/>
 </TabbedPage>

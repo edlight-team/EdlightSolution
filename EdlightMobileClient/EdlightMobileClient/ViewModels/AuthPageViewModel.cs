@@ -60,7 +60,7 @@ namespace EdlightMobileClient.ViewModels
                 if (target_user.Password != hashing.EncodeString(model.Password))
                     throw new Exception();
 
-                memory.StoreItem(MemoryAlliases.CurrentUser, model);
+                memory.StoreItem(MemoryAlliases.CurrentUser, target_user);
 
                 await NavigationService.NavigateAsync("ShellTabbedPage?selectedTab=WeekSchedulePage");
             }

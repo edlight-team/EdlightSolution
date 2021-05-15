@@ -12,6 +12,7 @@ namespace ApplicationModels.Models
         public Guid id;
         private Guid testID;
         private Guid groupID;
+        private Guid teacherID;
         private string testName;
         private string testType;
         private string testTime;
@@ -26,6 +27,9 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(GroupID))]
         public Guid GroupID { get => groupID; set => SetProperty(ref groupID, value); }
+
+        [JsonProperty(nameof(TeacherID))]
+        public Guid TeacherID { get => teacherID; set => SetProperty(ref teacherID, value); }
 
         [JsonProperty(nameof(TestName))]
         public string TestName { get => testName ??= string.Empty; set => SetProperty(ref testName, value); }

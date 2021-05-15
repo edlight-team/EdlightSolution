@@ -1,6 +1,7 @@
 using ApplicationServices.HashingService;
 using ApplicationServices.WebApiService;
 using ApplicationXamarinServices.MemoryService;
+using ApplicationXamarinServices.PermissionService;
 using EdlightMobileClient.ViewModels;
 using EdlightMobileClient.ViewModels.EducationViewModels;
 using EdlightMobileClient.ViewModels.ScheduleViewModels;
@@ -33,6 +34,7 @@ namespace EdlightMobileClient
         {
             containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
             containerRegistry.Register<IMemoryService, MemoryImplementation>();
+            containerRegistry.Register<IPermissionService, PermissionImplementation>();
             containerRegistry.Register<IHashingService, HashingImplementation>();
             containerRegistry.Register<IWebApiService, WebApiServiceImplementation>();
 

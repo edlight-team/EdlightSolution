@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Essentials;
 
 namespace ApplicationXamarinServices.MemoryService
@@ -18,7 +15,7 @@ namespace ApplicationXamarinServices.MemoryService
             try
             {
                 string serializedObject = Preferences.Get(alias, string.Empty);
-                if (string.IsNullOrEmpty(serializedObject))
+                if (!string.IsNullOrEmpty(serializedObject))
                     return JsonConvert.DeserializeObject<TData>(serializedObject);
                 return default;
             }

@@ -11,7 +11,7 @@ namespace ApplicationServices.WebApiService
     public class WebApiServiceImplementation : IWebApiService
     {
 #if DEBUG
-        //private static readonly string WebApiBaseURL = "http://192.168.0.100:1000/api/";
+        //private static readonly string WebApiBaseURL = "http://192.168.0.164:600/api/";
         private static readonly string WebApiBaseURL = "http://62.173.154.96:600/api/";
 #else
         private static readonly string WebApiBaseURL = "http://62.173.154.96:600/api/";

@@ -225,7 +225,7 @@ namespace DbConsoleFiller
             model.TestID = test.ID;
             model.TestName= "Тест1";
             model.TestType = "Контрольная работа";
-            model.TestTime = new DateTime(0, 0, 0, 1, 0, 0).ToLongTimeString();
+            model.TestTime = new DateTime(10, 10, 10, 1, 0, 0).ToLongTimeString();
             await api.PostModel(model, WebApiTableNames.TestHeaders);
 
             int count = (await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders)).Count;

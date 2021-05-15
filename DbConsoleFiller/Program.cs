@@ -14,6 +14,9 @@ namespace DbConsoleFiller
         static UserModel student;
         static UserModel teacher;
 
+        static readonly IWebApiService api;
+        static readonly IHashingService hashing;
+
         static void Main() => RunFill().Wait();
         static async Task RunFill()
         {
@@ -21,17 +24,17 @@ namespace DbConsoleFiller
             IWebApiService api = new WebApiServiceImplementation();
             IHashingService hashing = new HashingImplementation();
 
-            await FillAcademicDisciplines(api);
-            await FillAudiencesModel(api);
-            await FillTypeClassesModel(api);
-            await FillRolesModel(api);
-            await FillUsersModel(api, hashing);
-            await FillUsersRolesModel(api);
+            await FillAcademicDisciplines();
+            await FillAudiencesModel();
+            await FillTypeClassesModel();
+            await FillRolesModel();
+            await FillUsersModel();
+            await FillUsersRolesModel();
 
             Console.WriteLine("Fill Complete");
             Console.ReadKey();
         }
-        static async Task FillAcademicDisciplines(IWebApiService api)
+        static async Task FillAcademicDisciplines()
         {
             await api.DeleteAll(WebApiTableNames.AcademicDisciplines);
 
@@ -50,7 +53,7 @@ namespace DbConsoleFiller
             int count = (await api.GetModels<AcademicDisciplinesModel>(WebApiTableNames.AcademicDisciplines)).Count;
             Console.WriteLine("type " + model.GetType().Name +  " in db count = " + count);
         }
-        static async Task FillAudiencesModel(IWebApiService api)
+        static async Task FillAudiencesModel()
         {
             await api.DeleteAll(WebApiTableNames.Audiences);
 
@@ -69,7 +72,7 @@ namespace DbConsoleFiller
             int count = (await api.GetModels<AudiencesModel>(WebApiTableNames.Audiences)).Count;
             Console.WriteLine("type " + model.GetType().Name +  " in db count = " + count);
         }
-        static async Task FillTypeClassesModel(IWebApiService api)
+        static async Task FillTypeClassesModel()
         {
             await api.DeleteAll(WebApiTableNames.TypeClasses);
 
@@ -86,7 +89,7 @@ namespace DbConsoleFiller
             int count = (await api.GetModels<TypeClassesModel>(WebApiTableNames.TypeClasses)).Count;
             Console.WriteLine("type " + model.GetType().Name +  " in db count = " + count);
         }
-        static async Task FillRolesModel(IWebApiService api)
+        static async Task FillRolesModel()
         {
             await api.DeleteAll(WebApiTableNames.Roles);
 
@@ -101,7 +104,7 @@ namespace DbConsoleFiller
             int count = (await api.GetModels<RolesModel>(WebApiTableNames.Roles)).Count;
             Console.WriteLine("type " + model.GetType().Name +  " in db count = " + count);
         }
-        static async Task FillUsersModel(IWebApiService api, IHashingService hashing)
+        static async Task FillUsersModel()
         {
             await api.DeleteAll(WebApiTableNames.Users);
 
@@ -134,7 +137,7 @@ namespace DbConsoleFiller
             int count = (await api.GetModels<UserModel>(WebApiTableNames.Roles)).Count;
             Console.WriteLine("type " + model.GetType().Name +  " in db count = " + count);
         }
-        static async Task FillUsersRolesModel(IWebApiService api)
+        static async Task FillUsersRolesModel()
         {
             await api.DeleteAll(WebApiTableNames.UsersRoles);
 

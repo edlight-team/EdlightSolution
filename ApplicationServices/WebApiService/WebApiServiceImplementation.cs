@@ -23,6 +23,19 @@ namespace ApplicationServices.WebApiService
             request.Method = method;
             return request;
         }
+        public async Task<List<TData>> GetModels<TData>(string apiName, string condition)
+        {
+            WebRequest request = CreateRequest(apiName, WebRequestMethods.Http.Get);
+            request.Headers.Add("condition", condition);
+            WebResponse response = await request.GetResponseAsync();
+            using Stream response_stream = response.GetResponseStream();
+            using StreamReader reader = new(response_stream);
+            string result = string.Empty;
+            result = await reader.ReadToEndAsync();
+            reader.Close();
+
+            return JsonConvert.DeserializeObject<List<TData>>(result);
+        }
         public async Task<List<TData>> GetModels<TData>(string apiName)
         {
             WebRequest request = CreateRequest(apiName, WebRequestMethods.Http.Get);

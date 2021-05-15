@@ -107,7 +107,7 @@
                     <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true" />
                     <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type TabControl}}}" Value="Left" />
                 </MultiDataTrigger.Conditions>
-                <Setter TargetName="mainBorder" Property="Opacity" Value="0.85" />
+                <Setter TargetName="innerBorder" Property="Opacity" Value="0.85" />
             </MultiDataTrigger>
             <MultiDataTrigger>
                 <MultiDataTrigger.Conditions>

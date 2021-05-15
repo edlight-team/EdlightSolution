@@ -53,13 +53,13 @@ namespace EdlightMobileClient.ViewModels
         {
             try
             {
-                //var users = await api.GetModels<UserModel>(WebApiTableNames.Users);
-                //var target_user = users.FirstOrDefault(u => u.Login == model.Login);
+                var users = await api.GetModels<UserModel>(WebApiTableNames.Users);
+                var target_user = users.FirstOrDefault(u => u.Login == model.Login);
 
-                //if (target_user.Password != hashing.EncodeString(model.Password))
-                //    throw new Exception();
+                if (target_user.Password != hashing.EncodeString(model.Password))
+                    throw new Exception();
 
-                //memory.StoreItem(MemoryAlliases.CurrentUser, users);
+                memory.StoreItem(MemoryAlliases.CurrentUser, users);
 
                 await NavigationService.NavigateAsync("ShellTabbedPage?selectedTab=WeekSchedulePage");
             }

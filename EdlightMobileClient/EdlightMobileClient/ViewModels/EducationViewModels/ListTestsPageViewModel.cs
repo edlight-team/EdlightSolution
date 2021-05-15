@@ -40,17 +40,7 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
             this.api = api;
             this.memory = memory;
             this.accessManager = accessManager;
-            //DateTime time = new DateTime(2021, 3, 1, 1, 20, 0);
-            //TestHeadersModel testHeaderModel = new()
-            //{
-            //    TestName = "Test1",
-            //    TestType = "Контрольная работа",
-            //    CountQuestions = 3
-            //};
-            //TestHeaders = new();
-            //TestHeaders.Add(testHeaderModel);
-            //TestHeaders.Add(testHeaderModel);
-            //TestHeaders.Add(testHeaderModel);
+
             NavigateCommand = new DelegateCommand<object>(NavidateToStarEndTestPage);
 
             Task.Run(async () => await OnLoaded());
@@ -75,9 +65,9 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
             userModel = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
             await accessManager.ConfigureService(api, userModel);
             RolesModel teacher_role = await accessManager.GetRoleByName("teacher");
-            bool met = false;
+
             if (await accessManager.IsInRole(teacher_role))
-                met = true;
+                IsTeacher = true;
         }
 
         private async Task GetTeaherTestHeader()
@@ -85,15 +75,21 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
             List<TestHeadersModel> testHeaders = await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders);
             foreach (var item in testHeaders)
             {
-                if(item.te)
-                this.testHeaders.Add(item);
-
+                if (item.TeacherID == userModel.ID)
+                    this.testHeaders.Add(item);
             }
         }
 
-        private void GetStudentsTestHeader()
+        private async Task GetStudentsTestHeader()
         {
-
+            List<StudentsGroupsModel> studentsGroups = await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups);
+            StudentsGroupsModel groupID = studentsGroups.Where(s => s.IdStudent == userModel.ID).FirstOrDefault();
+            List<TestHeadersModel> testHeaders = await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders);
+            foreach (var item in testHeaders)
+            {
+                if (item.GroupID == groupID.IdGroup)
+                    this.testHeaders.Add(item);
+            }
         }
         #endregion
     }

@@ -66,6 +66,8 @@
                         </ListView.ItemTemplate>
                     </ListView>
                     <Button Grid.Row="4"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
                             HeightRequest="50"
                             WidthRequest="100"
                             HorizontalOptions="Fill"

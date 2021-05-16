@@ -5,9 +5,14 @@
               prism:ViewModelLocator.AutowireViewModel="True"
               x:Class="EdlightMobileClient.Views.EducationViews.TestingPage"
               NavigationPage.HasBackButton="False"
-              NavigationPage.HasNavigationBar="False"
+              NavigationPage.HasNavigationBar="True"
               ItemsSource="{Binding Questions}"
               x:Name="testingPage">
+    <NavigationPage.TitleView>
+        <StackLayout>
+            <Label Text="{Binding TimeHeader}" TextColor="AliceBlue" HorizontalTextAlignment="Center" FontSize="20"/>
+        </StackLayout>
+    </NavigationPage.TitleView>
     <CarouselPage.ItemTemplate>
         <DataTemplate>
             <ContentPage x:Name="testContent">
@@ -19,7 +24,16 @@
                         <RowDefinition Height="20"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Text=""
+                           FontSize="20"/>
                     <StackLayout Grid.Row="0"
+                                 Grid.Column="1"
                                  Orientation="Horizontal"
                                  HorizontalOptions="End">
                         <Label Text="{Binding NumberQuestion}"
@@ -30,6 +44,8 @@
                                FontSize="20"/>
                     </StackLayout>
                     <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="2"
                            Text="{Binding Question}"
                            FontSize="20"/>
                     <ListView Grid.Row="2"
@@ -40,8 +56,8 @@
                                 <ViewCell>
                                     <ViewCell.View>
                                         <StackLayout Orientation="Horizontal">
-                                            <CheckBox />
-                                            <Label Text="{Binding}"
+                                            <CheckBox IsChecked="{Binding IsUserAnswer}"/>
+                                            <Label Text="{Binding Answer}"
                                                    FontSize="20"/>
                                         </StackLayout>
                                     </ViewCell.View>

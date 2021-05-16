@@ -4,8 +4,11 @@
                         xmlns:prism="http://prismlibrary.com">
     <Application.Resources>
         <ResourceDictionary>
+            <Color x:Key="BackgroundColor">#2f3461</Color>
+            <Color x:Key="HeaderColor">#020508</Color>
+            <SolidColorBrush x:Key="BackroundBrush" Color="{StaticResource BackgroundColor}"/>
             <Style TargetType="NavigationPage">
-                <Setter Property="BarBackgroundColor" Value="#0E1D31"/>
+                <Setter Property="BarBackgroundColor" Value="{StaticResource HeaderColor}"/>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

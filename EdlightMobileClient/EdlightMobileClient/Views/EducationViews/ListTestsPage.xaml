@@ -10,70 +10,50 @@
              NavigationPage.HasNavigationBar="False">
     <ContentPage.Resources>
         <ResourceDictionary>
-            <SolidColorBrush x:Key="BackgroundBrush" Color="#0E1D31" />
-            <SolidColorBrush x:Key="BorderBrush" Color="#0E1D31" />
-            <SolidColorBrush x:Key="InnerElementBackgroundBrush" Color="#EE4865" />
-            <SolidColorBrush x:Key="InnerElementBorderBrush" Color="#EE4865" />
-            <SolidColorBrush x:Key="PrimaryFontBrush" Color="#F9F9F9" />
-            <SolidColorBrush x:Key="ElementFontBrush" Color="#F9F9F9" />
-            <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#EE4865" />
+            <SolidColorBrush x:Key="BackgroundBrush" Color="#2f3461"/>
+            <Color x:Key="TextColor">#151719</Color>
+            <Color x:Key="CardBorderColor">#e6e6fa</Color>
+            <SolidColorBrush x:Key="CardBrush" Color="#fb607f"/>
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <StackLayout BindableLayout.ItemsSource="{Binding TestHeaders}"
-                     Background="{StaticResource BackgroundBrush}">
+        <StackLayout BindableLayout.ItemsSource="{Binding TestHeaders}" Background="{StaticResource BackgroundBrush}">
             <BindableLayout.ItemTemplate>
                 <DataTemplate>
-                    <uc:ContentButton  HeightRequest="150"
+                    <uc:ContentButton  HeightRequest="180"
                                        WidthRequest="100"
-                                       Padding="10, 5, 10, 5"
                                        Command="{Binding BindingContext.NavigateCommand, Source={x:Reference listTestsPage}}"
                                        CommandParameter="{Binding}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <BoxView Grid.Column="0"
-                                     Grid.ColumnSpan="2"
-                                     Grid.Row="0"
-                                     Grid.RowSpan="3"
-                                     HorizontalOptions="Fill"
-                                     VerticalOptions="Fill"
-                                     Background="{StaticResource ElementFontBrush}"
-                                     CornerRadius="3"/>
-                            <BoxView Grid.Column="0"
-                                     Grid.ColumnSpan="2"
-                                     Grid.Row="0"
-                                     Grid.RowSpan="3"
-                                     HorizontalOptions="Fill"
-                                     VerticalOptions="Fill"
-                                     Margin="2, 2, 2, 2"
-                                     Background="{StaticResource InnerElementBackgroundBrush}"
-                                     CornerRadius="3"/>
-                            <Label Grid.Column="0"
-                                   Grid.ColumnSpan="2"
-                                   Grid.Row="0"
-                                   Margin="20, 10, 0, 0"
-                                   Text="{Binding TestType}"
-                                   FontSize="22"/>
-                            <Label Grid.Column="0"
-                                   Grid.ColumnSpan="2"
-                                   Grid.Row="1"
-                                   Margin="20, 0, 0, 0"
-                                   Text="{Binding TestName}"
-                                   FontSize="24"/>
-                            <Label Grid.Column="0"
-                                   Grid.Row="2"
-                                   Margin="20, 10, 0, 0"
-                                   Text="{Binding TestTime, StringFormat='{0:HH:mm}'}"
-                                   FontSize="20"/>
-                        </Grid>
+                        <Frame Margin="10, 5, 10, 5"
+                               CornerRadius="15"
+                               Background="{StaticResource CardBrush}"
+                               BorderColor="{StaticResource CardBorderColor}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="3*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0"
+                                       Text="{Binding TestType}"
+                                       TextColor="{StaticResource TextColor}"
+                                       FontSize="22"/>
+                                <Label Grid.Row="1"
+                                       VerticalOptions="Center"
+                                       Text="{Binding TestName}"
+                                       TextColor="{StaticResource TextColor}"
+                                       FontSize="24"/>
+                                <StackLayout Grid.Row="2"
+                                             Orientation="Horizontal">
+                                    <Label Text="Время на прохождение:"
+                                           TextColor="{StaticResource TextColor}"
+                                           FontSize="20"/>
+                                    <Label Text="{Binding TestTime, StringFormat='{0:HH:mm}'}"
+                                           TextColor="{StaticResource TextColor}"
+                                           FontSize="20"/>
+                                </StackLayout>
+                            </Grid>
+                        </Frame>
                     </uc:ContentButton>
                 </DataTemplate>
             </BindableLayout.ItemTemplate>

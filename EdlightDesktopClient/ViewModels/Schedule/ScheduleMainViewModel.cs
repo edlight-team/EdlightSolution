@@ -1,5 +1,6 @@
 ﻿using ApplicationModels.Models;
 using ApplicationWPFServices.MemoryService;
+using EdlightDesktopClient.Views;
 using EdlightDesktopClient.Views.Schedule;
 using HandyControl.Controls;
 using Prism.Commands;
@@ -113,7 +114,8 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         private void OnAddScheduleCard()
         {
-            Growl.Error("Test OK", "Global");
+            manager.RegisterViewWithRegion(BaseMethods.RegionNames.ModalRegion, typeof(AddScheduleView));
+            manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddScheduleView));
         }
 
         #endregion

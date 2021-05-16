@@ -2,14 +2,19 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:behaviors="clr-namespace:Styles.Behaviors;assembly=Styles"
+             xmlns:converters="clr-namespace:Styles.Converters;assembly=Styles"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:prism="http://prismlibrary.com/"
+             xmlns:prism="http://www.codeplex.com/prism"
              xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels.Schedule"
              behaviors:LoadedBehavior.Command="{Binding LoadedCommand}"
              d:DataContext="{d:DesignInstance vm:ScheduleDateViewerViewModel}"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <converters:TimeZoneConverter x:Key="TimeZoneConverter" />
+    </UserControl.Resources>
     <Grid>
         <!--#region Разметка-->
 
@@ -29,68 +34,31 @@
 
         <ScrollViewer Name="TimeZonesScroll"
                       Grid.Column="0"
+                      Margin="0,5,0,0"
                       ScrollChanged="TimeZonesScrollChanged"
                       VerticalScrollBarVisibility="Hidden">
             <ItemsControl ItemsSource="{Binding TimeZones}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid Height="17">
-                            <TextBlock Margin="5,0,5,0" Text="{Binding}">
+                            <TextBlock Name="TimeTextBlock"
+                                       Margin="5,0,5,0"
+                                       Text="{Binding}">
                                 <TextBlock.Style>
                                     <Style BasedOn="{StaticResource SimpleTextBlock}" TargetType="TextBlock">
                                         <Style.Triggers>
-                                            <Trigger Property="Text" Value="5">
+                                            <DataTrigger Binding="{Binding ElementName=TimeTextBlock, Path=Text, Converter={StaticResource TimeZoneConverter}}" Value="true">
                                                 <Setter Property="Foreground" Value="Gray" />
                                                 <Setter Property="HorizontalAlignment" Value="Right" />
-                                            </Trigger>
-                                            <Trigger Property="Text" Value="10">
-                                                <Setter Property="Foreground" Value="Gray" />
-                                                <Setter Property="HorizontalAlignment" Value="Right" />
-                                            </Trigger>
-                                            <Trigger Property="Text" Value="15">
-                                                <Setter Property="Foreground" Value="Gray" />
-                                                <Setter Property="HorizontalAlignment" Value="Right" />
-                                            </Trigger>
-                                            <Trigger Property="Text" Value="20">
-                                                <Setter Property="Foreground" Value="Gray" />
-                                                <Setter Property="HorizontalAlignment" Value="Right" />
-                                            </Trigger>
-                                            <Trigger Property="Text" Value="25">
-                                                <Setter Property="Foreground" Value="Gray" />
-                                                <Setter Property="HorizontalAlignment" Value="Right" />
-                                            </Trigger>
-                                            <Trigger Property="Text" Value="30">
-                                                <Setter Property="Foreground" Value="Gray" />
-                                                <Setter Property="HorizontalAlignment" Value="Right" />
-                                            </Trigger>
-                                            <Trigger Property="Text" Value="35">
-                                                <Setter Property="Foreground" Value="Gray" />
-                                                <Setter Property="HorizontalAlignment" Value="Right" />
-                                            </Trigger>
-                                            <Trigger Property="Text" Value="40">
-                                                <Setter Property="Foreground" Value="Gray" />
-                                                <Setter Property="HorizontalAlignment" Value="Right" />
-                                            </Trigger>
-                                            <Trigger Property="Text" Value="45">
-                                                <Setter Property="Foreground" Value="Gray" />
-                                                <Setter Property="HorizontalAlignment" Value="Right" />
-                                            </Trigger>
-                                            <Trigger Property="Text" Value="50">
-                                                <Setter Property="Foreground" Value="Gray" />
-                                                <Setter Property="HorizontalAlignment" Value="Right" />
-                                            </Trigger>
-                                            <Trigger Property="Text" Value="55">
-                                                <Setter Property="Foreground" Value="Gray" />
-                                                <Setter Property="HorizontalAlignment" Value="Right" />
-                                            </Trigger>
+                                            </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
-                            <Border Height="1"
-                                    VerticalAlignment="Bottom"
+                            <Border Height="2"
+                                    VerticalAlignment="Top"
                                     Background="{DynamicResource ActiveBackgroundTabHeaderBtush}"
-                                    Opacity="0.3" />
+                                    Opacity="0.35" />
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -102,18 +70,25 @@
 
         <ScrollViewer Name="CardsListScroll"
                       Grid.Column="2"
+                      Margin="0,5,0,0"
+                      AllowDrop="True"
+                      DragEnter="CardsListScrollDragEnter"
+                      Drop="CardsListScrollDrop"
                       ScrollChanged="CardsListScrollChanged"
                       VerticalScrollBarVisibility="Visible">
             <Grid>
                 <!--#region Сетка в расписании-->
-                <ItemsControl ItemsSource="{Binding TimeZones}">
+                <ItemsControl Name="ScheduleMarkup"
+                              Panel.ZIndex="1"
+                              DragEnter="ScheduleMarkupDragEnter"
+                              ItemsSource="{Binding TimeZones}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid Height="17">
-                                <Border Height="1"
-                                        VerticalAlignment="Bottom"
+                                <Border Height="2"
+                                        VerticalAlignment="Top"
                                         Background="{DynamicResource ActiveBackgroundTabHeaderBtush}"
-                                        Opacity="0.3" />
+                                        Opacity="0.35" />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -123,8 +98,79 @@
 
                 <Grid Name="ItemsGrid"
                       Grid.Column="2"
+                      Width="{Binding ElementName=ScheduleMarkup, Path=ActualWidth}"
+                      Height="{Binding ElementName=ScheduleMarkup, Path=ActualHeight}"
                       HorizontalAlignment="Center"
-                      VerticalAlignment="Top" />
+                      VerticalAlignment="Top"
+                      Panel.ZIndex="2">
+                    <hc:Card Width="600"
+                             Height="85"
+                             Margin="0,255,0,0"
+                             VerticalAlignment="Top"
+                             Panel.ZIndex="3"
+                             Background="BlueViolet"
+                             MouseDown="CardMouseDown">
+                        <Grid>
+                            <Border Background="Transparent" />
+                            <ContentControl Height="15"
+                                            Margin="3"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Top"
+                                            Cursor="SizeNS"
+                                            MouseDown="UpArrowMouseDown"
+                                            Template="{DynamicResource Up}" />
+                            <ContentControl Height="15"
+                                            Margin="3"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Bottom"
+                                            Cursor="SizeNS"
+                                            MouseDown="DownArrowMouseDown"
+                                            Template="{DynamicResource Down}" />
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Opacity" Value="1" />
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="False">
+                                            <Setter Property="Opacity" Value="0" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                        </Grid>
+                    </hc:Card>
+                </Grid>
+
+                <!--#region Ограничители-->
+
+                <StackPanel Name="Adorner"
+                            Grid.Column="2"
+                            Orientation="Vertical"
+                            Visibility="Collapsed">
+                    <Border Name="AdornerTargetBorder"
+                            Height="2"
+                            Background="{DynamicResource ActiveBackgroundTabHeaderBtush}"
+                            Visibility="Collapsed" />
+                    <hc:Card Name="AdornerCardTemplate"
+                             Width="600"
+                             Background="BlueViolet"
+                             Opacity="1" />
+                </StackPanel>
+                <Border Name="DownRangeBorder"
+                        Grid.Column="2"
+                        Height="2"
+                        VerticalAlignment="Top"
+                        Background="Transparent"
+                        Visibility="Visible" />
+                <Border Name="UpRangeBorder"
+                        Grid.Column="2"
+                        Height="2"
+                        VerticalAlignment="Top"
+                        Background="Transparent"
+                        Visibility="Visible" />
+
+                <!--#endregion-->
 
                 <!--#endregion-->
             </Grid>

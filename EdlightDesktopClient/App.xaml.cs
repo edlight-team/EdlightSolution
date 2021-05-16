@@ -17,6 +17,7 @@ using EdlightDesktopClient.Views.Schedule;
 using EdlightDesktopClient.Views.Settings;
 using Prism.Ioc;
 using Prism.Mvvm;
+using Prism.Unity;
 using System.Windows;
 
 namespace EdlightDesktopClient
@@ -24,32 +25,42 @@ namespace EdlightDesktopClient
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App
+    public partial class App : PrismApplication
     {
-        public App() => Current.Dispatcher.UnhandledException += DispatcherUnhandledExceptionHandler;
+        protected override Window CreateShell()
+        {
+            Current.Dispatcher.UnhandledException += DispatcherUnhandledExceptionHandler;
+            return Container.Resolve<AuthWindow>();
+        }
         private void DispatcherUnhandledExceptionHandler(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            HandyControl.Controls.Growl.ErrorGlobal(e.Exception.Message);
+            HandyControl.Controls.Growl.Error(e.Exception.Message, "Global");
             e.Handled = true;
         }
-        protected override Window CreateShell() => Container.Resolve<AuthWindow>();
         protected override void ConfigureViewModelLocator()
         {
             base.ConfigureViewModelLocator();
 
-            ViewModelLocationProvider.Register(typeof(AuthWindow).ToString(), () => Container.Resolve<AuthWindowViewModel>());
-            ViewModelLocationProvider.Register(typeof(MainWindow).ToString(), () => Container.Resolve<MainWindowViewModel>());
-
-            ViewModelLocationProvider.Register(typeof(LearnMainView).ToString(), () => Container.Resolve<LearnMainViewModel>());
-            ViewModelLocationProvider.Register(typeof(ProfileMainView).ToString(), () => Container.Resolve<ProfileMainViewModel>());
-            ViewModelLocationProvider.Register(typeof(ScheduleMainView).ToString(), () => Container.Resolve<ScheduleMainViewModel>());
-            ViewModelLocationProvider.Register(typeof(SettingsMainView).ToString(), () => Container.Resolve<SettingsMainViewModel>());
-            ViewModelLocationProvider.Register(typeof(GroupsMainView).ToString(), () => Container.Resolve<GroupsMainViewModel>());
-
-            ViewModelLocationProvider.Register(typeof(ScheduleDateViewer).ToString(), () => Container.Resolve<ScheduleDateViewerViewModel>());
+            ViewModelLocationProvider.Register<AuthWindow, AuthWindowViewModel>();
+            ViewModelLocationProvider.Register<MainWindow, MainWindowViewModel>();
+            ViewModelLocationProvider.Register<LearnMainView, LearnMainViewModel>();
+            ViewModelLocationProvider.Register<ProfileMainView, ProfileMainViewModel>();
+            ViewModelLocationProvider.Register<SettingsMainView, SettingsMainViewModel>();
+            ViewModelLocationProvider.Register<GroupsMainView, GroupsMainViewModel>();
+            ViewModelLocationProvider.Register<ScheduleMainView, ScheduleMainViewModel>();
+            ViewModelLocationProvider.Register<ScheduleDateViewer, ScheduleDateViewerViewModel>();
+            ViewModelLocationProvider.Register<AddScheduleView, AddScheduleViewModel>();
         }
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.RegisterForNavigation<LearnMainView>();
+            containerRegistry.RegisterForNavigation<ProfileMainView>();
+            containerRegistry.RegisterForNavigation<SettingsMainView>();
+            containerRegistry.RegisterForNavigation<GroupsMainView>();
+            containerRegistry.RegisterForNavigation<ScheduleMainView>();
+            containerRegistry.RegisterForNavigation<ScheduleDateViewer>();
+            containerRegistry.RegisterForNavigation<AddScheduleView>();
+
             containerRegistry.RegisterSingleton<IHashingService, HashingImplementation>();
             containerRegistry.RegisterSingleton<IMemoryService, MemoryImplementation>();
             containerRegistry.RegisterSingleton<INotificationService, NotificationImplementation>();

@@ -203,5 +203,59 @@
             </Canvas>
         </Viewbox>
     </ControlTemplate>
+    <ControlTemplate x:Key="Up" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Canvas Width="1276"
+                    Height="1276"
+                    RenderTransformOrigin="0.5, 0.5">
+                <Canvas.RenderTransform>
+                    <RotateTransform Angle="180" CenterX="0" CenterY="0" />
+                </Canvas.RenderTransform>
+                <Canvas>
+                    <Canvas.RenderTransform>
+                        <TranslateTransform X="0" Y="0" />
+                    </Canvas.RenderTransform>
+                    <Rectangle Width="1276"
+                               Height="1276"
+                               Fill="Transparent" />
+                    <Path Fill="{TemplateBinding Foreground}">
+                        <Path.RenderTransform>
+                            <TranslateTransform X="0" Y="250" />
+                        </Path.RenderTransform>
+                        <Path.Data>
+                            <PathGeometry Figures="m 148.55 0 h 0.69 c 1.55 2.62 4 4.5 6.07 6.68 160.5 160.51 321.02 321.01 481.51 481.52 0.78 0.86 1.56 0.86 2.36 0.01 162 -162.04 324.04 -324.05 486.05 -486.07 0.29 -0.54 0.85 -1.61 1.13 -2.14 h 0.91 c 4.63 5.57 10.16 10.33 15.16 15.57 44.52 44.52 89.04 89.05 133.57 133.56 v 0.65 C 1224.95 200.47 1174.24 251.5 1123.31 302.31 985.15 440.48 846.98 578.65 708.81 716.81 685.19 740.35 661.73 764.07 638 787.5 539.27 689.07 440.81 590.35 342.19 491.82 266.35 415.98 190.52 340.15 114.69 264.32 76.43 226.16 38.38 187.8 0 149.79 v -0.65 C 48.87 100.3 97.69 51.41 146.58 2.59 147.33 1.8 147.99 0.94 148.55 0 Z" FillRule="NonZero" />
+                        </Path.Data>
+                    </Path>
+                </Canvas>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+    <ControlTemplate x:Key="Down" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Canvas Width="1276"
+                    Height="1276"
+                    RenderTransformOrigin="0.5, 0.5">
+                <Canvas.RenderTransform>
+                    <RotateTransform Angle="0" CenterX="0" CenterY="0" />
+                </Canvas.RenderTransform>
+                <Canvas>
+                    <Canvas.RenderTransform>
+                        <TranslateTransform X="0" Y="0" />
+                    </Canvas.RenderTransform>
+                    <Rectangle Width="1276"
+                               Height="1276"
+                               Fill="Transparent" />
+                    <Path Fill="{TemplateBinding Foreground}">
+                        <Path.RenderTransform>
+                            <TranslateTransform X="0" Y="250" />
+                        </Path.RenderTransform>
+                        <Path.Data>
+                            <PathGeometry Figures="m 148.55 0 h 0.69 c 1.55 2.62 4 4.5 6.07 6.68 160.5 160.51 321.02 321.01 481.51 481.52 0.78 0.86 1.56 0.86 2.36 0.01 162 -162.04 324.04 -324.05 486.05 -486.07 0.29 -0.54 0.85 -1.61 1.13 -2.14 h 0.91 c 4.63 5.57 10.16 10.33 15.16 15.57 44.52 44.52 89.04 89.05 133.57 133.56 v 0.65 C 1224.95 200.47 1174.24 251.5 1123.31 302.31 985.15 440.48 846.98 578.65 708.81 716.81 685.19 740.35 661.73 764.07 638 787.5 539.27 689.07 440.81 590.35 342.19 491.82 266.35 415.98 190.52 340.15 114.69 264.32 76.43 226.16 38.38 187.8 0 149.79 v -0.65 C 48.87 100.3 97.69 51.41 146.58 2.59 147.33 1.8 147.99 0.94 148.55 0 Z" FillRule="NonZero" />
+                        </Path.Data>
+                    </Path>
+                </Canvas>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
 
 </ResourceDictionary>

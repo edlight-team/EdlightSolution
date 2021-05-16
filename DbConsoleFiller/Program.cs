@@ -14,15 +14,15 @@ namespace DbConsoleFiller
         static UserModel student;
         static UserModel teacher;
 
-        static readonly IWebApiService api;
-        static readonly IHashingService hashing;
+        static IWebApiService api;
+        static IHashingService hashing;
 
         static void Main() => RunFill().Wait();
         static async Task RunFill()
         {
             Console.WriteLine("Start filling");
-            IWebApiService api = new WebApiServiceImplementation();
-            IHashingService hashing = new HashingImplementation();
+            api = new WebApiServiceImplementation();
+            hashing = new HashingImplementation();
 
             await FillAcademicDisciplines();
             await FillAudiencesModel();
@@ -106,6 +106,8 @@ namespace DbConsoleFiller
         }
         static async Task FillUsersModel()
         {
+            string[] male_names = new string[] { "Алексей", "Иван", "Олег", "Игорь", "Владислав" };
+
             await api.DeleteAll(WebApiTableNames.Users);
 
             UserModel model = new();

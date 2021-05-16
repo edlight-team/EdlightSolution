@@ -12,8 +12,8 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Styles.Models;
+using System.Threading.Tasks;
 using System.Windows;
-using Unity;
 
 namespace EdlightDesktopClient.ViewModels
 {
@@ -47,12 +47,11 @@ namespace EdlightDesktopClient.ViewModels
 
         public DelegateCommand MinimizeCommand { get; private set; }
         public DelegateCommand CloseCommand { get; private set; }
-        public DelegateCommand LoadedCommand { get; private set; }
 
         #endregion
         #region ctor
 
-        public MainWindowViewModel(IUnityContainer container, IRegionManager manager, IMemoryService memory, IWebApiService api, IPermissionService accessManager)
+        public MainWindowViewModel(IRegionManager manager, IMemoryService memory, IWebApiService api, IPermissionService accessManager)
         {
             Loader = new();
             GroupsVisibility = Visibility.Collapsed;
@@ -63,35 +62,22 @@ namespace EdlightDesktopClient.ViewModels
 
             MinimizeCommand = new DelegateCommand(() => CurrentState = StaticCommands.ChangeWindowState(CurrentState));
             CloseCommand = new DelegateCommand(StaticCommands.Shutdown);
-            LoadedCommand = new DelegateCommand(OnLoaded);
-
-            container.RegisterType<object, LearnMainView>(nameof(LearnMainView));
-            container.RegisterType<object, ProfileMainView>(nameof(ProfileMainView));
-            container.RegisterType<object, ProfileMainView>(nameof(ProfileMainView));
-            container.RegisterType<object, SettingsMainView>(nameof(SettingsMainView));
-            container.RegisterType<object, GroupsMainView>(nameof(GroupsMainView));
-            container.RegisterType<object, ScheduleDateViewer>(nameof(ScheduleDateViewer));
 
             manager.RegisterViewWithRegion(BaseMethods.RegionNames.LearnRegion, typeof(LearnMainView));
             manager.RegisterViewWithRegion(BaseMethods.RegionNames.ProfileRegion, typeof(ProfileMainView));
-            manager.RegisterViewWithRegion(BaseMethods.RegionNames.ScheduleRegion, typeof(ScheduleMainView));
             manager.RegisterViewWithRegion(BaseMethods.RegionNames.SettingsRegion, typeof(SettingsMainView));
             manager.RegisterViewWithRegion(BaseMethods.RegionNames.GroupsRegion, typeof(GroupsMainView));
+            manager.RegisterViewWithRegion(BaseMethods.RegionNames.ScheduleRegion, typeof(ScheduleMainView));
             manager.RegisterViewWithRegion(BaseMethods.RegionNames.ScheduleDateViewRegion, typeof(ScheduleDateViewer));
-        }
-        private async void OnLoaded()
-        {
-            //Проверяем пользователя
-            UserModel current_user = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
-            await accessManager.ConfigureService(api, current_user);
-            RolesModel teacher_role = await accessManager.GetRoleByName("teacher");
-            if (await accessManager.IsInRole(teacher_role)) GroupsVisibility = Visibility.Visible;
 
-            manager.RequestNavigate(BaseMethods.RegionNames.LearnRegion, nameof(LearnMainView));
-            manager.RequestNavigate(BaseMethods.RegionNames.ProfileRegion, nameof(ProfileMainView));
-            manager.RequestNavigate(BaseMethods.RegionNames.ScheduleRegion, nameof(ScheduleMainView));
-            manager.RequestNavigate(BaseMethods.RegionNames.SettingsRegion, nameof(SettingsMainView));
-            manager.RequestNavigate(BaseMethods.RegionNames.GroupsRegion, nameof(GroupsMainView));
+            Task.Run(async () =>
+            {
+                //Проверяем пользователя
+                UserModel current_user = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
+                await accessManager.ConfigureService(api, current_user);
+                RolesModel teacher_role = await accessManager.GetRoleByName("teacher");
+                if (await accessManager.IsInRole(teacher_role)) GroupsVisibility = Visibility.Visible;
+            });
         }
 
         #endregion

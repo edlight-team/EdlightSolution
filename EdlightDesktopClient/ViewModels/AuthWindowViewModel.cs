@@ -69,8 +69,8 @@ namespace EdlightDesktopClient.ViewModels
             Password = "admin";
             Login = "student";
             Password = "student";
-            Login = "valgan";
-            Password = "valgan";
+            Login = "teacher";
+            Password = "teacher";
 #endif
 
             CloseCommand = new DelegateCommand(StaticCommands.Shutdown);
@@ -93,8 +93,8 @@ namespace EdlightDesktopClient.ViewModels
 #if !DEBUG
                 await Task.Delay(500);
 #endif
-                List<UserModel> users = await api.GetModels<UserModel>(WebApiTableNames.Users);
-                UserModel target_user = users.FirstOrDefault(u => u.Login == Login);
+                List<UserModel> users = await api.GetModels<UserModel>(WebApiTableNames.Users, $"Login = '{Login}'");
+                UserModel target_user = users.FirstOrDefault();
                 if (target_user == null)
                     throw new NotFoundException("Пользователь не найден в системе. \r\nПовторите попытку или обратитесь в тех.поддержку edlight@list.ru");
                 if (target_user.Password != hashing.EncodeString(Password))

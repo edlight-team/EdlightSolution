@@ -26,8 +26,9 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
         private ObservableCollection<QuestionsModel> questions;
         private string timeHeader;
 
-        private TimeSpan timeTest;
+        private bool indicatorIsRunning;
 
+        private TimeSpan timeTest;
         private Timer timer;
         #endregion
         #region props
@@ -35,6 +36,7 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
         public TestHeadersModel TestHeader { get => testHeader; set => SetProperty(ref testHeader, value); }
         public TestResultsModel Result { get => result; set => SetProperty(ref result, value); }
         public string TimeHeader { get => timeHeader; set => SetProperty(ref timeHeader, value); }
+        public bool IndicatorIsRunning { get => indicatorIsRunning; set => SetProperty(ref indicatorIsRunning, value); }
         #endregion
         #region commands
         public DelegateCommand NavigateCommand { get; private set; }

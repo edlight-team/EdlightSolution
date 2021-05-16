@@ -4,29 +4,83 @@
              xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="EdlightMobileClient.Views.EducationViews.ListTestResult"
-             Title="{Binding TestHeader.TestName}">
+             x:Name="listTestResult"
+             NavigationPage.HasBackButton="False"
+             NavigationPage.HasNavigationBar="False">
     <ContentPage.Content>
-        <ScrollView>
-            <ListView ItemsSource="{Binding TestResults}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <ViewCell.View>
-                                <Grid HeightRequest="80">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                </Grid>
-                            </ViewCell.View>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </ScrollView>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+            <Label Grid.Row="0"
+                   Text="{Binding TestHeader.TestName}" 
+                   HorizontalTextAlignment="Center"
+                   VerticalTextAlignment="Center"
+                   FontSize="20"/>
+            <ScrollView Grid.Row="1">
+                <StackLayout BindableLayout.ItemsSource="{Binding TestResults}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Grid HeightRequest="80"
+                                  Padding="10, 0, 10, 0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Row="0"
+                                       Grid.Column="0"
+                                       FontSize="20"
+                                       VerticalTextAlignment="End"
+                                       Text="{Binding StudentName}"/>
+                                <Label Grid.Row="1"
+                                       Grid.Column="0"
+                                       FontSize="20"
+                                       VerticalTextAlignment="Start"
+                                       Text="{Binding StudentSurname}"/>
+                                <Label Grid.Column="1"
+                                       FontSize="18"
+                                       HorizontalTextAlignment="Center">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding TestCompleted}" Value="true">
+                                            <Setter Property="Text" Value="Тест пройден"/>
+                                            <Setter Property="Grid.Row" Value="0"/>
+                                            <Setter Property="VerticalTextAlignment" Value="End"/>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding TestCompleted}" Value="false">
+                                            <Setter Property="Text" Value="Тест не пройден"/>
+                                            <Setter Property="Grid.Row" Value="0"/>
+                                            <Setter Property="Grid.RowSpan" Value="2"/>
+                                            <Setter Property="VerticalTextAlignment" Value="Center"/>
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                                <StackLayout Grid.Row="1"
+                                             Grid.Column="1"
+                                             IsVisible="{Binding TestCompleted}"
+                                             Orientation="Horizontal"
+                                             HorizontalOptions="Center">
+                                    <Label FontSize="18"
+                                           Text="Баллы:"/>
+                                    <Label FontSize="18"
+                                           Margin="0, 0, -2, 0"
+                                           Text="{Binding CorrectAnswers}"/>
+                                    <Label FontSize="18"
+                                           Text="/"/>
+                                    <Label FontSize="18"
+                                           Margin="-2, 0, 0, 0"
+                                           Text="{Binding BindingContext.TestHeader.CountQuestions, Source={x:Reference listTestResult}}"/>
+                                </StackLayout>
+                                
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+            </ScrollView>
+    </Grid>
     </ContentPage.Content>
 </ContentPage>

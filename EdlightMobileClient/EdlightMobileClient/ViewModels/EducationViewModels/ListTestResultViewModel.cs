@@ -20,48 +20,26 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
         private TestHeadersModel testHeader;
         #endregion
         #region props
-        public ObservableCollection<TestResultsModel> TestResults { get => testResults; set => SetProperty(ref testResults, value); }
-        public TestHeadersModel TestHeader { get => testHeader; set => SetProperty(ref testHeader, value); }
+        public ObservableCollection<TestResultsModel> TestResults { get => testResults ??= new(); set => SetProperty(ref testResults, value); }
+        public TestHeadersModel TestHeader { get => testHeader ??= new(); set => SetProperty(ref testHeader, value); }
         #endregion
         #region constructor
         public ListTestResultViewModel(INavigationService navigationService, IWebApiService api) : base(navigationService)
         {
             this.api = api;
-
-            TestHeader.TestName = "Имя теста";
-            TestResultsModel test = new()
-            {
-                StudentName = "Человек",
-                StudentSurname = "Человеков",
-                CorrectAnswers=50,
-                TestCompleted = true
-            };
-            TestResultsModel testo = new()
-            {
-                StudentName = "НеЧеловек",
-                StudentSurname = "НеЧеловеков",
-                CorrectAnswers = 1,
-                TestCompleted = false
-            };
-            TestResults.Add(test);
-            TestResults.Add(testo);
-            TestResults.Add(test);
-            TestResults.Add(testo);
-            TestResults.Add(test);
-            TestResults.Add(testo);
         }
         #endregion
         #region methods
 
         #endregion
         #region navigate
-        public override void OnNavigatedTo(INavigationParameters parameters)
+        public async override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
-            //TestHeader = parameters.GetValue<TestHeadersModel>("header");
-            //List<TestResultsModel> results = parameters.GetValue<List<TestResultsModel>>("result");
-            //foreach (var item in results)
-            //    TestResults.Add(item);
+            TestHeader = parameters.GetValue<TestHeadersModel>("header");
+            List<TestResultsModel> results = await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults, $"TestID = '{TestHeader.TestID}'");
+            foreach (var item in results)
+                TestResults.Add(item);
         }
         #endregion
     }

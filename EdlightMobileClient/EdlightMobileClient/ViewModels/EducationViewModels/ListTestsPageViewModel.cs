@@ -63,11 +63,9 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
             {
                 if (isTeacher)
                 {
-                    List<TestResultsModel> testResults = await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults, $"TestID = '{testHeader.TestID}'");
                     NavigationParameters navigationParams = new()
                     {
-                        { "header", testHeader },
-                        { "result", testResults }
+                        { "header", testHeader }
                     };
                     await NavigationService.NavigateAsync("ListTestResult", navigationParams);
                 }

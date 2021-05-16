@@ -40,10 +40,10 @@ namespace EdlightMobileClient.ViewModels
 #if DEBUG
             //Model.Login = "admin";
             //Model.Password = "admin";
-            Model.Login = "student";
-            Model.Password = "student";
-            //Model.Login = "teacher";
-            //Model.Password = "teacher";
+            //Model.Login = "student";
+            //Model.Password = "student";
+            Model.Login = "teacher";
+            Model.Password = "teacher";
 #endif
             this.hashing = hashing;
             this.api = api;

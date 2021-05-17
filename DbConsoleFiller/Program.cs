@@ -4,6 +4,7 @@ using ApplicationServices.WebApiService;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DbConsoleFiller
@@ -15,6 +16,7 @@ namespace DbConsoleFiller
 
         static UserModel student;
         static UserModel teacher;
+        static List<UserModel> otherusers;
 
         static GroupsModel group;
         static TestsModel test;
@@ -116,7 +118,7 @@ namespace DbConsoleFiller
         }
         static async Task FillUsersModel()
         {
-            string[] male_names = new string[] { "Алексей", "Иван", "Олег", "Игорь", "Владислав" };
+            //string[] male_names = new string[] { "Алексей", "Иван", "Олег", "Игорь", "Владислав" };
 
             await api.DeleteAll(WebApiTableNames.Users);
 
@@ -146,7 +148,12 @@ namespace DbConsoleFiller
             model.Sex = 1;
             teacher = await api.PostModel(model, WebApiTableNames.Users);
 
-            int count = (await api.GetModels<UserModel>(WebApiTableNames.Roles)).Count;
+            otherusers = new();
+            List<UserModel> users = GenerateRandomUsers();
+            foreach (var item in users)
+                otherusers.Add(await api.PostModel(item, WebApiTableNames.Users));
+
+            int count = (await api.GetModels<UserModel>(WebApiTableNames.Users)).Count;
             Console.WriteLine("type " + model.GetType().Name +  " in db count = " + count);
         }
         static async Task FillUsersRolesModel()
@@ -160,6 +167,13 @@ namespace DbConsoleFiller
             model.IdRole = teacherRole.Id;
             model.IdUser = teacher.ID;
             await api.PostModel(model, WebApiTableNames.UsersRoles);
+
+            foreach (var item in otherusers)
+                await api.PostModel(new UsersRolesModel()
+                {
+                    IdRole = item.Age >= 22 ? teacherRole.Id : studentRole.Id,
+                    IdUser = item.ID
+                }, WebApiTableNames.UsersRoles);
 
             int count = (await api.GetModels<UsersRolesModel>(WebApiTableNames.UsersRoles)).Count;
             Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
@@ -254,6 +268,40 @@ namespace DbConsoleFiller
 
             int count = (await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults)).Count;
             Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+        }
+
+        public static List<UserModel> GenerateRandomUsers()
+        {
+            PersonGenerator.GeneratorSettings settings = new()
+            {
+                Age = true,
+                Language = PersonGenerator.Languages.English,
+                FirstName = true,
+                MiddleName = true,
+                LastName = true,
+                MinAge = 16,
+                MaxAge = 25
+            };
+            PersonGenerator.PersonGenerator generator = new(settings);
+
+            var generated = generator.Generate(20);
+
+            List<UserModel> users = new();
+
+            foreach (var item in generated)
+            {
+                users.Add(new UserModel()
+                {
+                    Name = item.FirstName,
+                    Surname = item.MiddleName,
+                    Patrnymic = item.LastName,
+                    Age = item.Age,
+                    Sex = item.FirstName.Length > 6 ? 1 : 0,
+                    Login = new Regex(@"@+\w*").Replace(item.FirstName, ""),
+                    Password = new Regex(@"@+\w*").Replace(item.FirstName, "")
+                });
+            }
+            return users;
         }
     }
 }

@@ -1,15 +1,13 @@
 ﻿<Window x:Class="EdlightDesktopClient.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:behaviors="clr-namespace:Styles.Behaviors;assembly=Styles"
         xmlns:controls="clr-namespace:Styles.Controls;assembly=Styles"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:prism="http://prismlibrary.com/"
+        xmlns:prism="http://www.codeplex.com/prism"
         xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels"
         Title="{Binding Title}"
-        behaviors:LoadedBehavior.Command="{Binding LoadedCommand}"
         d:DataContext="{d:DesignInstance vm:MainWindowViewModel}"
         prism:ViewModelLocator.AutoWireViewModel="True"
         AllowsTransparency="True"
@@ -20,6 +18,7 @@
         mc:Ignorable="d">
     <Grid>
         <!--#region markup-->
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5" />
             <ColumnDefinition />
@@ -31,8 +30,10 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="5" />
         </Grid.RowDefinitions>
+
         <!--#endregion-->
         <!--#region borders and loaders-->
+
         <StackPanel Grid.Row="0"
                     Grid.RowSpan="4"
                     Grid.Column="0"
@@ -58,8 +59,10 @@
                 Grid.Column="1"
                 Background="Transparent"
                 MouseDown="BorderMouseDown" />
+
         <!--#endregion-->
         <!--#region header row-->
+
         <ContentControl Grid.Row="1"
                         Grid.Column="1"
                         Width="25"
@@ -94,8 +97,10 @@
                                 Template="{DynamicResource Close}" />
             </Button>
         </StackPanel>
+
         <!--#endregion-->
         <!--#region tabs-->
+
         <TabControl Grid.Row="2"
                     Grid.Column="1"
                     Margin="5"
@@ -116,7 +121,7 @@
                                    Text="Расписание" />
                     </StackPanel>
                 </TabItem.Header>
-                <ContentControl prism:RegionManager.RegionName="ScheduleRegion" />
+                <ContentControl Name="ScheduleRegion" />
             </TabItem>
             <TabItem Margin="0" Template="{DynamicResource SimpleTabItem}">
                 <TabItem.Header>
@@ -130,7 +135,7 @@
                                    Text="Профиль" />
                     </StackPanel>
                 </TabItem.Header>
-                <ContentControl prism:RegionManager.RegionName="ProfileRegion" />
+                <ContentControl Name="ProfileRegion" />
             </TabItem>
             <TabItem Margin="0" Template="{DynamicResource SimpleTabItem}">
                 <TabItem.Header>
@@ -144,7 +149,7 @@
                                    Text="Обучение" />
                     </StackPanel>
                 </TabItem.Header>
-                <ContentControl prism:RegionManager.RegionName="LearnRegion" />
+                <ContentControl Name="LearnRegion" />
             </TabItem>
             <TabItem Margin="0" Template="{DynamicResource SimpleTabItem}">
                 <TabItem.Header>
@@ -158,7 +163,7 @@
                                    Text="Настройки" />
                     </StackPanel>
                 </TabItem.Header>
-                <ContentControl prism:RegionManager.RegionName="SettingsRegion" />
+                <ContentControl Name="SettingsRegion" />
             </TabItem>
             <TabItem Margin="0"
                      Template="{DynamicResource SimpleTabItem}"
@@ -174,9 +179,21 @@
                                    Text="Группы" />
                     </StackPanel>
                 </TabItem.Header>
-                <ContentControl prism:RegionManager.RegionName="GroupsRegion" />
+                <ContentControl Name="GroupsRegion" />
             </TabItem>
         </TabControl>
+
+        <!--#endregion-->
+        <!--#region modal-->
+
+        <ContentControl Name="ModalRegion"
+                        Grid.Row="0"
+                        Grid.RowSpan="4"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3"
+                        ClipToBounds="True"
+                        SnapsToDevicePixels="True" />
+
         <!--#endregion-->
     </Grid>
 </Window>

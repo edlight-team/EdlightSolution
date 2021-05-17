@@ -9,4 +9,5 @@
     <SolidColorBrush x:Key="ActiveBackgroundTabHeaderBtush" Color="#EE4865" />
     <SolidColorBrush x:Key="InactiveBackgroundTabHeaderBtush" Color="#884865" />
     <SolidColorBrush x:Key="DisabledBackgroundTabHeaderBrush" Color="#884865" />
+    <SolidColorBrush x:Key="ZoneBrush" Color="#6B8E23" />
 </ResourceDictionary>

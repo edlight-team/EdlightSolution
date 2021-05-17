@@ -17,9 +17,8 @@ namespace DbConsoleFiller
         static UserModel teacher;
 
         static GroupsModel group;
-
         static TestsModel test;
-
+        
         static IWebApiService api;
         static IHashingService hashing;
 
@@ -117,6 +116,8 @@ namespace DbConsoleFiller
         }
         static async Task FillUsersModel()
         {
+            string[] male_names = new string[] { "Алексей", "Иван", "Олег", "Игорь", "Владислав" };
+
             await api.DeleteAll(WebApiTableNames.Users);
 
             UserModel model = new();

@@ -11,7 +11,13 @@
                 <ResourceDictionary Source="pack://application:,,,/Styles;component/FrameworkElements/ScrollBars.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Styles;component/FrameworkElements/TabControl.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Styles;component/FrameworkElements/TextBlock.xaml" />
-                <hc:ThemeResources RequestedTheme="Dark" UsingSystemTheme="True" />
+                <hc:ThemeResources RequestedTheme="Dark">
+                    <hc:ThemeResources.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Dark" hc:ThemeDictionary.Key="Dark">
+                            <SolidColorBrush x:Key="PrimaryBrush" Color="#EE4865" />
+                        </ResourceDictionary>
+                    </hc:ThemeResources.ThemeDictionaries>
+                </hc:ThemeResources>
                 <hc:Theme />
                 <ResourceDictionary Source="pack://application:,,,/Styles;component/Images/SVGCollection.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Styles;component/Brushes/SolidBrushes.xaml" />

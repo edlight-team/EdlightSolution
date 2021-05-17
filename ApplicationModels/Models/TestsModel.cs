@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Prism.Mvvm;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ApplicationModels.Models
 {
-    public class TestsModel:BindableBase
+    public class TestsModel : BindableBase
     {
         #region fields
         private Guid id;

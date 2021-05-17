@@ -38,7 +38,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Style="{DynamicResource InnerElementBorder}">
+                    <Border CornerRadius="10" Style="{DynamicResource InnerElementBorder}">
                         <ContentPresenter />
                     </Border>
                 </ControlTemplate>

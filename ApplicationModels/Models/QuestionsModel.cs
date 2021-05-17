@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace ApplicationModels.Models
 {
-    public class QuestionsModel:BindableBase
+    public class QuestionsModel : BindableBase
     {
         #region fields
         private int numberQuestion;

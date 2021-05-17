@@ -9,6 +9,10 @@ namespace EdlightDesktopClient.Views
     public partial class AuthWindow : Window
     {
         public AuthWindow() => InitializeComponent();
-        private void BorderMouseDown(object sender, MouseButtonEventArgs e) => DragMove();
+        private void BorderMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.RightButton == MouseButtonState.Pressed) return;
+            DragMove();
+        }
     }
 }

@@ -452,7 +452,6 @@ namespace ApiTest
 
             Assert.AreEqual(models.Count, 0);
         }
-
         [TestMethod]
         public void TestTestHeaders()
         {
@@ -506,10 +505,10 @@ namespace ApiTest
         public void TestTestResults()
         {
             TestResultsModel model = new();
-            model.StudentName= TestStrings[0];
-            model.StudentSurname= TestStrings[1];
-            model.TestID= TestGuids[0];
-            model.UserID= TestGuids[1];
+            model.StudentName = TestStrings[0];
+            model.StudentSurname = TestStrings[1];
+            model.TestID = TestGuids[0];
+            model.UserID = TestGuids[1];
             model.CorrectAnswers = 1;
             model.TestCompleted = TestBooleans[0];
 
@@ -522,10 +521,10 @@ namespace ApiTest
             Assert.AreEqual(posted.CorrectAnswers, 1);
             Assert.AreEqual(posted.TestCompleted, TestBooleans[0]);
 
-            posted.StudentName= TestStrings[2];
-            posted.StudentSurname= TestStrings[3];
-            posted.TestID= TestGuids[2];
-            posted.UserID= TestGuids[3];
+            posted.StudentName = TestStrings[2];
+            posted.StudentSurname = TestStrings[3];
+            posted.TestID = TestGuids[2];
+            posted.UserID = TestGuids[3];
             posted.CorrectAnswers = 2;
             posted.TestCompleted = TestBooleans[1];
 
@@ -555,7 +554,7 @@ namespace ApiTest
 
             var posted = api.PostModel(model, WebApiTableNames.Tests).Result;
 
-            Assert.AreEqual(posted.Questions, TestGuids[0]);
+            Assert.AreEqual(posted.Questions, TestStrings[0]);
 
             posted.Questions = TestStrings[1];
 

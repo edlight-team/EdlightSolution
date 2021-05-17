@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Prism.Mvvm;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ApplicationModels.Models
 {

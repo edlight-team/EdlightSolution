@@ -77,5 +77,11 @@ namespace ApplicationModels.Models
         }
 
         #endregion
+        #region methods
+
+        [JsonIgnore]
+        public string FullName { get => $"{Surname} {Name} {Patrnymic}"; }
+
+        #endregion
     }
 }

@@ -1,7 +1,9 @@
 ﻿using ApplicationModels.Models;
 using ApplicationServices.HashingService;
 using ApplicationServices.WebApiService;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DbConsoleFiller
@@ -14,6 +16,9 @@ namespace DbConsoleFiller
         static UserModel student;
         static UserModel teacher;
 
+        static GroupsModel group;
+        static TestsModel test;
+        
         static IWebApiService api;
         static IHashingService hashing;
 
@@ -30,6 +35,11 @@ namespace DbConsoleFiller
             await FillRolesModel();
             await FillUsersModel();
             await FillUsersRolesModel();
+            await FillGroupsModel();
+            await FillStudentsGroupsModel();
+            await FillTestsModel();
+            await FillTestHeaderModel();
+            await FillTestResult();
 
             Console.WriteLine("Fill Complete");
             Console.ReadKey();
@@ -152,6 +162,97 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.UsersRoles);
 
             int count = (await api.GetModels<UsersRolesModel>(WebApiTableNames.UsersRoles)).Count;
+            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+        }
+
+        static async Task FillGroupsModel()
+        {
+            await api.DeleteAll(WebApiTableNames.Groups);
+
+            GroupsModel model = new();
+            model.Group = "Группа1";
+            group = await api.PostModel(model, WebApiTableNames.Groups);
+
+            int count = (await api.GetModels<GroupsModel>(WebApiTableNames.Groups)).Count;
+            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+        }
+
+        static async Task FillStudentsGroupsModel()
+        {
+            await api.DeleteAll(WebApiTableNames.StudentsGroups);
+
+            StudentsGroupsModel model = new();
+            model.IdGroup = group.Id;
+            model.IdStudent = student.ID;
+            await api.PostModel(model, WebApiTableNames.StudentsGroups);
+
+            int count = (await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups)).Count;
+            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+        }
+
+        static async Task FillTestsModel()
+        {
+            await api.DeleteAll(WebApiTableNames.Tests);
+
+            List<QuestionsModel> list = new();
+            QuestionsModel questions = new();
+            questions.Question = "Вопрос1";
+            questions.NumberQuestion = 1;
+            questions.CorrectAnswerIndex = 1;
+            questions.AnswerOptions = new System.Collections.ObjectModel.ObservableCollection<TestAnswer>()
+            {
+                new TestAnswer(){ Answer= "ответ1"},
+                new TestAnswer(){ Answer= "ответ2"},
+                new TestAnswer(){ Answer= "ответ3"},
+                new TestAnswer(){ Answer= "ответ4"}
+            };
+            list.Add(questions);
+            questions.Question = "Вопрос2";
+            questions.NumberQuestion = 2;
+            list.Add(questions);
+            questions.Question = "Вопрос3";
+            questions.NumberQuestion = 3;
+            list.Add(questions);
+            TestsModel model = new();
+            model.Questions = JsonConvert.SerializeObject(list);
+            test = await api.PostModel(model, WebApiTableNames.Tests);
+
+            int count = (await api.GetModels<TestsModel>(WebApiTableNames.Tests)).Count;
+            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+        }
+
+        static async Task FillTestHeaderModel()
+        {
+            await api.DeleteAll(WebApiTableNames.TestHeaders);
+
+            TestHeadersModel model = new();
+            model.GroupID = group.Id;
+            model.TeacherID = teacher.ID;
+            model.CountQuestions = 3;
+            model.TestID = test.ID;
+            model.TestName= "Тест1";
+            model.TestType = "Контрольная работа";
+            model.TestTime = new DateTime(10, 10, 10, 1, 0, 0).ToLongTimeString();
+            await api.PostModel(model, WebApiTableNames.TestHeaders);
+
+            int count = (await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders)).Count;
+            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+        }
+
+        static async Task FillTestResult()
+        {
+            await api.DeleteAll(WebApiTableNames.TestResults);
+
+            TestResultsModel model = new();
+            model.TestID = test.ID;
+            model.UserID = student.ID;
+            model.StudentName = student.Name;
+            model.StudentSurname = student.Surname;
+            model.TestCompleted = false;
+            model.CorrectAnswers = 0;
+            await api.PostModel(model, WebApiTableNames.TestResults);
+
+            int count = (await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults)).Count;
             Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
         }
     }

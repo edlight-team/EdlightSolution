@@ -17,8 +17,9 @@ namespace DbConsoleFiller
         static UserModel student;
         static UserModel teacher;
         static List<UserModel> otherusers;
+        static List<UsersRolesModel> otherUserRoles;
 
-        static GroupsModel group;
+        static List<GroupsModel> groups;
         static TestsModel test;
         
         static IWebApiService api;
@@ -161,6 +162,7 @@ namespace DbConsoleFiller
             await api.DeleteAll(WebApiTableNames.UsersRoles);
 
             UsersRolesModel model = new();
+            otherUserRoles = new();
             model.IdRole = studentRole.Id;
             model.IdUser = student.ID;
             await api.PostModel(model, WebApiTableNames.UsersRoles);
@@ -169,11 +171,11 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.UsersRoles);
 
             foreach (var item in otherusers)
-                await api.PostModel(new UsersRolesModel()
+                otherUserRoles.Add(await api.PostModel(new UsersRolesModel()
                 {
                     IdRole = item.Age >= 22 ? teacherRole.Id : studentRole.Id,
                     IdUser = item.ID
-                }, WebApiTableNames.UsersRoles);
+                }, WebApiTableNames.UsersRoles));
 
             int count = (await api.GetModels<UsersRolesModel>(WebApiTableNames.UsersRoles)).Count;
             Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
@@ -183,25 +185,36 @@ namespace DbConsoleFiller
         {
             await api.DeleteAll(WebApiTableNames.Groups);
 
-            GroupsModel model = new();
-            model.Group = "Группа1";
-            group = await api.PostModel(model, WebApiTableNames.Groups);
+            int groupNumder = 1;
 
+            groups = new();
+            while (groupNumder <= 5)
+            {
+                groups.Add(await api.PostModel(new GroupsModel() { Group = $"Группа {groupNumder++}" }, WebApiTableNames.Groups));
+            };
+            
             int count = (await api.GetModels<GroupsModel>(WebApiTableNames.Groups)).Count;
-            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+            Console.WriteLine("type " + nameof(GroupsModel) + " in db count = " + count);
         }
 
         static async Task FillStudentsGroupsModel()
         {
             await api.DeleteAll(WebApiTableNames.StudentsGroups);
 
-            StudentsGroupsModel model = new();
-            model.IdGroup = group.Id;
-            model.IdStudent = student.ID;
-            await api.PostModel(model, WebApiTableNames.StudentsGroups);
+            Random random = new();
+            for (int i = 0; i < otherusers.Count; i++)
+            {
+                if (otherUserRoles[i].IdRole == studentRole.Id)
+                {
+                    StudentsGroupsModel model = new();
+                    model.IdGroup = groups[random.Next(0, groups.Count - 1)].Id;
+                    model.IdStudent = otherusers[i].ID;
+                    await api.PostModel(model, WebApiTableNames.StudentsGroups);
+                }
+            }
 
             int count = (await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups)).Count;
-            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+            Console.WriteLine("type " + nameof(StudentsGroupsModel) + " in db count = " + count);
         }
 
         static async Task FillTestsModel()
@@ -240,7 +253,7 @@ namespace DbConsoleFiller
             await api.DeleteAll(WebApiTableNames.TestHeaders);
 
             TestHeadersModel model = new();
-            model.GroupID = group.Id;
+            model.GroupID = groups[0].Id;
             model.TeacherID = teacher.ID;
             model.CountQuestions = 3;
             model.TestID = test.ID;

@@ -12,6 +12,7 @@ namespace ApplicationServices.WebApiService
     {
 #if DEBUG
         //private static readonly string WebApiBaseURL = "http://192.168.0.164:600/api/";
+        //private static readonly string WebApiBaseURL = "http://192.168.0.100:600/api/";
         private static readonly string WebApiBaseURL = "http://62.173.154.96:600/api/";
 #else
         private static readonly string WebApiBaseURL = "http://62.173.154.96:600/api/";

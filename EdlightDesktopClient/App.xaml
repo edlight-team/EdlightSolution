@@ -14,7 +14,7 @@
                 <hc:ThemeResources RequestedTheme="Dark">
                     <hc:ThemeResources.ThemeDictionaries>
                         <ResourceDictionary x:Key="Dark" hc:ThemeDictionary.Key="Dark">
-                            <SolidColorBrush x:Key="PrimaryBrush" Color="#EE4865" />
+                            <SolidColorBrush x:Key="PrimaryBrush" Color="#07575B" />
                         </ResourceDictionary>
                     </hc:ThemeResources.ThemeDictionaries>
                 </hc:ThemeResources>

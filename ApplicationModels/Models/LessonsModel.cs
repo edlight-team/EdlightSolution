@@ -77,37 +77,37 @@ namespace ApplicationModels.Models
         /// <summary>
         /// Занятие
         /// </summary>
-        [JsonProperty(nameof(TimeLessons))]
+        [JsonIgnore]
         public TimeLessonsModel TimeLessons { get => timeLessons; set => SetProperty(ref timeLessons, value); }
 
         /// <summary>
         /// Преподаватель
         /// </summary>
-        [JsonProperty(nameof(Teacher))]
+        [JsonIgnore]
         public UserModel Teacher { get => teacher; set => SetProperty(ref teacher, value); }
 
         /// <summary>
         /// Дисциплина
         /// </summary>
-        [JsonProperty(nameof(AcademicDiscipline))]
+        [JsonIgnore]
         public AcademicDisciplinesModel AcademicDiscipline { get => academicDiscipline; set => SetProperty(ref academicDiscipline, value); }
 
         /// <summary>
         /// Тип дисциплины
         /// </summary>
-        [JsonProperty(nameof(TypeClass))]
+        [JsonIgnore]
         public TypeClassesModel TypeClass { get => typeClass; set => SetProperty(ref typeClass, value); }
 
         /// <summary>
         /// Аудитория
         /// </summary>
-        [JsonProperty(nameof(Audience))]
+        [JsonIgnore]
         public AudiencesModel Audience { get => audience; set => SetProperty(ref audience, value); }
 
         /// <summary>
         /// Группа
         /// </summary>
-        [JsonProperty(nameof(Group))]
+        [JsonIgnore]
         public GroupsModel Group { get => group; set => SetProperty(ref group, value); }
 
         #endregion

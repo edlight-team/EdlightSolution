@@ -64,18 +64,15 @@ namespace EdlightDesktopClient.ViewModels
             MinimizeCommand = new DelegateCommand(() => CurrentState = StaticCommands.ChangeWindowState(CurrentState));
             CloseCommand = new DelegateCommand(StaticCommands.Shutdown);
             LoadedCommand = new DelegateCommand(OnLoaded);
-
-            Task.Run(async () =>
-            {
-                //Проверяем пользователя
-                UserModel current_user = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
-                await accessManager.ConfigureService(api, current_user);
-                RolesModel teacher_role = await accessManager.GetRoleByName("teacher");
-                if (await accessManager.IsInRole(teacher_role)) GroupsVisibility = Visibility.Visible;
-            });
         }
-        private void OnLoaded()
+        private async void OnLoaded()
         {
+            //Проверяем пользователя
+            UserModel current_user = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
+            await accessManager.ConfigureService(api, current_user);
+            RolesModel teacher_role = await accessManager.GetRoleByName("teacher");
+            if (await accessManager.IsInRole(teacher_role)) GroupsVisibility = Visibility.Visible;
+
             manager.RequestNavigate(BaseMethods.RegionNames.LearnRegion, nameof(LearnMainView));
             manager.RequestNavigate(BaseMethods.RegionNames.ProfileRegion, nameof(ProfileMainView));
             manager.RequestNavigate(BaseMethods.RegionNames.SettingsRegion, nameof(SettingsMainView));

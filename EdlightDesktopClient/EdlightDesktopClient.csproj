@@ -60,6 +60,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AccessConfigurations\ScheduleConfig.cs" />
     <Compile Include="BaseMethods\RegionNames.cs" />
     <Compile Include="ViewModels\Groups\GroupsMainViewModel.cs" />
     <Compile Include="ViewModels\Learn\LearnMainViewModel.cs" />

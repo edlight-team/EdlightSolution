@@ -30,7 +30,7 @@ namespace EdlightDesktopClient.Views.Schedule
         private readonly DoubleAnimation cardShowAnimation;
         private readonly DoubleAnimation cardHideAnimation;
         private readonly DoubleAnimation adornerShowAnimation;
-        private readonly DoubleAnimation adornerHideAnimation; 
+        private readonly DoubleAnimation adornerHideAnimation;
 
         #endregion
         #region Конструктор и выгрузка
@@ -52,7 +52,7 @@ namespace EdlightDesktopClient.Views.Schedule
         private void ScheduleDateViewerUnloaded(object sender, RoutedEventArgs e)
         {
             aggregator.GetEvent<GridChildChangedEvent>().Unsubscribe(OnGridChildEvent);
-        } 
+        }
 
         #endregion
         #region Создание карточек
@@ -464,7 +464,7 @@ namespace EdlightDesktopClient.Views.Schedule
 
             #endregion
 
-            infoGrid.Children.Add(controlsStack); 
+            infoGrid.Children.Add(controlsStack);
 
             #endregion
 
@@ -835,7 +835,7 @@ namespace EdlightDesktopClient.Views.Schedule
                 CheckGridVisibilities(card);
                 aggregator.GetEvent<CardMoveOrResizeEvent>().Publish(card);
             }
-        } 
+        }
 
         #endregion
     }

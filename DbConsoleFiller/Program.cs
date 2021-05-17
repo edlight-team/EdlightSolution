@@ -13,15 +13,18 @@ namespace DbConsoleFiller
     {
         static RolesModel studentRole;
         static RolesModel teacherRole;
+        static RolesModel umoRole;
 
         static UserModel student;
         static UserModel teacher;
+        static UserModel umoadmin;
+
         static List<UserModel> otherusers;
         static List<UsersRolesModel> otherUserRoles;
 
         static List<GroupsModel> groups;
         static TestsModel test;
-        
+
         static IWebApiService api;
         static IHashingService hashing;
 
@@ -64,7 +67,7 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.AcademicDisciplines);
 
             int count = (await api.GetModels<AcademicDisciplinesModel>(WebApiTableNames.AcademicDisciplines)).Count;
-            Console.WriteLine("type " + model.GetType().Name +  " in db count = " + count);
+            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
         }
         static async Task FillAudiencesModel()
         {
@@ -83,7 +86,7 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.Audiences);
 
             int count = (await api.GetModels<AudiencesModel>(WebApiTableNames.Audiences)).Count;
-            Console.WriteLine("type " + model.GetType().Name +  " in db count = " + count);
+            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
         }
         static async Task FillTypeClassesModel()
         {
@@ -100,7 +103,7 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.TypeClasses);
 
             int count = (await api.GetModels<TypeClassesModel>(WebApiTableNames.TypeClasses)).Count;
-            Console.WriteLine("type " + model.GetType().Name +  " in db count = " + count);
+            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
         }
         static async Task FillRolesModel()
         {
@@ -113,9 +116,12 @@ namespace DbConsoleFiller
             model.RoleName = "teacher";
             model.RoleDescription = "Преподаватель";
             teacherRole = await api.PostModel(model, WebApiTableNames.Roles);
+            model.RoleName = "umo";
+            model.RoleDescription = "Учебно-методический отдел";
+            umoRole = await api.PostModel(model, WebApiTableNames.Roles);
 
             int count = (await api.GetModels<RolesModel>(WebApiTableNames.Roles)).Count;
-            Console.WriteLine("type " + model.GetType().Name +  " in db count = " + count);
+            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
         }
         static async Task FillUsersModel()
         {
@@ -146,6 +152,14 @@ namespace DbConsoleFiller
             model.Age = 35;
             model.Sex = 1;
             teacher = await api.PostModel(model, WebApiTableNames.Users);
+            model.Login = "umoadmin";
+            model.Password = hashing.EncodeString("umoadmin");
+            model.Name = "Сотрудник";
+            model.Surname = "Учебно-методического";
+            model.Patrnymic = "Отдела";
+            model.Age = 35;
+            model.Sex = 2;
+            umoadmin = await api.PostModel(model, WebApiTableNames.Users);
 
             otherusers = new();
             List<UserModel> users = GenerateRandomUsers(50);
@@ -153,7 +167,7 @@ namespace DbConsoleFiller
                 otherusers.Add(await api.PostModel(item, WebApiTableNames.Users));
 
             int count = (await api.GetModels<UserModel>(WebApiTableNames.Users)).Count;
-            Console.WriteLine("type " + model.GetType().Name +  " in db count = " + count);
+            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
         }
         static async Task FillUsersRolesModel()
         {
@@ -166,6 +180,9 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.UsersRoles);
             model.IdRole = teacherRole.Id;
             model.IdUser = teacher.ID;
+            await api.PostModel(model, WebApiTableNames.UsersRoles);
+            model.IdRole = umoRole.Id;
+            model.IdUser = umoadmin.ID;
             await api.PostModel(model, WebApiTableNames.UsersRoles);
 
             foreach (var item in otherusers)
@@ -190,7 +207,7 @@ namespace DbConsoleFiller
             {
                 groups.Add(await api.PostModel(new GroupsModel() { Group = $"Группа {groupNumder++}" }, WebApiTableNames.Groups));
             };
-            
+
             int count = (await api.GetModels<GroupsModel>(WebApiTableNames.Groups)).Count;
             Console.WriteLine("type " + nameof(GroupsModel) + " in db count = " + count);
         }
@@ -255,7 +272,7 @@ namespace DbConsoleFiller
             model.TeacherID = teacher.ID;
             model.CountQuestions = 3;
             model.TestID = test.ID;
-            model.TestName= "Тест1";
+            model.TestName = "Тест1";
             model.TestType = "Контрольная работа";
             model.TestTime = new DateTime(10, 10, 10, 1, 0, 0).ToLongTimeString();
             await api.PostModel(model, WebApiTableNames.TestHeaders);

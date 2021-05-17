@@ -27,6 +27,12 @@ namespace ApplicationServices.PermissionService
         /// <returns>True если у роли есть разрешение</returns>
         Task<bool> IsInPermission(RolesModel role, PermissionsModel permission);
         /// <summary>
+        /// Проверка разрешения у текущего пользователя
+        /// </summary>
+        /// <param name="permissionName">Имя разрешения</param>
+        /// <returns>True если есть разрешение</returns>
+        Task<bool> IsInPermission(string permissionName);
+        /// <summary>
         /// Получить роль из загруженных по имени
         /// </summary>
         /// <returns>Роль</returns>

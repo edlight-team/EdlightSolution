@@ -1,8 +1,5 @@
 ﻿using ApplicationModels.Models;
 using ApplicationServices.WebApiService;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ApplicationXamarinService.PermissionService

@@ -27,6 +27,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private readonly IRegionManager manager;
         private readonly IWebApiService api;
         private readonly INotificationService notification;
+        private readonly IPermissionService permissionService;
 
         #endregion
         #region fields
@@ -104,15 +105,13 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             this.manager = manager;
             this.api = api;
             this.notification = notification;
+            this.permissionService = permissionService;
             aggregator.GetEvent<DateChangedEvent>().Subscribe(() => OnLoadModelsByDate(CurrentDate));
 
             Models = new();
             memory.StoreItem("TimeLessons", Models);
             CurrentUser = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
             CurrentDate = DateTime.Now;
-
-            Task get_config = Task.Run(async () => Config = await ScheduleConfig.InitializeByPermissionService(permissionService));
-            get_config.Wait();
 
             #region Date clicks
 
@@ -131,7 +130,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #endregion
         #region methods
 
-        private async Task LoadingData(IWebApiService api)
+        private async Task LoadingData()
         {
             Teachers = new ObservableCollection<UserModel>(await api.GetModels<UserModel>(WebApiTableNames.Users));
             Disciplines = new ObservableCollection<AcademicDisciplinesModel>(await api.GetModels<AcademicDisciplinesModel>(WebApiTableNames.AcademicDisciplines));
@@ -139,6 +138,8 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             TypeClasses = new ObservableCollection<TypeClassesModel>(await api.GetModels<TypeClassesModel>(WebApiTableNames.TypeClasses));
             Groups = new ObservableCollection<GroupsModel>(await api.GetModels<GroupsModel>(WebApiTableNames.Groups));
             TimeLessons = new ObservableCollection<TimeLessonsModel>(await api.GetModels<TimeLessonsModel>(WebApiTableNames.TimeLessons));
+
+            if (Config == null) Config = await ScheduleConfig.InitializeByPermissionService(permissionService);
         }
         #region Date clicks
 
@@ -153,7 +154,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
                 Task load = Task.Run(async () =>
                 {
-                    Task loading = Task.Run(async () => await LoadingData(api));
+                    Task loading = Task.Run(async () => await LoadingData());
                     await Task.WhenAll(loading);
 
                     Models.Clear();

@@ -1,5 +1,6 @@
 using ApplicationModels.Models;
 using ApplicationServices.HashingService;
+using ApplicationServices.PermissionService;
 using ApplicationServices.WebApiService;
 using Newtonsoft.Json;
 using System;
@@ -25,6 +26,8 @@ namespace DbConsoleFiller
         static List<GroupsModel> groups;
         static TestsModel test;
 
+        static Dictionary<string, PermissionsModel> permissionNamesDictionary = new();
+
         static IWebApiService api;
         static IHashingService hashing;
 
@@ -39,6 +42,8 @@ namespace DbConsoleFiller
             await FillAudiencesModel();
             await FillTypeClassesModel();
             await FillRolesModel();
+            await FillPermissions();
+            await FillRolePermissions();
             await FillUsersModel();
             await FillUsersRolesModel();
             await FillGroupsModel();
@@ -123,6 +128,108 @@ namespace DbConsoleFiller
             int count = (await api.GetModels<RolesModel>(WebApiTableNames.Roles)).Count;
             Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
         }
+        static async Task FillPermissions()
+        {
+            await api.DeleteAll(WebApiTableNames.Permissions);
+
+            Type permission_class_type = typeof(PermissionNames);
+            foreach (var member in permission_class_type.GetMembers())
+            {
+                object[] attr = member.GetCustomAttributes(typeof(PermissionDescription), true);
+                if (attr.Length != 0)
+                {
+                    string description = (attr[0] as PermissionDescription).Description;
+                    string name = member.Name;
+
+                    PermissionsModel posted =
+                        await api.PostModel(new PermissionsModel() { PermissionName = name, PermissionDescription = description }, WebApiTableNames.Permissions);
+
+                    permissionNamesDictionary.Add(name, posted);
+                }
+            }
+
+            int count = (await api.GetModels<PermissionsModel>(WebApiTableNames.Permissions)).Count;
+            Console.WriteLine("type " + nameof(PermissionsModel) + " in db count = " + count);
+        }
+        static async Task FillRolePermissions()
+        {
+            await api.DeleteAll(WebApiTableNames.RolesPermissions);
+
+            //Студент
+            await api.PostModel(new RolesPermissionsModel() {
+                IdRole = studentRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleComments].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel() {
+                IdRole = studentRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.CreateScheduleComments].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel() {
+                IdRole = studentRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.EditScheduleComments].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel() {
+                IdRole = studentRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.DeleteScheduleComments].Id
+            }, WebApiTableNames.RolesPermissions);
+
+            //Преподаватель
+            await api.PostModel(new RolesPermissionsModel() {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleComments].Id 
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.CreateScheduleComments].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.EditScheduleComments].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.DeleteScheduleComments].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.SetScheduleStatus].Id
+            }, WebApiTableNames.RolesPermissions);
+
+            //УМО
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleComments].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.CreateScheduleComments].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.CreateScheduleRecords].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.SetScheduleStatus].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.DeleteScheduleRecord].Id
+            }, WebApiTableNames.RolesPermissions);
+
+
+            int count = (await api.GetModels<RolesPermissionsModel>(WebApiTableNames.RolesPermissions)).Count;
+            Console.WriteLine("type " + nameof(RolesPermissionsModel) + " in db count = " + count);
+        }
         static async Task FillUsersModel()
         {
             await api.DeleteAll(WebApiTableNames.Users);
@@ -195,7 +302,6 @@ namespace DbConsoleFiller
             int count = (await api.GetModels<UsersRolesModel>(WebApiTableNames.UsersRoles)).Count;
             Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
         }
-
         static async Task FillGroupsModel()
         {
             await api.DeleteAll(WebApiTableNames.Groups);
@@ -211,7 +317,6 @@ namespace DbConsoleFiller
             int count = (await api.GetModels<GroupsModel>(WebApiTableNames.Groups)).Count;
             Console.WriteLine("type " + nameof(GroupsModel) + " in db count = " + count);
         }
-
         static async Task FillStudentsGroupsModel()
         {
             await api.DeleteAll(WebApiTableNames.StudentsGroups);
@@ -231,7 +336,6 @@ namespace DbConsoleFiller
             int count = (await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups)).Count;
             Console.WriteLine("type " + nameof(StudentsGroupsModel) + " in db count = " + count);
         }
-
         static async Task FillTestsModel()
         {
             await api.DeleteAll(WebApiTableNames.Tests);
@@ -262,7 +366,6 @@ namespace DbConsoleFiller
             int count = (await api.GetModels<TestsModel>(WebApiTableNames.Tests)).Count;
             Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
         }
-
         static async Task FillTestHeaderModel()
         {
             await api.DeleteAll(WebApiTableNames.TestHeaders);
@@ -280,7 +383,6 @@ namespace DbConsoleFiller
             int count = (await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders)).Count;
             Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
         }
-
         static async Task FillTestResult()
         {
             await api.DeleteAll(WebApiTableNames.TestResults);

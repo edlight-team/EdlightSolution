@@ -1,80 +1,77 @@
 ﻿using ApplicationModels.Models;
 using ApplicationServices.HashingService;
 using ApplicationServices.WebApiService;
+using ApplicationXamarinService.MemoryService;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Navigation;
 using StaticCollections;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace EdlightMobileClient.ViewModels
 {
     public class AuthPageViewModel : ViewModelBase
     {
-        public AuthPageViewModel(INavigationService navigationService, IHashingService hashing) : base(navigationService)
-        {
-#if DEBUG
-            Model.Login = "admin";
-            Model.Password = "admin";
-#endif
-            this.hashing = hashing;
-            //this.api = api;
-            AuthCommand = new DelegateCommand(OnAuthCommand);
-        }
-
+        #region services
         private readonly IHashingService hashing;
         private readonly IWebApiService api;
-
+        private readonly IMemoryService memory;
+        #endregion
+        #region fields
         private UserModel model;
+
+        #endregion
+        #region props
         public UserModel Model { get => model ??= new(); set => SetProperty(ref model, value); }
 
+        #endregion
+        #region commands
         public DelegateCommand AuthCommand { get; }
+
+        #endregion
+        #region constructor
+        public AuthPageViewModel(INavigationService navigationService, IWebApiService api, IMemoryService memory, IHashingService hashing) : base(navigationService)
+        {
+#if DEBUG
+            //Model.Login = "admin";
+            //Model.Password = "admin";
+            Model.Login = "student";
+            Model.Password = "student";
+            //Model.Login = "teacher";
+            //Model.Password = "teacher";
+#endif
+            this.hashing = hashing;
+            this.api = api;
+            this.memory = memory;
+
+            AuthCommand = new DelegateCommand(OnAuthCommand);
+        }
+        #endregion
+        #region methods
         private async void OnAuthCommand()
         {
             try
             {
-                //ToDo: Переделай вместо этого на api.GetModels..........
-                //Пример в EdlightSolution -> ClientDesktop -> EdlightDesktopClient -> ViewModels -> AuthWindowViewModel
+                var users = await api.GetModels<UserModel>(WebApiTableNames.Users);
+                var target_user = users.FirstOrDefault(u => u.Login == model.Login);
 
-                HttpClient client = new();
-                client.Timeout = TimeSpan.FromSeconds(5);
-                HttpRequestMessage request = new();
-                request.RequestUri = new Uri($"{StaticStrings.BaseURL}/api/users/login={Model.Login}&auth_token=5B6253853ACCF8B8E4FEE1F67C46D");
-                request.Method = HttpMethod.Get;
-                request.Headers.Add("Accept", "application/json");
+                if (target_user.Password != hashing.EncodeString(model.Password))
+                    throw new Exception();
 
-                HttpResponseMessage response = await client.SendAsync(request);
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    await Application.Current.MainPage.DisplayAlert("Ошибка", response.Content.ReadAsStringAsync().Result, "Ок");
-                    return;
-                }
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    await Application.Current.MainPage.DisplayAlert("Ошибка", response.Content.ReadAsStringAsync().Result, "Ок");
-                    return;
-                }
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    HttpContent responseContent = response.Content;
-                    string json = await responseContent.ReadAsStringAsync();
-                    UserModel user = JsonConvert.DeserializeObject<UserModel>(json);
-                    string hashPass = hashing.GetHash(Model.Password);
-                    if (user.Password != hashPass)
-                    {
-                        await Application.Current.MainPage.DisplayAlert("Ошибка", "Пароль не подходит", "Ок");
-                        return;
-                    }
-                    await NavigationService.NavigateAsync("NavigationPage/ShellTabbedPage?selectedTab=WeekSchedulePage");
-                }
+                memory.StoreItem(MemoryAlliases.CurrentUser, target_user);
+
+                await NavigationService.NavigateAsync("ShellTabbedPage?selectedTab=WeekSchedulePage");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "Ок");
             }
         }
+
+        #endregion
     }
 }

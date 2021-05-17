@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             xmlns:uc="clr-namespace:EdlightMobileClient.UserControls"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="EdlightMobileClient.Views.EducationViews.ListTestsPage"
+             x:Name="listTestsPage"
+             NavigationPage.HasBackButton="False"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <SolidColorBrush x:Key="BackgroundBrush" Color="#2f3461"/>
+            <Color x:Key="TextColor">#151719</Color>
+            <Color x:Key="CardBorderColor">#e6e6fa</Color>
+            <SolidColorBrush x:Key="CardBrush" Color="#fb607f"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout BindableLayout.ItemsSource="{Binding TestHeaders}" Background="{StaticResource BackgroundBrush}">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <uc:ContentButton  HeightRequest="180"
+                                       WidthRequest="100"
+                                       Command="{Binding BindingContext.NavigateCommand, Source={x:Reference listTestsPage}}"
+                                       CommandParameter="{Binding}">
+                        <Frame Margin="10, 5, 10, 5"
+                               CornerRadius="15"
+                               Background="{StaticResource CardBrush}"
+                               BorderColor="{StaticResource CardBorderColor}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="3*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0"
+                                       Text="{Binding TestType}"
+                                       TextColor="{StaticResource TextColor}"
+                                       FontSize="22"/>
+                                <Label Grid.Row="1"
+                                       VerticalOptions="Center"
+                                       Text="{Binding TestName}"
+                                       TextColor="{StaticResource TextColor}"
+                                       FontSize="24"/>
+                                <StackLayout Grid.Row="2"
+                                             Orientation="Horizontal">
+                                    <Label Text="Время на прохождение:"
+                                           TextColor="{StaticResource TextColor}"
+                                           FontSize="20"/>
+                                    <Label Text="{Binding TestTime, StringFormat='{0:HH:mm}'}"
+                                           TextColor="{StaticResource TextColor}"
+                                           FontSize="20"/>
+                                </StackLayout>
+                            </Grid>
+                        </Frame>
+                    </uc:ContentButton>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

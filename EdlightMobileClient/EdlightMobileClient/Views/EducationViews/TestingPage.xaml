@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:prism="http://prismlibrary.com"
+              xmlns:stateContainerDemo="clr-namespace:Xamarin.Forms.Essentials.Controls;assembly=Xamarin.Forms.Essentials.Controls"
+              prism:ViewModelLocator.AutowireViewModel="True"
+              x:Class="EdlightMobileClient.Views.EducationViews.TestingPage"
+              NavigationPage.HasBackButton="False"
+              NavigationPage.HasNavigationBar="True"
+              ItemsSource="{Binding Questions}"
+              Background="{DynamicResource BackgroundBrush}"
+              x:Name="testingPage">
+    <CarouselPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="TextColor">#f8f4ff</Color>
+            <Color x:Key="ButtonTextColor">#151719</Color>
+            <Color x:Key="CardBorderColor">#e6e6fa</Color>
+            <SolidColorBrush x:Key="BackgroundBrush" Color="#2f3461"/>
+            <SolidColorBrush x:Key="ButtonBackgroundBrush" Color="#fb607f"/>
+            <SolidColorBrush x:Key="SplitLineBrash" Color="#e6e6fa"/>
+        </ResourceDictionary>
+    </CarouselPage.Resources>
+    <NavigationPage.TitleView>
+        <Label Text="{Binding TimeHeader}" Margin="-15, 0, 0, 0" TextColor="AliceBlue" HorizontalTextAlignment="Center" FontSize="20"/>
+    </NavigationPage.TitleView>
+    <CarouselPage.ItemTemplate>
+        <DataTemplate>
+            <ContentPage x:Name="testContent"
+                         Background="{StaticResource BackgroundBrush}">
+                <Grid Padding="10, 10, 10, 10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ActivityIndicator Grid.Row="2" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" IsRunning="{Binding BindingContext.IndicatorIsRunning, Source={x:Reference testingPage}}"/>
+                    <BoxView Grid.Row="0"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="3"
+                             HeightRequest="2"
+                             VerticalOptions="Start"
+                             HorizontalOptions="Fill"
+                             Margin="5, -10, 5, 0"
+                             Background="{StaticResource SplitLineBrash}"/>
+                    <StackLayout Grid.Row="0"
+                                 Grid.Column="2"
+                                 Orientation="Horizontal"
+                                 HorizontalOptions="End">
+                        <Label Text="{Binding NumberQuestion}"
+                               TextColor="{StaticResource TextColor}"
+                               FontSize="20"/>
+                        <Label Text="/"
+                               TextColor="{StaticResource TextColor}"
+                               FontSize="20"/>
+                        <Label Text="{Binding BindingContext.TestHeader.CountQuestions, Source={x:Reference testingPage}}"
+                               TextColor="{StaticResource TextColor}"
+                               FontSize="20"/>
+                    </StackLayout>
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="3"
+                           Margin="10, 0, 10, 0"
+                           VerticalOptions="Center"
+                           Text="{Binding Question}"
+                           TextColor="{StaticResource TextColor}"
+                           FontSize="20"/>
+                    <ListView Grid.Row="2"
+                              Grid.RowSpan="2"
+                              Margin="10, 0, 10, 0"
+                              ItemsSource="{Binding AnswerOptions}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <ViewCell.View>
+                                        <StackLayout Orientation="Horizontal">
+                                            <CheckBox IsChecked="{Binding IsUserAnswer}"/>
+                                            <Label Text="{Binding Answer}"
+                                                   VerticalOptions="Center"
+                                                   TextColor="{StaticResource TextColor}"
+                                                   FontSize="20"/>
+                                        </StackLayout>
+                                    </ViewCell.View>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Button Grid.Row="5"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            HeightRequest="50"
+                            WidthRequest="100"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"
+                            Background="{StaticResource ButtonBackgroundBrush}"
+                            Text="Завершить тест"
+                            FontSize="20"
+                            TextColor="{StaticResource ButtonTextColor}"
+                            Clicked="Button_Clicked"
+                            Command="{Binding BindingContext.NavigateCommand, Source={x:Reference testingPage}}"/>
+                </Grid>
+            </ContentPage>
+        </DataTemplate>
+    </CarouselPage.ItemTemplate>
+</CarouselPage>

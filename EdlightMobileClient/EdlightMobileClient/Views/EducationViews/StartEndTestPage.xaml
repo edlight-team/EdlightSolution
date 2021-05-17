@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="EdlightMobileClient.Views.EducationViews.StartEndTestPage"
+             NavigationPage.HasBackButton="False"
+             NavigationPage.HasNavigationBar="False"
+             x:Name="startEndTestPage"
+             Background="{DynamicResource BackgroundBrush}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="TextColor">#f8f4ff</Color>
+            <Color x:Key="ButtonTextColor">#151719</Color>
+            <Color x:Key="CardBorderColor">#e6e6fa</Color>
+            <SolidColorBrush x:Key="BackgroundBrush" Color="#2f3461"/>
+            <SolidColorBrush x:Key="ButtonBackgroundBrush" Color="#fb607f"/>
+            <SolidColorBrush x:Key="SplitLineBrash" Color="#e6e6fa"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="6*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0"
+                   Grid.ColumnSpan="3"
+                   Grid.Row="1"
+                   HorizontalOptions="Center"
+                   Text="{Binding TestHeader.TestType}"
+                   TextColor="{StaticResource TextColor}"
+                   FontSize="25"/>
+            <Label Grid.Column="0"
+                   Grid.ColumnSpan="3"
+                   Grid.Row="2"
+                   HorizontalOptions="Center"
+                   Text="{Binding TestHeader.TestName}"
+                   TextColor="{StaticResource TextColor}"
+                   FontSize="25"/>
+            <StackLayout Grid.Column="0"
+                         Grid.ColumnSpan="3"
+                         Grid.Row="3"
+                         Orientation="Horizontal"
+                         HorizontalOptions="Center">
+                <StackLayout.Style>
+                    <Style TargetType="StackLayout">
+                        <Setter Property="IsVisible" Value="true"/>
+                        <Style.Triggers>
+                            <DataTrigger TargetType="StackLayout" Binding="{Binding Result.TestCompleted}" Value="true">
+                                <Setter Property="IsVisible" Value="false"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackLayout.Style>
+                <Label Text="Время прохождения теста:"
+                       TextColor="{StaticResource TextColor}"
+                       FontSize="20"/>
+                <Label Text="{Binding TestHeader.TestTime,StringFormat='{0:HH:mm}'}"
+                       TextColor="{StaticResource TextColor}"
+                       FontSize="20"/>
+            </StackLayout>
+            <StackLayout Grid.Column="0"
+                         Grid.ColumnSpan="3"
+                         Grid.Row="4"
+                         Orientation="Horizontal"
+                         HorizontalOptions="Center">
+                <Label Text="Количество вопросов:"
+                       TextColor="{StaticResource TextColor}"
+                       FontSize="20"/>
+                <Label Text="{Binding TestHeader.CountQuestions}"
+                       TextColor="{StaticResource TextColor}"
+                       FontSize="20"/>
+            </StackLayout>
+            <StackLayout Grid.Column="0"
+                         Grid.ColumnSpan="3"
+                         Grid.Row="5"
+                         Orientation="Horizontal"
+                         HorizontalOptions="Center">
+                <StackLayout.Style>
+                    <Style TargetType="StackLayout">
+                        <Setter Property="IsVisible" Value="false"/>
+                        <Style.Triggers>
+                            <DataTrigger TargetType="StackLayout" Binding="{Binding Result.TestCompleted}" Value="true">
+                                <Setter Property="IsVisible" Value="true"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackLayout.Style>
+                <Label Text="Правильных ответов:"
+                       TextColor="{StaticResource TextColor}"
+                       FontSize="20"/>
+                <Label Text="{Binding Result.CorrectAnswers}"
+                       TextColor="{StaticResource TextColor}"
+                       FontSize="20"/>
+            </StackLayout>
+            <Button Grid.Column="1"
+                    Grid.Row="7"
+                    HeightRequest="60"
+                    WidthRequest="100"
+                    Background="{StaticResource ButtonBackgroundBrush}"
+                    TextColor="{StaticResource ButtonTextColor}"
+                    FontSize="18"
+                    CornerRadius="15"
+                    Command="{Binding NavigateCommand}"
+                    CommandParameter="{Binding TestHeader.TestID}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Text" Value="Начать тест"/>
+                        <Style.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding Result.TestCompleted}" Value="true">
+                                <Setter Property="Text" Value="Тест пройден"/>
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

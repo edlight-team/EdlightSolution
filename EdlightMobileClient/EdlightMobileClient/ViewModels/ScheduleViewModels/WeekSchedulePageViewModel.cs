@@ -1,9 +1,12 @@
-﻿using EdlightMobileClient.Collections;
+﻿using ApplicationModels.Models;
+using EdlightMobileClient.Collections;
 using EdlightMobileClient.Models;
+using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Navigation;
 using System;
 using System.Collections.Generic;
+using Xamarin.Essentials;
 
 namespace EdlightMobileClient.ViewModels.ScheduleViewModels
 {

@@ -168,7 +168,6 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         private void OnAddScheduleCard()
         {
-            manager.RegisterViewWithRegion(BaseMethods.RegionNames.ModalRegion, typeof(AddScheduleView));
             manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddScheduleView));
         }
 

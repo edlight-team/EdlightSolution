@@ -1,5 +1,6 @@
 ﻿using ApplicationEventsWPF.Events;
 using ApplicationModels.Models;
+using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
 using HandyControl.Controls;
 using Prism.Commands;
@@ -19,6 +20,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #region services
 
         private readonly IEventAggregator aggregator;
+        private readonly IWebApiService api;
 
         #endregion
         #region fields
@@ -41,9 +43,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #endregion
         #region ctor
 
-        public ScheduleDateViewerViewModel(IMemoryService memory, IEventAggregator aggregator)
+        public ScheduleDateViewerViewModel(IMemoryService memory, IEventAggregator aggregator, IWebApiService api)
         {
             this.aggregator = aggregator;
+            this.api = api;
             Models = memory.GetItem<ObservableCollection<LessonsModel>>("TimeLessons");
             FillTimes();
 
@@ -54,17 +57,18 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #endregion
         #region methods
 
+        #region Загрузка и выгрузка
+
         private void OnLoaded()
         {
             CreateCards();
             aggregator.GetEvent<CardMoveOrResizeEvent>().Subscribe(UpdateCard);
-            aggregator.GetEvent<DateChangedEvent>().Subscribe(CreateCards);
         }
-        private void OnUnloaded()
-        {
-            aggregator.GetEvent<CardMoveOrResizeEvent>().Unsubscribe(UpdateCard);
-            aggregator.GetEvent<DateChangedEvent>().Unsubscribe(CreateCards);
-        }
+        private void OnUnloaded() => aggregator.GetEvent<CardMoveOrResizeEvent>().Unsubscribe(UpdateCard);
+
+        #endregion
+        #region Заполнение времени и карточек
+
         private void FillTimes()
         {
             TimeZones = new();
@@ -72,10 +76,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
             for (int i = 8; i < 20; i++)
             {
-                TimeZones.Add(i.ToString("D2") + ":" + 0.ToString("D2"));
+                TimeZones.Add(i.ToString() + ":" + 0.ToString("D2"));
                 foreach (var interval in intervals)
                 {
-                    TimeZones.Add(i.ToString("D2") + ":" + interval.ToString("D2"));
+                    TimeZones.Add(i.ToString() + ":" + interval.ToString("D2"));
                 }
             }
         }
@@ -95,15 +99,11 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
                 aggregator.GetEvent<GridChildChangedEvent>().Publish(new object[] { card, model });
             }
-        }
-        private void UpdateCard(Card card)
-        {
-            var target = Models.FirstOrDefault(m => m.Id.ToString().ToUpper() == card.Uid);
-            if (target == null) return;
-            target.TimeLessons.StartTime = CalculateStartTimeByTopMargin(card.Margin.Top);
-            target.TimeLessons.EndTime = CalculateEndTimeByStartTimeAndHeight(target.TimeLessons.StartTime, card.Height);
-            //Growl.Info($"Новое время: Начало - {target.TimeLessons.StartTime}; Конец - {target.TimeLessons.EndTime}", "Global");
-        }
+        } 
+
+        #endregion
+        #region Вычисления размеров сетки
+
         private string CalculateStartTimeByTopMargin(double topMargin)
         {
             var index = (int)Math.Round(topMargin / 17);
@@ -128,6 +128,23 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             int endIndexTime = TimeZones.IndexOf(endTime);
             return (endIndexTime - startIndexTime) * 17;
         }
+
+        #endregion
+        #region Обновление карточек
+
+        private async void UpdateCard(Card card)
+        {
+            var target = Models.FirstOrDefault(m => m.Id.ToString().ToUpper() == card.Uid);
+            if (target == null) return;
+            target.TimeLessons.StartTime = CalculateStartTimeByTopMargin(card.Margin.Top);
+            target.TimeLessons.EndTime = CalculateEndTimeByStartTimeAndHeight(target.TimeLessons.StartTime, card.Height);
+
+            await api.PutModel(target.TimeLessons, WebApiTableNames.TimeLessons);
+            //ToDo: Добавть здесь метод Signal R
+        } 
+
+        #endregion
+
         #endregion
     }
 }

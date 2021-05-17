@@ -12,6 +12,7 @@ using Styles.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Unity;
 
@@ -71,6 +72,8 @@ namespace EdlightDesktopClient.ViewModels
             Password = "student";
             Login = "teacher";
             Password = "teacher";
+            Login = "umoadmin";
+            Password = "umoadmin";
 #endif
 
             CloseCommand = new DelegateCommand(StaticCommands.Shutdown);

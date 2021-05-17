@@ -40,6 +40,12 @@ namespace ApiTest
         #endregion
         #region test methods
         [TestMethod]
+        public void TestClear()
+        {
+            string result = api.DeleteAll().Result;
+            Assert.IsTrue(result.Contains("Успешно"));
+        }
+        [TestMethod]
         public void TestUsers()
         {
             UserModel model = new();
@@ -500,7 +506,6 @@ namespace ApiTest
 
             Assert.AreEqual(models.Count, 0);
         }
-
         [TestMethod]
         public void TestTestResults()
         {
@@ -545,7 +550,6 @@ namespace ApiTest
 
             Assert.AreEqual(models.Count, 0);
         }
-
         [TestMethod]
         public void TestTests()
         {

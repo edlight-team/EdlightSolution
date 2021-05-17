@@ -61,6 +61,7 @@
     <Compile Include="HashingService\IHashingService.cs" />
     <Compile Include="PermissionService\IPermissionService.cs" />
     <Compile Include="PermissionService\PermissionImplementation.cs" />
+    <Compile Include="PermissionService\PermissionNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebApiService\IWebApiService.cs" />
     <Compile Include="WebApiService\WebApiServiceImplementation.cs" />

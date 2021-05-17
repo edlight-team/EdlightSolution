@@ -4,7 +4,7 @@
         xmlns:controls="clr-namespace:Styles.Controls;assembly=Styles"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:prism="http://prismlibrary.com/"
+        xmlns:prism="http://www.codeplex.com/prism"
         xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels"
         Title="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
         Width="375"

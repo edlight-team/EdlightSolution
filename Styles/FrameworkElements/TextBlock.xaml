@@ -47,6 +47,14 @@
         <Setter Property="CaretBrush" Value="{DynamicResource PrimaryFontBrush}" />
     </Style>
 
+    <Style x:Key="ToolTipTextBlock" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryFontBrush}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Width" Value="250" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
     <Style x:Key="SimpleToolTip" TargetType="ToolTip">
         <Setter Property="Template">
             <Setter.Value>

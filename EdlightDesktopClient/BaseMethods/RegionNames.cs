@@ -26,5 +26,9 @@
         /// Регион просмотра расписания по дате
         /// </summary>
         internal static string ScheduleDateViewRegion = nameof(ScheduleDateViewRegion);
+        /// <summary>
+        /// Регион модальных окон
+        /// </summary>
+        internal static string ModalRegion = nameof(ModalRegion);
     }
 }

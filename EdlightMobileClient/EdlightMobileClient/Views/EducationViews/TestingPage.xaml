@@ -2,6 +2,7 @@
 <CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
               xmlns:prism="http://prismlibrary.com"
+              xmlns:stateContainerDemo="clr-namespace:Xamarin.Forms.Essentials.Controls;assembly=Xamarin.Forms.Essentials.Controls"
               prism:ViewModelLocator.AutowireViewModel="True"
               x:Class="EdlightMobileClient.Views.EducationViews.TestingPage"
               NavigationPage.HasBackButton="False"
@@ -20,7 +21,7 @@
         </ResourceDictionary>
     </CarouselPage.Resources>
     <NavigationPage.TitleView>
-        <Label Text="{Binding TimeHeader}" TextColor="AliceBlue" HorizontalTextAlignment="Center" FontSize="20"/>
+        <Label Text="{Binding TimeHeader}" Margin="-15, 0, 0, 0" TextColor="AliceBlue" HorizontalTextAlignment="Center" FontSize="20"/>
     </NavigationPage.TitleView>
     <CarouselPage.ItemTemplate>
         <DataTemplate>
@@ -30,6 +31,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="25"/>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="50"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="20"/>
                         <RowDefinition Height="auto"/>
@@ -37,18 +39,19 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ActivityIndicator IsRunning="{Binding BindingContext.IndicatorIsRunning, Source={x:Reference testingPage}}"/>
+                    <ActivityIndicator Grid.Row="2" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" IsRunning="{Binding BindingContext.IndicatorIsRunning, Source={x:Reference testingPage}}"/>
                     <BoxView Grid.Row="0"
                              Grid.Column="0"
-                             Grid.ColumnSpan="2"
+                             Grid.ColumnSpan="3"
                              HeightRequest="2"
                              VerticalOptions="Start"
                              HorizontalOptions="Fill"
                              Margin="5, -10, 5, 0"
                              Background="{StaticResource SplitLineBrash}"/>
                     <StackLayout Grid.Row="0"
-                                 Grid.Column="1"
+                                 Grid.Column="2"
                                  Orientation="Horizontal"
                                  HorizontalOptions="End">
                         <Label Text="{Binding NumberQuestion}"
@@ -63,13 +66,14 @@
                     </StackLayout>
                     <Label Grid.Row="1"
                            Grid.Column="0"
-                           Grid.ColumnSpan="2"
+                           Grid.ColumnSpan="3"
                            Margin="10, 0, 10, 0"
                            VerticalOptions="Center"
                            Text="{Binding Question}"
                            TextColor="{StaticResource TextColor}"
                            FontSize="20"/>
                     <ListView Grid.Row="2"
+                              Grid.RowSpan="2"
                               Margin="10, 0, 10, 0"
                               ItemsSource="{Binding AnswerOptions}">
                         <ListView.ItemTemplate>
@@ -88,9 +92,9 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <Button Grid.Row="4"
+                    <Button Grid.Row="5"
                             Grid.Column="0"
-                            Grid.ColumnSpan="2"
+                            Grid.ColumnSpan="3"
                             HeightRequest="50"
                             WidthRequest="100"
                             HorizontalOptions="Fill"

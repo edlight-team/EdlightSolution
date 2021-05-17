@@ -36,13 +36,13 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
         #region methods
         public async void NaviagteToTestingPage(object parametr)
         {
-            List<TestsModel> tests = await api.GetModels<TestsModel>(WebApiTableNames.Tests, $"ID = '{testHeader.TestID}'");
-            List<QuestionsModel> questions = JsonConvert.DeserializeObject<List<QuestionsModel>>(tests[0].Questions);
+            //List<TestsModel> tests = await api.GetModels<TestsModel>(WebApiTableNames.Tests, $"ID = '{testHeader.TestID}'");
+            //List<QuestionsModel> questions = JsonConvert.DeserializeObject<List<QuestionsModel>>(tests[0].Questions);
             NavigationParameters navigationParams = new()
             {
                 { "header", testHeader },
-                { "result", result },
-                { "questions", questions }
+                { "result", result }
+                //{ "questions", questions }
             };
             await NavigationService.NavigateAsync("TestingPage", navigationParams);
         }

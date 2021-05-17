@@ -1,5 +1,6 @@
 ﻿using ApplicationModels.Models;
 using ApplicationServices.WebApiService;
+using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
@@ -51,7 +52,8 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
 
             NavigateCommand = new DelegateCommand(EndTest);
 
-            StartTimer();
+            Questions.Add(new QuestionsModel() { AnswerOptions = new ObservableCollection<TestAnswer>(), Question = string.Empty });
+            IndicatorIsRunning = true;
         }
         #endregion
         #region methods
@@ -105,18 +107,28 @@ namespace EdlightMobileClient.ViewModels.EducationViewModels
                 EndTest();
             }
         }
+
+        private async void DownloadQuestions()
+        {
+            List<TestsModel> tests = await api.GetModels<TestsModel>(WebApiTableNames.Tests, $"ID = '{testHeader.TestID}'");
+            List<QuestionsModel> questions = JsonConvert.DeserializeObject<List<QuestionsModel>>(tests[0].Questions);
+            foreach (var item in questions)
+                Questions.Add(item);
+            IndicatorIsRunning = false;
+            Questions.RemoveAt(0);
+            StartTimer();
+        }
         #endregion
         #region navigation
         public override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
+
             TestHeader = parameters.GetValue<TestHeadersModel>("header");
             Result = parameters.GetValue<TestResultsModel>("result");
             DateTime time = Convert.ToDateTime(TestHeader.TestTime);
             timeTest = time.TimeOfDay;
-            List<QuestionsModel> questions = parameters.GetValue<List<QuestionsModel>>("questions");
-            foreach (var item in questions)
-                Questions.Add(item);
+            Task.Run(() => DownloadQuestions());
         }
 
         public void Dispose()

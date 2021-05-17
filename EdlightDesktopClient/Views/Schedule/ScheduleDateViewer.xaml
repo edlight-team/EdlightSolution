@@ -9,6 +9,7 @@
              xmlns:prism="http://www.codeplex.com/prism"
              xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels.Schedule"
              behaviors:LoadedBehavior.Command="{Binding LoadedCommand}"
+             behaviors:UnloadedBehavior.Command="{Binding UnloadedCommand}"
              d:DataContext="{d:DesignInstance vm:ScheduleDateViewerViewModel}"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d">
@@ -72,7 +73,6 @@
                       Grid.Column="2"
                       Margin="0,5,0,0"
                       AllowDrop="True"
-                      DragEnter="CardsListScrollDragEnter"
                       Drop="CardsListScrollDrop"
                       ScrollChanged="CardsListScrollChanged"
                       VerticalScrollBarVisibility="Visible">
@@ -102,73 +102,60 @@
                       Height="{Binding ElementName=ScheduleMarkup, Path=ActualHeight}"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Top"
-                      Panel.ZIndex="2">
-                    <hc:Card Width="600"
-                             Height="85"
-                             Margin="0,255,0,0"
-                             VerticalAlignment="Top"
-                             Panel.ZIndex="3"
-                             Background="BlueViolet"
-                             MouseDown="CardMouseDown">
-                        <Grid>
-                            <Border Background="Transparent" />
-                            <ContentControl Height="15"
-                                            Margin="3"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Top"
-                                            Cursor="SizeNS"
-                                            MouseDown="UpArrowMouseDown"
-                                            Template="{DynamicResource Up}" />
-                            <ContentControl Height="15"
-                                            Margin="3"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Bottom"
-                                            Cursor="SizeNS"
-                                            MouseDown="DownArrowMouseDown"
-                                            Template="{DynamicResource Down}" />
-                            <Grid.Style>
-                                <Style TargetType="Grid">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Opacity" Value="1" />
-                                        </Trigger>
-                                        <Trigger Property="IsMouseOver" Value="False">
-                                            <Setter Property="Opacity" Value="0" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Grid.Style>
-                        </Grid>
-                    </hc:Card>
-                </Grid>
+                      Panel.ZIndex="2" />
 
-                <!--#region Ограничители-->
+                <!--#endregion-->
+                <!--#region Ограничители и задний фон при перетаскивании-->
+
+                <!--#region Задний фон-->
 
                 <StackPanel Name="Adorner"
                             Grid.Column="2"
+                            Opacity="0"
                             Orientation="Vertical"
-                            Visibility="Collapsed">
+                            Visibility="Visible">
                     <Border Name="AdornerTargetBorder"
                             Height="2"
                             Background="{DynamicResource ActiveBackgroundTabHeaderBtush}"
                             Visibility="Collapsed" />
                     <hc:Card Name="AdornerCardTemplate"
                              Width="600"
-                             Background="BlueViolet"
                              Opacity="1" />
                 </StackPanel>
+
+                <!--#endregion-->
+                <!--#region Зоны-->
+
+                <Border Name="AdornerZoneLeft"
+                        Grid.Column="2"
+                        Width="150"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Stretch"
+                        Background="{DynamicResource ZoneBrush}"
+                        Opacity="0" />
+                <Border Name="AdornerZoneRight"
+                        Grid.Column="2"
+                        Width="150"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Stretch"
+                        Background="{DynamicResource ZoneBrush}"
+                        Opacity="0" />
+
+                <!--#endregion-->
+                <!--#region Ограничители-->
+
                 <Border Name="DownRangeBorder"
                         Grid.Column="2"
                         Height="2"
                         VerticalAlignment="Top"
-                        Background="Transparent"
-                        Visibility="Visible" />
+                        Background="{DynamicResource ActiveBackgroundTabHeaderBtush}"
+                        Visibility="Collapsed" />
                 <Border Name="UpRangeBorder"
                         Grid.Column="2"
                         Height="2"
                         VerticalAlignment="Top"
-                        Background="Transparent"
-                        Visibility="Visible" />
+                        Background="{DynamicResource ActiveBackgroundTabHeaderBtush}"
+                        Visibility="Collapsed" />
 
                 <!--#endregion-->
 

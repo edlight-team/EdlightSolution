@@ -49,11 +49,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonFileModel.cs" />
     <Compile Include="Models\AcademicDisciplinesModel.cs" />
     <Compile Include="Models\AudiencesModel.cs" />
+    <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Models\DialogsModel.cs" />
     <Compile Include="Models\GroupsModel.cs" />
     <Compile Include="Models\LessonsModel.cs" />
+    <Compile Include="Models\MaterialsModel.cs" />
     <Compile Include="Models\MessagesModel.cs" />
     <Compile Include="Models\PermissionsModel.cs" />
     <Compile Include="Models\QuestionsModel.cs" />

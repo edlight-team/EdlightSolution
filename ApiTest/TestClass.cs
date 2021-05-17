@@ -574,6 +574,89 @@ namespace ApiTest
 
             Assert.AreEqual(models.Count, 0);
         }
+        [TestMethod]
+        public void TestComments()
+        {
+            CommentModel model = new();
+            model.Message = TestStrings[0];
+
+            var posted = api.PostModel(model, WebApiTableNames.Comments).Result;
+
+            Assert.AreEqual(posted.Message, TestStrings[0]);
+
+            posted.Message = TestStrings[1];
+
+            var putted = api.PutModel(posted, WebApiTableNames.Comments).Result;
+
+            Assert.AreEqual(putted.Message, TestStrings[1]);
+
+            var deleted_count = api.DeleteModel(putted.Id, WebApiTableNames.Comments).Result;
+
+            Assert.AreEqual(deleted_count, 1);
+
+            var models = new List<CommentModel>(api.GetModels<CommentModel>(WebApiTableNames.Comments).Result);
+
+            Assert.AreEqual(models.Count, 0);
+        }
+        [TestMethod]
+        public void TestMaterials()
+        {
+            MaterialsModel model = new();
+            model.MaterialPath = TestStrings[0];
+
+            var posted = api.PostModel(model, WebApiTableNames.Materials).Result;
+
+            Assert.AreEqual(posted.MaterialPath, TestStrings[0]);
+
+            posted.MaterialPath = TestStrings[1];
+
+            var putted = api.PutModel(posted, WebApiTableNames.Materials).Result;
+
+            Assert.AreEqual(putted.MaterialPath, TestStrings[1]);
+
+            var deleted_count = api.DeleteModel(putted.Id, WebApiTableNames.Materials).Result;
+
+            Assert.AreEqual(deleted_count, 1);
+
+            var models = new List<MaterialsModel>(api.GetModels<MaterialsModel>(WebApiTableNames.Materials).Result);
+
+            Assert.AreEqual(models.Count, 0);
+        }
+        [TestMethod]
+        public void TestFiles()
+        {
+            Random rnd = new();
+            byte[] data = new byte[128 * 1024 * 10];
+            rnd.NextBytes(data);
+
+            ApplicationModels.JsonFileModel file = new();
+            file.FileName = "test.file";
+            file.Data = data;
+
+            string push = api.PushFile("test/", file).Result;
+
+            Assert.AreEqual(push, "Файл успешно сохранен");
+
+            byte[] data_from_server = new byte[128 * 1024 * 10];
+
+            object response = api.GetFile("test/test.file").Result;
+            if (response is ApplicationModels.JsonFileModel jfm)
+            {
+                data_from_server = jfm.Data;
+            }
+
+            bool isEquals = false;
+            for (int i = 0; i < data.Length; i++)
+            {
+                isEquals = data_from_server[i] == data[i];
+            }
+
+            Assert.IsTrue(isEquals);
+
+            string delete = api.DeleteFile("test/test.file").Result;
+
+            Assert.AreEqual(delete, "Файл успешно удален");
+        }
         #endregion
     }
 }

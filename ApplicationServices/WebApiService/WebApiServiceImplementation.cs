@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ApplicationModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -110,6 +111,54 @@ namespace ApplicationServices.WebApiService
         {
             WebRequest request = CreateRequest("Database", WebRequestMethods.Http.Get);
             if (Target != null) request.Headers.Add(nameof(Target), Target);
+            WebResponse response = await request.GetResponseAsync();
+            using Stream response_stream = response.GetResponseStream();
+            using StreamReader reader = new(response_stream);
+            string result = string.Empty;
+            result = await reader.ReadToEndAsync();
+            reader.Close();
+            return result;
+        }
+
+        public async Task<object> GetFile(string path)
+        {
+            WebRequest request = CreateRequest("Files", WebRequestMethods.Http.Get);
+            request.Headers.Add("Path", path);
+            WebResponse response = await request.GetResponseAsync();
+            using Stream response_stream = response.GetResponseStream();
+            using StreamReader reader = new(response_stream);
+            string result = string.Empty;
+            result = await reader.ReadToEndAsync();
+            reader.Close();
+
+            return JsonConvert.DeserializeObject<JsonFileModel>(result);
+        }
+        public async Task<string> PushFile(string path, JsonFileModel FileModel)
+        {
+            WebRequest request = CreateRequest("Files", WebRequestMethods.Http.Post);
+            request.Headers.Add("Path", path);
+
+            string data = JsonConvert.SerializeObject(FileModel);
+            byte[] data_bytes = Encoding.UTF8.GetBytes(data);
+            request.ContentType = "application/json";
+            request.ContentLength = data_bytes.Length;
+
+            using Stream requestStream = await request.GetRequestStreamAsync();
+            await requestStream.WriteAsync(data_bytes, 0, data_bytes.Length);
+            requestStream.Close();
+
+            WebResponse response = await request.GetResponseAsync();
+            using Stream response_stream = response.GetResponseStream();
+            using StreamReader reader = new(response_stream);
+            string result = string.Empty;
+            result = await reader.ReadToEndAsync();
+            reader.Close();
+            return result;
+        }
+        public async Task<string> DeleteFile(string path)
+        {
+            WebRequest request = CreateRequest("Files", "DELETE");
+            request.Headers.Add("Path", path);
             WebResponse response = await request.GetResponseAsync();
             using Stream response_stream = response.GetResponseStream();
             using StreamReader reader = new(response_stream);

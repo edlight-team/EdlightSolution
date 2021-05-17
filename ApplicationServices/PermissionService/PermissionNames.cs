@@ -73,6 +73,27 @@ namespace ApplicationServices.PermissionService
         public const string DeleteScheduleComments = nameof(DeleteScheduleComments);
 
         #endregion
+        #region Файлы
+
+        /// <summary>
+        /// Получить файл с сервера
+        /// </summary>
+        [PermissionDescription("Получить файл с сервера")]
+        public const string GetFile = nameof(GetFile);
+
+        /// <summary>
+        /// Добавить файл на сервер
+        /// </summary>
+        [PermissionDescription("Добавить файл на сервер")]
+        public const string PushFile = nameof(PushFile);
+
+        /// <summary>
+        /// Удалить файл на сервере
+        /// </summary>
+        [PermissionDescription("Удалить файл на сервере")]
+        public const string DeleteFile = nameof(DeleteFile);
+
+        #endregion
     } 
 
     #endregion

@@ -23,7 +23,7 @@ namespace EdlightDesktopClient.AccessConfigurations
 
         public Visibility CanCreateScheduleRecord { get => _canCreateScheduleRecord; set => SetProperty(ref _canCreateScheduleRecord, value); }
         public Visibility CanSetScheduleStatus { get => _canSetScheduleStatus; set => SetProperty(ref _canSetScheduleStatus, value); }
-        public Visibility DeleteScheduleRecord { get => _deleteScheduleRecord; set => SetProperty(ref _deleteScheduleRecord, value); }
+        public Visibility CanDeleteScheduleRecord { get => _deleteScheduleRecord; set => SetProperty(ref _deleteScheduleRecord, value); }
 
         public Visibility CanGetScheduleComments { get => _canGetScheduleComments; set => SetProperty(ref _canGetScheduleComments, value); }
         public Visibility CanCreateScheduleComments { get => _canCreateScheduleComments; set => SetProperty(ref _canCreateScheduleComments, value); }
@@ -44,7 +44,7 @@ namespace EdlightDesktopClient.AccessConfigurations
 
             config.CanCreateScheduleRecord = await permissionService.IsInPermission(PermissionNames.CreateScheduleRecords) ? Visibility.Visible : Visibility.Collapsed;
             config.CanSetScheduleStatus = await permissionService.IsInPermission(PermissionNames.SetScheduleStatus) ? Visibility.Visible : Visibility.Collapsed;
-            config.DeleteScheduleRecord = await permissionService.IsInPermission(PermissionNames.DeleteScheduleRecord) ? Visibility.Visible : Visibility.Collapsed;
+            config.CanDeleteScheduleRecord = await permissionService.IsInPermission(PermissionNames.DeleteScheduleRecord) ? Visibility.Visible : Visibility.Collapsed;
 
             config.CanGetScheduleComments = await permissionService.IsInPermission(PermissionNames.GetScheduleComments) ? Visibility.Visible : Visibility.Collapsed;
             config.CanCreateScheduleComments = await permissionService.IsInPermission(PermissionNames.CreateScheduleComments) ? Visibility.Visible : Visibility.Collapsed;

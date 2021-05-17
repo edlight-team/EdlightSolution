@@ -172,6 +172,10 @@ namespace DbConsoleFiller
                 IdRole = studentRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.DeleteScheduleComments].Id
             }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel() {
+                IdRole = studentRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.GetFile].Id
+            }, WebApiTableNames.RolesPermissions);
 
             //Преподаватель
             await api.PostModel(new RolesPermissionsModel() {
@@ -197,6 +201,21 @@ namespace DbConsoleFiller
             {
                 IdRole = teacherRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.SetScheduleStatus].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.GetFile].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.PushFile].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.DeleteFile].Id
             }, WebApiTableNames.RolesPermissions);
 
             //УМО
@@ -224,6 +243,21 @@ namespace DbConsoleFiller
             {
                 IdRole = umoRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.DeleteScheduleRecord].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.GetFile].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.PushFile].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.DeleteFile].Id
             }, WebApiTableNames.RolesPermissions);
 
 

@@ -4,9 +4,11 @@
     {
         public static string AcademicDisciplines = nameof(AcademicDisciplines);
         public static string Audiences = nameof(Audiences);
+        public static string Comments = nameof(Comments);
         public static string Dialogs = nameof(Dialogs);
         public static string Groups = nameof(Groups);
         public static string Lessons = nameof(Lessons);
+        public static string Materials = nameof(Materials);
         public static string Messages = nameof(Messages);
         public static string Permissions = nameof(Permissions);
         public static string Roles = nameof(Roles);

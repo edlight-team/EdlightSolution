@@ -1,4 +1,4 @@
-﻿using ApplicationModels.Models;
+using ApplicationModels.Models;
 using ApplicationServices.HashingService;
 using ApplicationServices.WebApiService;
 using Newtonsoft.Json;
@@ -148,7 +148,7 @@ namespace DbConsoleFiller
             teacher = await api.PostModel(model, WebApiTableNames.Users);
 
             otherusers = new();
-            List<UserModel> users = GenerateRandomUsers();
+            List<UserModel> users = GenerateRandomUsers(50);
             foreach (var item in users)
                 otherusers.Add(await api.PostModel(item, WebApiTableNames.Users));
 
@@ -281,7 +281,7 @@ namespace DbConsoleFiller
             Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
         }
 
-        public static List<UserModel> GenerateRandomUsers()
+        public static List<UserModel> GenerateRandomUsers(int countUsers)
         {
             PersonGenerator.GeneratorSettings settings = new()
             {
@@ -295,7 +295,7 @@ namespace DbConsoleFiller
             };
             PersonGenerator.PersonGenerator generator = new(settings);
 
-            var generated = generator.Generate(50);
+            var generated = generator.Generate(countUsers);
 
             List<UserModel> users = new();
 

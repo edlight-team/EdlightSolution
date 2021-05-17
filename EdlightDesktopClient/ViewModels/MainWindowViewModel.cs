@@ -47,6 +47,7 @@ namespace EdlightDesktopClient.ViewModels
 
         public DelegateCommand MinimizeCommand { get; private set; }
         public DelegateCommand CloseCommand { get; private set; }
+        public DelegateCommand LoadedCommand { get; private set; }
 
         #endregion
         #region ctor
@@ -62,13 +63,7 @@ namespace EdlightDesktopClient.ViewModels
 
             MinimizeCommand = new DelegateCommand(() => CurrentState = StaticCommands.ChangeWindowState(CurrentState));
             CloseCommand = new DelegateCommand(StaticCommands.Shutdown);
-
-            manager.RegisterViewWithRegion(BaseMethods.RegionNames.LearnRegion, typeof(LearnMainView));
-            manager.RegisterViewWithRegion(BaseMethods.RegionNames.ProfileRegion, typeof(ProfileMainView));
-            manager.RegisterViewWithRegion(BaseMethods.RegionNames.SettingsRegion, typeof(SettingsMainView));
-            manager.RegisterViewWithRegion(BaseMethods.RegionNames.GroupsRegion, typeof(GroupsMainView));
-            manager.RegisterViewWithRegion(BaseMethods.RegionNames.ScheduleRegion, typeof(ScheduleMainView));
-            manager.RegisterViewWithRegion(BaseMethods.RegionNames.ScheduleDateViewRegion, typeof(ScheduleDateViewer));
+            LoadedCommand = new DelegateCommand(OnLoaded);
 
             Task.Run(async () =>
             {
@@ -79,7 +74,15 @@ namespace EdlightDesktopClient.ViewModels
                 if (await accessManager.IsInRole(teacher_role)) GroupsVisibility = Visibility.Visible;
             });
         }
-
+        private void OnLoaded()
+        {
+            manager.RequestNavigate(BaseMethods.RegionNames.LearnRegion, nameof(LearnMainView));
+            manager.RequestNavigate(BaseMethods.RegionNames.ProfileRegion, nameof(ProfileMainView));
+            manager.RequestNavigate(BaseMethods.RegionNames.SettingsRegion, nameof(SettingsMainView));
+            manager.RequestNavigate(BaseMethods.RegionNames.GroupsRegion, nameof(GroupsMainView));
+            manager.RequestNavigate(BaseMethods.RegionNames.ScheduleRegion, nameof(ScheduleMainView));
+            manager.RequestNavigate(BaseMethods.RegionNames.ScheduleDateViewRegion, nameof(ScheduleDateViewer));
+        }
         #endregion
     }
 }

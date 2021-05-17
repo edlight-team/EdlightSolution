@@ -119,8 +119,6 @@ namespace DbConsoleFiller
         }
         static async Task FillUsersModel()
         {
-            //string[] male_names = new string[] { "Алексей", "Иван", "Олег", "Игорь", "Владислав" };
-
             await api.DeleteAll(WebApiTableNames.Users);
 
             UserModel model = new();
@@ -297,7 +295,7 @@ namespace DbConsoleFiller
             };
             PersonGenerator.PersonGenerator generator = new(settings);
 
-            var generated = generator.Generate(20);
+            var generated = generator.Generate(50);
 
             List<UserModel> users = new();
 
@@ -311,7 +309,7 @@ namespace DbConsoleFiller
                     Age = item.Age,
                     Sex = item.FirstName.Length > 6 ? 1 : 0,
                     Login = new Regex(@"@+\w*").Replace(item.FirstName, ""),
-                    Password = new Regex(@"@+\w*").Replace(item.FirstName, "")
+                    Password = hashing.EncodeString(new Regex(@"@+\w*").Replace(item.FirstName, ""))
                 });
             }
             return users;

@@ -5,6 +5,7 @@ using ApplicationServices.WebApiService;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -34,7 +35,9 @@ namespace DbConsoleFiller
         static void Main() => RunFill().Wait();
         static async Task RunFill()
         {
+            Stopwatch all_watch = new();
             Console.WriteLine("Start filling");
+            all_watch.Start();
             api = new WebApiServiceImplementation();
             hashing = new HashingImplementation();
 
@@ -52,11 +55,15 @@ namespace DbConsoleFiller
             await FillTestHeaderModel();
             await FillTestResult();
 
-            Console.WriteLine("Fill Complete");
+            Console.Write("Fill Complete, time ellapsed: ");
+            all_watch.Stop();
+            Console.WriteLine(all_watch.Elapsed.TotalSeconds + " sec.");
             Console.ReadKey();
         }
         static async Task FillAcademicDisciplines()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.AcademicDisciplines);
 
             AcademicDisciplinesModel model = new();
@@ -72,10 +79,14 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.AcademicDisciplines);
 
             int count = (await api.GetModels<AcademicDisciplinesModel>(WebApiTableNames.AcademicDisciplines)).Count;
-            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillAudiencesModel()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.Audiences);
 
             AudiencesModel model = new();
@@ -91,10 +102,14 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.Audiences);
 
             int count = (await api.GetModels<AudiencesModel>(WebApiTableNames.Audiences)).Count;
-            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillTypeClassesModel()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.TypeClasses);
 
             TypeClassesModel model = new();
@@ -108,10 +123,14 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.TypeClasses);
 
             int count = (await api.GetModels<TypeClassesModel>(WebApiTableNames.TypeClasses)).Count;
-            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillRolesModel()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.Roles);
 
             RolesModel model = new();
@@ -126,10 +145,14 @@ namespace DbConsoleFiller
             umoRole = await api.PostModel(model, WebApiTableNames.Roles);
 
             int count = (await api.GetModels<RolesModel>(WebApiTableNames.Roles)).Count;
-            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillPermissions()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.Permissions);
 
             Type permission_class_type = typeof(PermissionNames);
@@ -149,10 +172,14 @@ namespace DbConsoleFiller
             }
 
             int count = (await api.GetModels<PermissionsModel>(WebApiTableNames.Permissions)).Count;
-            Console.WriteLine("type " + nameof(PermissionsModel) + " in db count = " + count);
+            Console.Write("type " + nameof(PermissionsModel) + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillRolePermissions()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.RolesPermissions);
 
             //Студент
@@ -178,6 +205,10 @@ namespace DbConsoleFiller
             }, WebApiTableNames.RolesPermissions);
 
             //Преподаватель
+            await api.PostModel(new RolesPermissionsModel() {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleManaging].Id 
+            }, WebApiTableNames.RolesPermissions);
             await api.PostModel(new RolesPermissionsModel() {
                 IdRole = teacherRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleComments].Id 
@@ -222,6 +253,11 @@ namespace DbConsoleFiller
             await api.PostModel(new RolesPermissionsModel()
             {
                 IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleManaging].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleComments].Id
             }, WebApiTableNames.RolesPermissions);
             await api.PostModel(new RolesPermissionsModel()
@@ -262,10 +298,14 @@ namespace DbConsoleFiller
 
 
             int count = (await api.GetModels<RolesPermissionsModel>(WebApiTableNames.RolesPermissions)).Count;
-            Console.WriteLine("type " + nameof(RolesPermissionsModel) + " in db count = " + count);
+            Console.Write("type " + nameof(RolesPermissionsModel) + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillUsersModel()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.Users);
 
             UserModel model = new();
@@ -306,12 +346,15 @@ namespace DbConsoleFiller
             List<UserModel> users = GenerateRandomUsers(50);
             foreach (var item in users)
                 otherusers.Add(await api.PostModel(item, WebApiTableNames.Users));
-
             int count = (await api.GetModels<UserModel>(WebApiTableNames.Users)).Count;
-            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillUsersRolesModel()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.UsersRoles);
 
             UsersRolesModel model = new();
@@ -334,10 +377,14 @@ namespace DbConsoleFiller
                 }, WebApiTableNames.UsersRoles));
 
             int count = (await api.GetModels<UsersRolesModel>(WebApiTableNames.UsersRoles)).Count;
-            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillGroupsModel()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.Groups);
 
             int groupNumder = 1;
@@ -349,10 +396,14 @@ namespace DbConsoleFiller
             };
 
             int count = (await api.GetModels<GroupsModel>(WebApiTableNames.Groups)).Count;
-            Console.WriteLine("type " + nameof(GroupsModel) + " in db count = " + count);
+            Console.Write("type " + nameof(GroupsModel) + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillStudentsGroupsModel()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.StudentsGroups);
 
             Random random = new();
@@ -368,10 +419,14 @@ namespace DbConsoleFiller
             }
 
             int count = (await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups)).Count;
-            Console.WriteLine("type " + nameof(StudentsGroupsModel) + " in db count = " + count);
+            Console.Write("type " + nameof(StudentsGroupsModel) + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillTestsModel()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.Tests);
 
             List<QuestionsModel> list = new();
@@ -398,10 +453,14 @@ namespace DbConsoleFiller
             test = await api.PostModel(model, WebApiTableNames.Tests);
 
             int count = (await api.GetModels<TestsModel>(WebApiTableNames.Tests)).Count;
-            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillTestHeaderModel()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.TestHeaders);
 
             TestHeadersModel model = new();
@@ -415,10 +474,14 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.TestHeaders);
 
             int count = (await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders)).Count;
-            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
         static async Task FillTestResult()
         {
+            Stopwatch watch = new();
+            watch.Start();
             await api.DeleteAll(WebApiTableNames.TestResults);
 
             TestResultsModel model = new();
@@ -431,7 +494,9 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.TestResults);
 
             int count = (await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults)).Count;
-            Console.WriteLine("type " + model.GetType().Name + " in db count = " + count);
+            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
 
         public static List<UserModel> GenerateRandomUsers(int countUsers)

@@ -3,12 +3,14 @@ using ApplicationModels.Models;
 using HandyControl.Controls;
 using Prism.Events;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
 
 namespace EdlightDesktopClient.Views.Schedule
 {
@@ -17,6 +19,26 @@ namespace EdlightDesktopClient.Views.Schedule
     /// </summary>
     public partial class ScheduleDateViewer : UserControl
     {
+        #region resources
+
+        private readonly ResourceDictionary textBlocks = null;
+        private readonly ResourceDictionary brushes = null;
+        private readonly ResourceDictionary svg = null;
+
+        private readonly Style simpleTextBlockStyle = null;
+        private readonly Style toolTipTextBlockStyle = null;
+
+        private readonly ControlTemplate classTypeTemplate = null;
+        private readonly ControlTemplate teacherTemplate = null;
+        private readonly ControlTemplate doorTemplate = null;
+        private readonly ControlTemplate bookTemplate = null;
+        private readonly ControlTemplate groupTemplate = null;
+        private readonly ControlTemplate commentTemplate = null;
+
+        private readonly SolidColorBrush primaryBrush = null;
+        private readonly SolidColorBrush innerBrush = null;
+
+        #endregion
         #region fields and services
 
         private readonly IEventAggregator aggregator;
@@ -48,6 +70,39 @@ namespace EdlightDesktopClient.Views.Schedule
             cardHideAnimation = new(1.0, 0.5, TimeSpan.FromMilliseconds(250));
             adornerShowAnimation = new(0.0, 1.0, TimeSpan.FromMilliseconds(250));
             adornerHideAnimation = new(1.0, 0.0, TimeSpan.FromMilliseconds(250));
+
+            #region Ищем ресурсы
+
+            Collection<ResourceDictionary> merged = Application.Current.Resources.MergedDictionaries;
+
+            foreach (ResourceDictionary rd in merged)
+            {
+                if (rd.Source == null) continue;
+                if (rd.Source.OriginalString.Contains("TextBlock")) textBlocks = rd;
+                else if (rd.Source.OriginalString.Contains("SolidBrushes")) brushes = rd;
+                else if (rd.Source.OriginalString.Contains("SVGCollection")) svg = rd;
+            }
+            foreach (var key in textBlocks.Keys)
+            {
+                if (key.ToString() == "SimpleTextBlock") simpleTextBlockStyle = (Style)textBlocks[key];
+                else if (key.ToString() == "ToolTipTextBlock") toolTipTextBlockStyle = (Style)textBlocks[key];
+            }
+            foreach (var key in brushes.Keys)
+            {
+                if (key.ToString() == "InactiveBackgroundTabHeaderBtush") innerBrush = (SolidColorBrush)brushes[key];
+                else if (key.ToString() == "PrimaryFontBrush") primaryBrush = (SolidColorBrush)brushes[key];
+            }
+            foreach (var key in svg.Keys)
+            {
+                if (key.ToString() == "ClassType") classTypeTemplate = (ControlTemplate)svg[key];
+                else if (key.ToString() == "Teacher") teacherTemplate = (ControlTemplate)svg[key];
+                else if (key.ToString() == "Door") doorTemplate = (ControlTemplate)svg[key];
+                else if (key.ToString() == "Book") bookTemplate = (ControlTemplate)svg[key];
+                else if (key.ToString() == "Group") groupTemplate = (ControlTemplate)svg[key];
+                else if (key.ToString() == "Comment") commentTemplate = (ControlTemplate)svg[key];
+            }
+
+            #endregion
         }
         private void ScheduleDateViewerUnloaded(object sender, RoutedEventArgs e)
         {
@@ -63,79 +118,169 @@ namespace EdlightDesktopClient.Views.Schedule
         /// <param name="child">Карточка из ивента</param>
         private void OnGridChildEvent(object[] childAndModel)
         {
-            if (childAndModel == null) ItemsGrid.Children.Clear();
-            else
+            if (childAndModel == null)
             {
-                if (childAndModel[0] is Card card && childAndModel[1] is LessonsModel lm)
+                ItemsGrid.Children.Clear();
+            }
+            //ToDo: Добавить передачу комментариев
+            else if (childAndModel[0] is Card card && childAndModel[1] is LessonsModel lm)
+            {
+                //Указываем обратный порядок чтобы сетка с dnd была сверху
+                Grid content = new();
+                content.Children.Add(CreateCardBigInfoGrid(card, lm, null));
+                content.Children.Add(CreateCardLargeInfoGrid(card, lm, null));
+                content.Children.Add(CreateCardSmallInfoGrid(card, lm, null));
+                content.Children.Add(CreateDragAndDropGrid());
+                //Сбрасываем фоновый цвет т.к. используется в сетках
+                card.Background = new SolidColorBrush(Colors.Transparent);
+                //Заполняем главный контрол созданной карточкой
+                card.Content = content;
+                CheckGridVisibilities(card);
+                card.MouseDoubleClick += CardMouseDoubleClick;
+                ItemsGrid.Children.Add(card);
+            }
+            else if (childAndModel[0] is LessonsModel dlm && childAndModel[1] is bool deleting)
+            {
+                for (int i = 0; i < ItemsGrid.Children.Count; i++)
                 {
-                    //Указываем обратный порядок чтобы сетка с dnd была сверху
-                    Grid content = new();
-                    content.Children.Add(CreateCardBigInfoGrid(card, lm));
-                    content.Children.Add(CreateCardLargeInfoGrid(card, lm));
-                    content.Children.Add(CreateCardSmallInfoGrid(card, lm));
-                    content.Children.Add(CreateDragAndDropGrid());
-                    //Сбрасываем фоновый цвет т.к. используется в сетках
-                    card.Background = new SolidColorBrush(Colors.Transparent);
-                    //Заполняем главный контрол созданной карточкой
-                    card.Content = content;
-                    CheckGridVisibilities(card);
-                    ItemsGrid.Children.Add(card);
+                    if (ItemsGrid.Children[i] is Card delete_card && delete_card.Uid == dlm.Id.ToString().ToUpper())
+                    {
+                        ItemsGrid.Children.Remove(delete_card);
+                    }
                 }
             }
         }
+
         /// <summary>
         /// Большая сетка
         /// </summary>
         /// <param name="card">Карточка</param>
         /// <returns>Сетка</returns>
-        private Grid CreateCardBigInfoGrid(Card card, LessonsModel lm)
+        private Grid CreateCardBigInfoGrid(Card card, LessonsModel lm, List<CommentModel> commentsList)
         {
+            #region Объявление сетки
+
             Grid infoGrid = new();
             infoGrid.Name = "BigInfo";
 
+            #endregion
+            #region Разметка
+
             ColumnDefinition smallColumn1 = new();
             smallColumn1.Width = new GridLength(15);
+            ColumnDefinition controlIconCollumn = new();
+            controlIconCollumn.Width = new GridLength(80);
+            ColumnDefinition commentIconCollumn = new();
+            commentIconCollumn.Width = new GridLength(80);
             ColumnDefinition smallColumn2 = new();
             smallColumn2.Width = new GridLength(15);
 
             infoGrid.ColumnDefinitions.Add(smallColumn1);
+            infoGrid.ColumnDefinitions.Add(controlIconCollumn);
             infoGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            infoGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            infoGrid.ColumnDefinitions.Add(commentIconCollumn);
             infoGrid.ColumnDefinitions.Add(smallColumn2);
 
             RowDefinition smallRow = new();
-            smallRow.Height = new GridLength(35);
-            RowDefinition row1 = new();
-            row1.Height = new GridLength(40);
-            RowDefinition row2 = new();
-            row2.Height = new GridLength(40);
-            RowDefinition row3 = new();
-            row3.Height = new GridLength(40);
-            RowDefinition row4 = new();
-            row4.Height = new GridLength(40);
+            smallRow.Height = new GridLength(15);
+            RowDefinition header = new();
+            header.Height = new GridLength(40);
+            RowDefinition splitRow = new();
+            splitRow.Height = new GridLength(15);
             RowDefinition endRow = new();
             endRow.Height = new GridLength(15);
 
             infoGrid.RowDefinitions.Add(smallRow);
-            infoGrid.RowDefinitions.Add(row1);
-            infoGrid.RowDefinitions.Add(row2);
-            infoGrid.RowDefinitions.Add(row3);
-            infoGrid.RowDefinitions.Add(row4);
+            infoGrid.RowDefinitions.Add(header);
+            infoGrid.RowDefinitions.Add(splitRow);
+            infoGrid.RowDefinitions.Add(new RowDefinition());
+            infoGrid.RowDefinitions.Add(new RowDefinition());
+            infoGrid.RowDefinitions.Add(new RowDefinition());
             infoGrid.RowDefinitions.Add(new RowDefinition());
             infoGrid.RowDefinitions.Add(endRow);
 
+            #endregion
+            #region Рамки
+
             Border border = new();
             border.CornerRadius = new CornerRadius(5);
-            //border.Background = card.Background;
-            border.Background = new SolidColorBrush(Colors.Blue);
+            border.Background = card.Background;
+            SetRowColumns(border, 0, 0, 8, 5);
 
-            Grid.SetColumn(border, 0);
-            Grid.SetRow(border, 0);
-            Grid.SetColumnSpan(border, 4);
-            Grid.SetRowSpan(border, 7);
+            Border innerBorder = new();
+            innerBorder.CornerRadius = new CornerRadius(5);
+            innerBorder.Background = innerBrush;
+            SetRowColumns(innerBorder, 1, 1, columnSpan: 2);
+
+            Border innerBorderOther = new();
+            innerBorderOther.CornerRadius = new CornerRadius(5);
+            innerBorderOther.Background = innerBrush;
+            SetRowColumns(innerBorderOther, 3, 1, 4, 3);
 
             infoGrid.Children.Add(border);
+            infoGrid.Children.Add(innerBorder);
+            infoGrid.Children.Add(innerBorderOther);
 
+            #endregion
+            #region Название дисциплины
+
+            ContentControl classType = CreateControl(classTypeTemplate, null, 25);
+            classType.Margin = new Thickness(15, 0, 0, 0);
+            SetRowColumns(classType, 1, 1);
+            infoGrid.Children.Add(classType);
+
+            TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
+            disciplineTextBlock.Margin = new Thickness(50, 0, 0, 0);
+            SetRowColumns(disciplineTextBlock, 1, 2);
+            infoGrid.Children.Add(disciplineTextBlock);
+
+            #endregion
+            #region Комментарии
+
+            ContentControl comments = CreateControl(commentTemplate, CreateCommentsToolTip(commentsList), 40);
+            comments.HorizontalAlignment = HorizontalAlignment.Center;
+            SetRowColumns(comments, 1, 3);
+            infoGrid.Children.Add(comments);
+
+            #endregion
+            #region Прочее
+
+            ContentControl teacherControl = CreateControl(teacherTemplate, null, 30);
+            ContentControl audienceControl = CreateControl(doorTemplate, null, 30);
+            ContentControl disciplineControl = CreateControl(bookTemplate, null, 45);
+            ContentControl groupControl = CreateControl(groupTemplate, null, 40);
+
+            teacherControl.Margin = new Thickness(15, 0, 0, 0);
+            audienceControl.Margin = new Thickness(15, 0, 0, 0);
+            disciplineControl.Margin = new Thickness(15, 0, 0, 0);
+            groupControl.Margin = new Thickness(15, 0, 0, 0);
+
+            SetRowColumns(teacherControl, 3, 1);
+            SetRowColumns(audienceControl, 4, 1);
+            SetRowColumns(disciplineControl, 5, 1);
+            SetRowColumns(groupControl, 6, 1);
+
+            infoGrid.Children.Add(teacherControl);
+            infoGrid.Children.Add(audienceControl);
+            infoGrid.Children.Add(disciplineControl);
+            infoGrid.Children.Add(groupControl);
+
+            TextBlock teacherText = CreateTextBlock(lm.Teacher?.FullName);
+            TextBlock audienceText = CreateTextBlock(lm.Audience?.NumberAudience);
+            TextBlock disciplineText = CreateTextBlock(lm.AcademicDiscipline?.Title);
+            TextBlock groupText = CreateTextBlock(lm.Group?.Group);
+
+            SetRowColumns(teacherText, 3, 2);
+            SetRowColumns(audienceText, 4, 2);
+            SetRowColumns(disciplineText, 5, 2);
+            SetRowColumns(groupText, 6, 2);
+
+            infoGrid.Children.Add(teacherText);
+            infoGrid.Children.Add(audienceText);
+            infoGrid.Children.Add(disciplineText);
+            infoGrid.Children.Add(groupText);
+
+            #endregion
             return infoGrid;
         }
         /// <summary>
@@ -143,45 +288,121 @@ namespace EdlightDesktopClient.Views.Schedule
         /// </summary>
         /// <param name="card">Карточка</param>
         /// <returns>Сетка</returns>
-        private Grid CreateCardLargeInfoGrid(Card card, LessonsModel lm)
+        private Grid CreateCardLargeInfoGrid(Card card, LessonsModel lm, List<CommentModel> commentsList)
         {
+            #region Объявление сетки
+
             Grid infoGrid = new();
             infoGrid.Name = "LargeInfo";
 
+            #endregion
+            #region Разметка
+
             ColumnDefinition smallColumn1 = new();
             smallColumn1.Width = new GridLength(15);
+            ColumnDefinition commentIconCollumn = new();
+            commentIconCollumn.Width = new GridLength(80);
             ColumnDefinition smallColumn2 = new();
             smallColumn2.Width = new GridLength(15);
 
             infoGrid.ColumnDefinitions.Add(smallColumn1);
             infoGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            infoGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            infoGrid.ColumnDefinitions.Add(commentIconCollumn);
             infoGrid.ColumnDefinitions.Add(smallColumn2);
 
             RowDefinition smallRow = new();
-            smallRow.Height = new GridLength(35);
+            smallRow.Height = new GridLength(15);
+            RowDefinition headerRow = new();
+            headerRow.Height = new GridLength(40);
             RowDefinition endRow = new();
             endRow.Height = new GridLength(15);
 
             infoGrid.RowDefinitions.Add(smallRow);
-            infoGrid.RowDefinitions.Add(new RowDefinition());
-            infoGrid.RowDefinitions.Add(new RowDefinition());
-            infoGrid.RowDefinitions.Add(new RowDefinition());
+            infoGrid.RowDefinitions.Add(headerRow);
             infoGrid.RowDefinitions.Add(new RowDefinition());
             infoGrid.RowDefinitions.Add(endRow);
+
+            #endregion
+            #region Рамки
 
             Border border = new();
             border.CornerRadius = new CornerRadius(5);
             border.Background = card.Background;
+            SetRowColumns(border, 0, 0, 4, 4);
 
-            Grid.SetColumn(border, 0);
-            Grid.SetRow(border, 0);
-            Grid.SetColumnSpan(border, 4);
-            Grid.SetRowSpan(border, 6);
+            Border innerBorder = new();
+            innerBorder.CornerRadius = new CornerRadius(5);
+            innerBorder.Background = innerBrush;
+            SetRowColumns(innerBorder, 1, 1);
 
             infoGrid.Children.Add(border);
-            infoGrid.ShowGridLines = true;
+            infoGrid.Children.Add(innerBorder);
 
+            #endregion
+            #region Название дисциплины
+
+            ContentControl classType = CreateControl(classTypeTemplate, null, 25);
+            classType.Margin = new Thickness(15, 0, 0, 0);
+            SetRowColumns(classType, 1, 1);
+            infoGrid.Children.Add(classType);
+
+            TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
+            disciplineTextBlock.Margin = new Thickness(50, 0, 0, 0);
+            SetRowColumns(disciplineTextBlock, 1, 1);
+            infoGrid.Children.Add(disciplineTextBlock);
+
+            #endregion
+            #region Комментарии
+
+            ContentControl comments = CreateControl(commentTemplate, CreateCommentsToolTip(commentsList), 40);
+            comments.HorizontalAlignment = HorizontalAlignment.Center;
+            SetRowColumns(comments, 1, 2);
+            infoGrid.Children.Add(comments);
+
+            #endregion
+            #region Остальные иконки
+
+            Grid others = new();
+            others.VerticalAlignment = VerticalAlignment.Center;
+            others.HorizontalAlignment = HorizontalAlignment.Center;
+
+            ColumnDefinition col1 = new();
+            ColumnDefinition col2 = new();
+            ColumnDefinition col3 = new();
+            ColumnDefinition col4 = new();
+
+            col1.Width = new GridLength(75);
+            col2.Width = new GridLength(75);
+            col3.Width = new GridLength(75);
+            col4.Width = new GridLength(75);
+
+            others.ColumnDefinitions.Add(new ColumnDefinition());
+            others.ColumnDefinitions.Add(col1);
+            others.ColumnDefinitions.Add(col2);
+            others.ColumnDefinitions.Add(col3);
+            others.ColumnDefinitions.Add(col4);
+            others.ColumnDefinitions.Add(new ColumnDefinition());
+
+            SetRowColumns(others, 2, 1, columnSpan: 2);
+
+            ContentControl teacherControl = CreateControl(teacherTemplate, CreateToolTip(lm.Teacher?.FullName), 30);
+            ContentControl audienceControl = CreateControl(doorTemplate, CreateToolTip(lm.Audience?.NumberAudience), 30);
+            ContentControl disciplineControl = CreateControl(bookTemplate, CreateToolTip(lm.AcademicDiscipline?.Title), 45);
+            ContentControl groupControl = CreateControl(groupTemplate, CreateToolTip(lm.Group?.Group), 40);
+
+            SetRowColumns(teacherControl, 0, 1);
+            SetRowColumns(audienceControl, 0, 2);
+            SetRowColumns(disciplineControl, 0, 3);
+            SetRowColumns(groupControl, 0, 4);
+
+            others.Children.Add(teacherControl);
+            others.Children.Add(audienceControl);
+            others.Children.Add(disciplineControl);
+            others.Children.Add(groupControl);
+
+            infoGrid.Children.Add(others);
+
+            #endregion
             return infoGrid;
         }
         /// <summary>
@@ -189,90 +410,15 @@ namespace EdlightDesktopClient.Views.Schedule
         /// </summary>
         /// <param name="card">Карточка</param>
         /// <returns>Сетка</returns>
-        private Grid CreateCardSmallInfoGrid(Card card, LessonsModel lm)
+        private Grid CreateCardSmallInfoGrid(Card card, LessonsModel lm, List<CommentModel> commentsList)
         {
-            #region Ищем ресурсы
-
-            Collection<ResourceDictionary> merged = Application.Current.Resources.MergedDictionaries;
-
-            ResourceDictionary textBlocks = null;
-            ResourceDictionary brushes = null;
-            ResourceDictionary svg = null;
-
-            Style simpleTextBlockStyle = null;
-            Style toolTipTextBlockStyle = null;
-
-            ControlTemplate classTypeTemplate = null;
-            ControlTemplate teacherTemplate = null;
-            ControlTemplate doorTemplate = null;
-            ControlTemplate bookTemplate = null;
-            ControlTemplate groupTemplate = null;
-            ControlTemplate commentTemplate = null;
-
-            SolidColorBrush primaryBrush = null;
-            SolidColorBrush innerBrush = null;
-
-            foreach (ResourceDictionary rd in merged)
-            {
-                if (rd.Source == null) continue;
-                if (rd.Source.OriginalString.Contains("TextBlock")) textBlocks = rd;
-                else if (rd.Source.OriginalString.Contains("SolidBrushes")) brushes = rd;
-                else if (rd.Source.OriginalString.Contains("SVGCollection")) svg = rd;
-            }
-            foreach (var key in textBlocks.Keys)
-            {
-                if (key.ToString() == "SimpleTextBlock")
-                {
-                    simpleTextBlockStyle = (Style)textBlocks[key];
-                }
-                if (key.ToString() == "ToolTipTextBlock")
-                {
-                    toolTipTextBlockStyle = (Style)textBlocks[key];
-                }
-            }
-            foreach (var key in brushes.Keys)
-            {
-                if (key.ToString() == "InactiveBackgroundTabHeaderBtush")
-                {
-                    innerBrush = (SolidColorBrush)brushes[key];
-                }
-                else if (key.ToString() == "PrimaryFontBrush")
-                {
-                    primaryBrush = (SolidColorBrush)brushes[key];
-                }
-            }
-            foreach (var key in svg.Keys)
-            {
-                if (key.ToString() == "ClassType")
-                {
-                    classTypeTemplate = (ControlTemplate)svg[key];
-                }
-                else if (key.ToString() == "Teacher")
-                {
-                    teacherTemplate = (ControlTemplate)svg[key];
-                }
-                else if (key.ToString() == "Door")
-                {
-                    doorTemplate = (ControlTemplate)svg[key];
-                }
-                else if (key.ToString() == "Book")
-                {
-                    bookTemplate = (ControlTemplate)svg[key];
-                }
-                else if (key.ToString() == "Group")
-                {
-                    groupTemplate = (ControlTemplate)svg[key];
-                }
-                else if (key.ToString() == "Comment")
-                {
-                    commentTemplate = (ControlTemplate)svg[key];
-                }
-            }
-
-            #endregion
+            #region Объявление сетки
 
             Grid infoGrid = new();
             infoGrid.Name = "SmallInfo";
+
+            #endregion
+            #region Разметка
 
             ColumnDefinition smallColumn1 = new();
             smallColumn1.Width = new GridLength(15);
@@ -296,52 +442,36 @@ namespace EdlightDesktopClient.Views.Schedule
             infoGrid.RowDefinitions.Add(new RowDefinition());
             infoGrid.RowDefinitions.Add(smallRow2);
 
+            #endregion
+            #region Рамки
+
             Border border = new();
             border.Name = "SmallGridBorder";
             border.CornerRadius = new CornerRadius(5);
             border.Background = card.Background;
+            SetRowColumns(border, 0, 0, 3, 5);
 
             Border innerBorder = new();
             innerBorder.CornerRadius = new CornerRadius(5);
             innerBorder.Background = innerBrush;
-
-            Grid.SetColumn(border, 0);
-            Grid.SetRow(border, 0);
-            Grid.SetColumnSpan(border, 5);
-            Grid.SetRowSpan(border, 3);
-
-            Grid.SetColumn(innerBorder, 1);
-            Grid.SetRow(innerBorder, 1);
-            Grid.SetColumnSpan(innerBorder, 3);
+            SetRowColumns(innerBorder, 1, 1, columnSpan: 2);
 
             infoGrid.Children.Add(border);
             infoGrid.Children.Add(innerBorder);
 
-            ContentControl classType = new();
-            classType.Width = 25;
-            classType.Margin = new Thickness(10, 0, 0, 0);
-            classType.Foreground = primaryBrush;
-            classType.Template = classTypeTemplate;
-            classType.HorizontalAlignment = HorizontalAlignment.Left;
-            classType.VerticalAlignment = VerticalAlignment.Center;
+            #endregion
+            #region Название дисциплины
 
-            Grid.SetColumn(classType, 1);
-            Grid.SetRow(classType, 1);
-
+            ContentControl classType = CreateControl(classTypeTemplate, null, 25);
+            classType.Margin = new Thickness(15, 0, 0, 0);
+            SetRowColumns(classType, 1, 1);
             infoGrid.Children.Add(classType);
 
-            TextBlock disciplineTextBlock = new();
-            classType.Margin = new Thickness(15, 0, 0, 0);
-            disciplineTextBlock.Text = lm.TypeClass?.Title;
-            disciplineTextBlock.Style = simpleTextBlockStyle;
-            disciplineTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            disciplineTextBlock.VerticalAlignment = VerticalAlignment.Center;
+            TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
+            SetRowColumns(disciplineTextBlock, 1, 2);
+            infoGrid.Children.Add(disciplineTextBlock); 
 
-            Grid.SetColumn(disciplineTextBlock, 2);
-            Grid.SetRow(disciplineTextBlock, 1);
-
-            infoGrid.Children.Add(disciplineTextBlock);
-
+            #endregion
             #region Иконки с тултипами
 
             StackPanel controlsStack = new();
@@ -349,125 +479,27 @@ namespace EdlightDesktopClient.Views.Schedule
             controlsStack.HorizontalAlignment = HorizontalAlignment.Center;
             controlsStack.VerticalAlignment = VerticalAlignment.Center;
             controlsStack.Margin = new Thickness(10, 0, 0, 0);
-
-            Grid.SetColumn(controlsStack, 3);
-            Grid.SetRow(controlsStack, 1);
+            SetRowColumns(controlsStack, 1, 3);
 
             #region Преподаватель
-
-            ContentControl teacherControl = new();
-            teacherControl.Width = 30;
-            teacherControl.Margin = new Thickness(0, 0, 5, 0);
-            teacherControl.Foreground = primaryBrush;
-            teacherControl.Template = teacherTemplate;
-            teacherControl.HorizontalAlignment = HorizontalAlignment.Left;
-            teacherControl.VerticalAlignment = VerticalAlignment.Center;
-
-            TextBlock teacherToolTipTextBlock = new();
-            teacherToolTipTextBlock.Style = toolTipTextBlockStyle;
-            teacherToolTipTextBlock.Text = lm.Teacher.FullName;
-
-            ToolTip teacherToolTip = new();
-            teacherToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Left;
-            teacherToolTip.Content = teacherToolTipTextBlock;
-            teacherControl.ToolTip = teacherToolTip;
-
-            controlsStack.Children.Add(teacherControl);
-
+            controlsStack.Children.Add(CreateControl(teacherTemplate, CreateToolTip(lm.Teacher?.FullName), 30));
             #endregion
             #region Аудитория
-
-            ContentControl audienceControl = new();
-            audienceControl.Width = 30;
-            audienceControl.Margin = new Thickness(0, 0, 5, 0);
-            audienceControl.Foreground = primaryBrush;
-            audienceControl.Template = doorTemplate;
-            audienceControl.HorizontalAlignment = HorizontalAlignment.Left;
-            audienceControl.VerticalAlignment = VerticalAlignment.Center;
-
-            TextBlock audienceToolTipTextBlock = new();
-            audienceToolTipTextBlock.Style = toolTipTextBlockStyle;
-            audienceToolTipTextBlock.Text = lm.Audience?.NumberAudience;
-
-            ToolTip audienceToolTip = new();
-            audienceToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Left;
-            audienceToolTip.Content = audienceToolTipTextBlock;
-            audienceControl.ToolTip = audienceToolTip;
-
-            controlsStack.Children.Add(audienceControl);
-
+            controlsStack.Children.Add(CreateControl(doorTemplate, CreateToolTip(lm.Audience?.NumberAudience), 30));
             #endregion
             #region Дисциплина
-
-            ContentControl academicDisciplineControl = new();
-            academicDisciplineControl.Width = 45;
-            academicDisciplineControl.Margin = new Thickness(0, 0, 5, 0);
-            academicDisciplineControl.Foreground = primaryBrush;
-            academicDisciplineControl.Template = bookTemplate;
-            academicDisciplineControl.HorizontalAlignment = HorizontalAlignment.Left;
-            academicDisciplineControl.VerticalAlignment = VerticalAlignment.Center;
-
-            TextBlock academicDisciplineToolTipTextBlock = new();
-            academicDisciplineToolTipTextBlock.Style = toolTipTextBlockStyle;
-            academicDisciplineToolTipTextBlock.Text = lm.AcademicDiscipline?.Title;
-
-            ToolTip academicDisciplineToolTip = new();
-            academicDisciplineToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Left;
-            academicDisciplineToolTip.Content = academicDisciplineToolTipTextBlock;
-            academicDisciplineControl.ToolTip = academicDisciplineToolTip;
-
-            controlsStack.Children.Add(academicDisciplineControl);
-
+            controlsStack.Children.Add(CreateControl(bookTemplate, CreateToolTip(lm.AcademicDiscipline?.Title), 45));
             #endregion
             #region Группа
-
-            ContentControl groupControl = new();
-            groupControl.Width = 40;
-            groupControl.Margin = new Thickness(0, 0, 5, 0);
-            groupControl.Foreground = primaryBrush;
-            groupControl.Template = groupTemplate;
-            groupControl.HorizontalAlignment = HorizontalAlignment.Left;
-            groupControl.VerticalAlignment = VerticalAlignment.Center;
-
-            TextBlock groupToolTipTextBlock = new();
-            groupToolTipTextBlock.Style = toolTipTextBlockStyle;
-            groupToolTipTextBlock.Text = lm.Group?.Group;
-
-            ToolTip groupToolTip = new();
-            groupToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Left;
-            groupToolTip.Content = groupToolTipTextBlock;
-            groupControl.ToolTip = groupToolTip;
-
-            controlsStack.Children.Add(groupControl);
-
+            controlsStack.Children.Add(CreateControl(groupTemplate, CreateToolTip(lm.Group?.Group), 40));
             #endregion
             #region Комменты
-
-            ContentControl commentControl = new();
-            commentControl.Width = 30;
-            commentControl.Margin = new Thickness(0, 0, 5, 0);
-            commentControl.Foreground = primaryBrush;
-            commentControl.Template = commentTemplate;
-            commentControl.HorizontalAlignment = HorizontalAlignment.Left;
-            commentControl.VerticalAlignment = VerticalAlignment.Center;
-
-            //TextBlock groupToolTipTextBlock = new();
-            //groupToolTipTextBlock.Style = toolTipTextBlockStyle;
-            //groupToolTipTextBlock.Text = lm.Group?.Group;
-
-            //ToolTip groupToolTip = new();
-            //groupToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Left;
-            //groupToolTip.Content = groupToolTipTextBlock;
-            //commentControl.ToolTip = groupToolTip;
-
-            controlsStack.Children.Add(commentControl);
-
+            controlsStack.Children.Add(CreateControl(commentTemplate, CreateCommentsToolTip(commentsList), 40));
             #endregion
 
             infoGrid.Children.Add(controlsStack);
 
             #endregion
-
             return infoGrid;
         }
         /// <summary>
@@ -477,6 +509,8 @@ namespace EdlightDesktopClient.Views.Schedule
         private Grid CreateDragAndDropGrid()
         {
             Grid subGrid = new();
+            subGrid.Name = "TopGrid";
+            #region Разметка
 
             ColumnDefinition smallColumn1 = new();
             smallColumn1.Width = new GridLength(15);
@@ -488,7 +522,7 @@ namespace EdlightDesktopClient.Views.Schedule
             subGrid.ColumnDefinitions.Add(smallColumn2);
 
             RowDefinition smallRow = new();
-            smallRow.Height = new GridLength(35);
+            smallRow.Height = new GridLength(15);
             RowDefinition endRow = new();
             endRow.Height = new GridLength(15);
 
@@ -496,41 +530,16 @@ namespace EdlightDesktopClient.Views.Schedule
             subGrid.RowDefinitions.Add(new RowDefinition());
             subGrid.RowDefinitions.Add(endRow);
 
-            #region Ищем ресурсы
-
-            Collection<ResourceDictionary> merged = Application.Current.Resources.MergedDictionaries;
-            ResourceDictionary borders = null;
-            ResourceDictionary svg = null;
-
-            foreach (ResourceDictionary rd in merged)
-            {
-                if (rd.Source == null) continue;
-                if (rd.Source.OriginalString.Contains("Borders")) borders = rd;
-                else if (rd.Source.OriginalString.Contains("SVGCollection")) svg = rd;
-            }
-
             #endregion
             #region Прозрачная рамка
 
-            foreach (var key in borders.Keys)
-            {
-                if (key.ToString() == "VisibleMouseOverGrid")
-                {
-                    subGrid.Style = (Style)borders[key];
-                }
-            }
-
             Border transparent_border_up = new();
             transparent_border_up.Background = new SolidColorBrush(Colors.Transparent);
-            Grid.SetRow(transparent_border_up, 0);
-            Grid.SetColumn(transparent_border_up, 0);
-            Grid.SetColumnSpan(transparent_border_up, 3);
+            SetRowColumns(transparent_border_up, 0, 0, columnSpan: 3);
 
             Border transparent_border_down = new();
             transparent_border_down.Background = new SolidColorBrush(Colors.Transparent);
-            Grid.SetRow(transparent_border_down, 3);
-            Grid.SetColumn(transparent_border_down, 0);
-            Grid.SetColumnSpan(transparent_border_down, 3);
+            SetRowColumns(transparent_border_down, 2, 0, columnSpan: 3);
 
             subGrid.Children.Add(transparent_border_up);
             subGrid.Children.Add(transparent_border_down);
@@ -571,10 +580,7 @@ namespace EdlightDesktopClient.Views.Schedule
                 }
             }
             up_arrow.MouseDown += UpArrowMouseDown;
-
-            Grid.SetRow(up_arrow, 0);
-            Grid.SetColumn(up_arrow, 3);
-
+            SetRowColumns(up_arrow, 0, 3);
             subGrid.Children.Add(up_arrow);
 
             #endregion
@@ -594,14 +600,179 @@ namespace EdlightDesktopClient.Views.Schedule
                 }
             }
             down_arrow.MouseDown += DownArrowMouseDown;
-
-            Grid.SetRow(down_arrow, 3);
-            Grid.SetColumn(down_arrow, 3);
-
+            SetRowColumns(down_arrow, 3, 3);
             subGrid.Children.Add(down_arrow);
 
             #endregion
             return subGrid;
+        }
+
+        #region Создание контролов
+
+        private ContentControl CreateControl(ControlTemplate template, ToolTip tip, int size)
+        {
+            ContentControl control = new();
+            control.Width = size;
+            control.Margin = new Thickness(0, 0, 5, 0);
+            control.Foreground = primaryBrush;
+            control.Template = template;
+            control.HorizontalAlignment = HorizontalAlignment.Left;
+            control.VerticalAlignment = VerticalAlignment.Center;
+            control.ToolTip = tip;
+            return control;
+        }
+        private TextBlock CreateTextBlock(string message)
+        {
+            TextBlock txt = new();
+            txt.Text = message;
+            txt.Style = simpleTextBlockStyle;
+            txt.HorizontalAlignment = HorizontalAlignment.Left;
+            txt.VerticalAlignment = VerticalAlignment.Center;
+            return txt;
+        }
+        private ToolTip CreateToolTip(string message)
+        {
+            TextBlock textBlock = new();
+            textBlock.Style = toolTipTextBlockStyle;
+            textBlock.Text = message;
+
+            ToolTip toolTip = new();
+            toolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Left;
+            toolTip.Content = textBlock;
+
+            return toolTip;
+        }
+        private ToolTip CreateCommentsToolTip(List<CommentModel> comments)
+        {
+            StackPanel controlsStack = new();
+            controlsStack.Orientation = Orientation.Vertical;
+            controlsStack.HorizontalAlignment = HorizontalAlignment.Center;
+            controlsStack.VerticalAlignment = VerticalAlignment.Top;
+
+            if (comments != null)
+            {
+                comments.Reverse();
+                int rangeLimit = 1;
+                foreach (CommentModel com in comments)
+                {
+                    if (rangeLimit >= 6) break;
+
+                    Border border = new();
+                    border.Margin = new Thickness(3);
+                    border.Background = innerBrush;
+
+                    Border split = new();
+                    split.Height = 1;
+                    split.VerticalAlignment = VerticalAlignment.Bottom;
+                    split.Margin = new Thickness(6, 0, 6, 0);
+                    split.Opacity = 0.5;
+                    split.Background = new SolidColorBrush(Colors.White);
+
+                    TextBlock from = new();
+                    from.Style = simpleTextBlockStyle;
+                    from.Margin = new Thickness(6);
+                    from.Text = com.User.Surname + " " + com.User.Name;
+                    from.HorizontalAlignment = HorizontalAlignment.Left;
+                    from.VerticalAlignment = VerticalAlignment.Top;
+                    from.FontSize = 11;
+
+                    TextBlock time = new();
+                    time.Style = simpleTextBlockStyle;
+                    time.Margin = new Thickness(6);
+                    time.Text = com.Date.ToString();
+                    time.HorizontalAlignment = HorizontalAlignment.Right;
+                    time.VerticalAlignment = VerticalAlignment.Top;
+                    time.FontSize = 11;
+
+                    TextBlock msg = new();
+                    msg.Style = simpleTextBlockStyle;
+                    msg.Margin = new Thickness(6);
+                    msg.Text = com.Message;
+                    msg.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    msg.VerticalAlignment = VerticalAlignment.Top;
+                    msg.FontSize = 12;
+                    msg.TextWrapping = TextWrapping.Wrap;
+
+                    Grid gr = new();
+                    gr.Height = 70;
+                    gr.Width = 330;
+
+                    RowDefinition head = new();
+                    head.Height = new GridLength(30);
+
+                    gr.RowDefinitions.Add(head);
+                    gr.RowDefinitions.Add(new RowDefinition());
+
+                    Grid.SetRow(border, 0);
+                    Grid.SetRow(msg, 1);
+                    Grid.SetRowSpan(border, 3);
+
+                    gr.Children.Add(border);
+                    gr.Children.Add(split);
+                    gr.Children.Add(from);
+                    gr.Children.Add(time);
+                    gr.Children.Add(msg);
+
+                    controlsStack.Children.Add(gr);
+                    rangeLimit++;
+                }
+            }
+
+            ToolTip toolTip = new();
+            toolTip.Width = 400;
+            toolTip.Height = 400;
+            toolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Left;
+            toolTip.Content = controlsStack;
+
+            return toolTip;
+        }
+        /// <summary>
+        /// Установить для элемента Row и Column
+        /// </summary>
+        /// <param name="element">Элемент</param>
+        /// <param name="row">Строка</param>
+        /// <param name="collumn">Столбец</param>
+        /// <param name="rowSpan">Объединение строк</param>
+        /// <param name="columnSpan">Объединение столбцов</param>
+        private void SetRowColumns(UIElement element, int row, int collumn, int rowSpan = 0, int columnSpan = 0)
+        {
+            Grid.SetRow(element, row);
+            Grid.SetColumn(element, collumn);
+            if (rowSpan != 0) Grid.SetRowSpan(element, rowSpan);
+            if (columnSpan != 0) Grid.SetColumnSpan(element, columnSpan);
+        } 
+
+        #endregion
+
+        #endregion
+        #region Метод выбора карточки
+
+        private void CardMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Card card)
+            {
+                if (card.Effect == null)
+                {
+                    SetEffect(card, true);
+                    foreach (var ch in ItemsGrid.Children)
+                    {
+                        if(ch is Card other && other.Uid != card.Uid)
+                        {
+                            SetEffect(other, false);
+                        }
+                    }
+                }
+                else
+                {
+                    SetEffect(card, false);
+                }
+            }
+        }
+        private void SetEffect(Card card, bool selected)
+        {
+            if (!selected) card.Effect = null;
+            else card.Effect = new DropShadowEffect() { Color = Colors.SpringGreen, Opacity = 0.5, ShadowDepth = 0, BlurRadius = 20, Direction = 0 };
+            aggregator.GetEvent<CardSelectingEvent>().Publish(new KeyValuePair<string, bool>(card.Uid, selected));
         }
 
         #endregion

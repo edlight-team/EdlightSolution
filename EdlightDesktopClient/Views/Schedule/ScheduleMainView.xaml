@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="EdlightDesktopClient.Views.Schedule.ScheduleMainView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:behaviors="clr-namespace:Styles.Behaviors;assembly=Styles"
              xmlns:controls="clr-namespace:Styles.Controls;assembly=Styles"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:hc="https://handyorg.github.io/handycontrol"
@@ -35,7 +36,7 @@
                 CornerRadius="0,15,15,15" />
 
         <!--#endregion-->
-        <!--#region Дата-->
+        <!--#region Дата и группа-->
 
         <StackPanel Grid.Row="0"
                     Margin="25,0,0,0"
@@ -48,7 +49,7 @@
             <Button Command="{Binding PrevDayCommand}" Style="{DynamicResource SimpleButtonWithBorder}">
                 <Button.ToolTip>
                     <ToolTip HorizontalOffset="15"
-                             Placement="Left"
+                             Placement="Right"
                              Style="{DynamicResource SimpleToolTip}"
                              VerticalOffset="25">
                         <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Предыдущий день" />
@@ -114,6 +115,37 @@
             </Button>
 
             <!--#endregion-->
+            <!--#region Обновить-->
+
+            <Button Margin="0,0,10,0"
+                    Command="{Binding RefreshDayCommand}"
+                    Style="{DynamicResource SimpleButtonWithBorder}">
+                <Button.ToolTip>
+                    <ToolTip HorizontalOffset="0"
+                             Placement="Right"
+                             Style="{DynamicResource SimpleToolTip}"
+                             VerticalOffset="25">
+                        <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Обновить" />
+                    </ToolTip>
+                </Button.ToolTip>
+                <ContentControl Width="18"
+                                Height="18"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Refresh}" />
+            </Button>
+
+            <!--#endregion-->
+            <!--#region Группа-->
+            <TextBlock Width="45"
+                       Margin="10,0,10,0"
+                       Style="{DynamicResource ToolTipTextBlock}"
+                       Text="Группа:" />
+            <hc:ComboBox Width="150"
+                         behaviors:ComboSelectedIndexChangedBehavior.Command="{Binding GroupsChangedCommand, UpdateSourceTrigger=PropertyChanged}"
+                         DisplayMemberPath="Group"
+                         ItemsSource="{Binding Groups, UpdateSourceTrigger=PropertyChanged}"
+                         SelectedItem="{Binding SelectedGroup, UpdateSourceTrigger=PropertyChanged}" />
+            <!--#endregion-->
 
         </StackPanel>
 
@@ -136,7 +168,7 @@
                 <ColumnDefinition Width="1" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="1" />
-                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="250" />
             </Grid.ColumnDefinitions>
 
             <!--#endregion-->
@@ -148,39 +180,72 @@
                     Background="{DynamicResource ActiveBackgroundTabHeaderBtush}" />
 
             <!--#endregion-->
-            <!--#region Кнопки управления-->
+            <!--#region Управление-->
 
             <StackPanel Grid.Row="0"
                         Grid.Column="4"
-                        Margin="0,10,0,0"
                         Orientation="Vertical">
-                <Button Width="125"
-                        Margin="0,0,0,10"
-                        Command="{Binding AddCardCommand}"
-                        Style="{DynamicResource SimpleButtonWithBorder}"
-                        Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
-                    <TextBlock HorizontalAlignment="Center"
-                               Style="{DynamicResource SimpleTextBlock}"
-                               Text="Новая запись" />
-                </Button>
-                <Button Width="125"
-                        Margin="0,0,0,10"
-                        IsEnabled="False"
-                        Style="{DynamicResource SimpleButtonWithBorder}"
-                        Visibility="{Binding Config.CanSetScheduleStatus, UpdateSourceTrigger=PropertyChanged}">
-                    <TextBlock HorizontalAlignment="Center"
-                               Style="{DynamicResource SimpleTextBlock}"
-                               Text="Отменить занятие" />
-                </Button>
-                <Button Width="125"
-                        Margin="0,0,0,10"
-                        IsEnabled="False"
-                        Style="{DynamicResource SimpleButtonWithBorder}"
-                        Visibility="{Binding Config.CanDeleteScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
-                    <TextBlock HorizontalAlignment="Center"
-                               Style="{DynamicResource SimpleTextBlock}"
-                               Text="Удалить запись" />
-                </Button>
+                <!--#region Кнопки управления-->
+                <Expander Margin="5"
+                          Header="Управление"
+                          IsExpanded="True"
+                          Visibility="{Binding Config.CanManageSchedule, UpdateSourceTrigger=PropertyChanged}">
+                    <StackPanel Margin="0,10,0,0" Orientation="Vertical">
+                        <Button Width="175"
+                                Margin="0,0,0,10"
+                                Command="{Binding AddCardCommand}"
+                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBlock HorizontalAlignment="Center"
+                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Text="Новая запись" />
+                        </Button>
+                        <Button Width="175"
+                                Margin="0,0,0,10"
+                                Command="{Binding CancelCardCommand}"
+                                IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                Visibility="{Binding Config.CanSetScheduleStatus, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBlock HorizontalAlignment="Center"
+                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Text="Отменить занятие" />
+                        </Button>
+                        <Button Width="175"
+                                Margin="0,0,0,10"
+                                Command="{Binding DeleteCardCommand}"
+                                IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                Visibility="{Binding Config.CanDeleteScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBlock HorizontalAlignment="Center"
+                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Text="Удалить запись" />
+                        </Button>
+                    </StackPanel>
+                </Expander>
+                <!--#endregion-->
+                <!--#region Материалы выбранного в расписании-->
+                <Expander Margin="5"
+                          Header="Материалы"
+                          IsExpanded="False"
+                          Visibility="{Binding Config.CanGetMaterial, UpdateSourceTrigger=PropertyChanged}">
+                    <StackPanel Margin="0,10,0,0" Orientation="Vertical">
+                        <Button Width="175"
+                                Margin="0,0,0,10"
+                                Command="{Binding AddMaterialCommand}"
+                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                Visibility="{Binding Config.CanCreateMaterial, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBlock HorizontalAlignment="Center"
+                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Text="Добавить материал" />
+                        </Button>
+                    </StackPanel>
+                </Expander>
+                <!--#endregion-->
+                <!--#region Комментарии выбранного в расписании-->
+                <Expander Margin="5"
+                          Header="Комментарии"
+                          IsExpanded="False" />
+                <!--#endregion-->
             </StackPanel>
 
             <!--#endregion-->

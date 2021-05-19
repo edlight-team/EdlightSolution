@@ -28,6 +28,12 @@ namespace ApplicationServices.PermissionService
         #region Записи расписания
 
         /// <summary>
+        /// Управлять расписанием
+        /// </summary>
+        [PermissionDescription("Управлять расписанием")]
+        public const string GetScheduleManaging = nameof(GetScheduleManaging);
+
+        /// <summary>
         /// Создать записи расписания
         /// </summary>
         [PermissionDescription("Создать записи расписания")]

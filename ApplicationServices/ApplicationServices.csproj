@@ -75,10 +75,6 @@
       <Project>{3BC9C9C3-3EE8-476B-AFEE-6C113A9D5650}</Project>
       <Name>ApplicationModels</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Styles\Styles.csproj">
-      <Project>{85aa63c8-3100-4151-a96f-eac74682cfe3}</Project>
-      <Name>Styles</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

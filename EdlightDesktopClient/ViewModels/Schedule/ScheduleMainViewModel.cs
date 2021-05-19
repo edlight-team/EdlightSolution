@@ -35,6 +35,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #endregion
         #region fields
 
+        private bool _firstRun = true;
         private bool _isCardActionsEnabled;
 
         private ScheduleConfig _config;
@@ -131,7 +132,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             this.notification = notification;
             this.permissionService = permissionService;
             this.aggregator = aggregator;
-            aggregator.GetEvent<DateChangedEvent>().Subscribe(() => OnLoadModelsByDate(CurrentDate, false));
+            aggregator.GetEvent<DateChangedEvent>().Subscribe(() => OnLoadModelsByDate(CurrentDate));
             aggregator.GetEvent<CardSelectingEvent>().Subscribe(OnCardSelecting);
 
             Models = new();
@@ -168,18 +169,20 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         #region Загрузка данных
 
-        private async Task LoadingData(bool loadGroups = true)
+        private async Task LoadingData()
         {
-            Teachers = new ObservableCollection<UserModel>(await api.GetModels<UserModel>(WebApiTableNames.Users));
-            Disciplines = new ObservableCollection<AcademicDisciplinesModel>(await api.GetModels<AcademicDisciplinesModel>(WebApiTableNames.AcademicDisciplines));
-            Audiences = new ObservableCollection<AudiencesModel>(await api.GetModels<AudiencesModel>(WebApiTableNames.Audiences));
-            TypeClasses = new ObservableCollection<TypeClassesModel>(await api.GetModels<TypeClassesModel>(WebApiTableNames.TypeClasses));
-            if (loadGroups)
+            if(_firstRun)
             {
                 Groups = new ObservableCollection<GroupsModel>(await api.GetModels<GroupsModel>(WebApiTableNames.Groups));
                 SelectedGroup = Groups.FirstOrDefault();
                 GroupsChangedCommand = new DelegateCommand(OnGroupsChanged);
+
+                _firstRun = false;
             }
+            Teachers = new ObservableCollection<UserModel>(await api.GetModels<UserModel>(WebApiTableNames.Users));
+            Disciplines = new ObservableCollection<AcademicDisciplinesModel>(await api.GetModels<AcademicDisciplinesModel>(WebApiTableNames.AcademicDisciplines));
+            Audiences = new ObservableCollection<AudiencesModel>(await api.GetModels<AudiencesModel>(WebApiTableNames.Audiences));
+            TypeClasses = new ObservableCollection<TypeClassesModel>(await api.GetModels<TypeClassesModel>(WebApiTableNames.TypeClasses));
             TimeLessons = new ObservableCollection<TimeLessonsModel>(await api.GetModels<TimeLessonsModel>(WebApiTableNames.TimeLessons));
 
             await Config.SetVisibilities(permissionService);
@@ -193,10 +196,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private void OnPrevCLick() => CurrentDate = CurrentDate.AddDays(-1);
         private void OnTodayClick() => CurrentDate = CurrentDate = DateTime.Now;
         private void OnNextClick() => CurrentDate = CurrentDate.AddDays(1);
-        private void OnRefreshDay() => OnLoadModelsByDate(_currentDate, false);
-        private void OnGroupsChanged() => OnLoadModelsByDate(_currentDate, false);
+        private void OnRefreshDay() => OnLoadModelsByDate(_currentDate);
+        private void OnGroupsChanged() => OnLoadModelsByDate(_currentDate);
 
-        private async void OnLoadModelsByDate(DateTime date, bool loadGroups = true)
+        private async void OnLoadModelsByDate(DateTime date)
         {
             try
             {
@@ -204,7 +207,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
                 Task load = Task.Run(async () =>
                 {
-                    Task loading = Task.Run(async () => await LoadingData(loadGroups));
+                    Task loading = Task.Run(async () => await LoadingData());
                     await Task.WhenAll(loading);
 
                     Models.Clear();
@@ -237,7 +240,6 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             }
             catch (Exception ex)
             {
-                notification.ShowError("Во время загрузки произошла ошибка: " + ex.Message);
                 throw;
             }
             finally

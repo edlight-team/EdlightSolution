@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:behaviors="clr-namespace:Styles.Behaviors;assembly=Styles"
              xmlns:controls="clr-namespace:Styles.Controls;assembly=Styles"
+             xmlns:converters="clr-namespace:Styles.Converters;assembly=Styles"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,6 +12,9 @@
              d:DataContext="{d:DesignInstance vm:ScheduleMainViewModel}"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="55" />
@@ -223,29 +227,32 @@
                     </StackPanel>
                 </Expander>
                 <!--#endregion-->
-                <!--#region Материалы выбранного в расписании-->
-                <Expander Margin="5"
-                          Header="Материалы"
-                          IsExpanded="False"
-                          Visibility="{Binding Config.CanGetMaterial, UpdateSourceTrigger=PropertyChanged}">
-                    <StackPanel Margin="0,10,0,0" Orientation="Vertical">
-                        <Button Width="175"
-                                Margin="0,0,0,10"
-                                Command="{Binding AddMaterialCommand}"
-                                Style="{DynamicResource SimpleButtonWithBorder}"
-                                Visibility="{Binding Config.CanCreateMaterial, UpdateSourceTrigger=PropertyChanged}">
-                            <TextBlock HorizontalAlignment="Center"
-                                       Style="{DynamicResource SimpleTextBlock}"
-                                       Text="Добавить материал" />
-                        </Button>
-                    </StackPanel>
-                </Expander>
-                <!--#endregion-->
-                <!--#region Комментарии выбранного в расписании-->
-                <Expander Margin="5"
-                          Header="Комментарии"
-                          IsExpanded="False" />
-                <!--#endregion-->
+                <StackPanel Orientation="Vertical" Visibility="{Binding IsCardActionsEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                    <!--#region Материалы выбранного в расписании-->
+                    <Expander Margin="5"
+                              Header="Материалы"
+                              IsExpanded="False"
+                              Visibility="{Binding Config.CanGetMaterial, UpdateSourceTrigger=PropertyChanged}">
+                        <StackPanel Margin="0,10,0,0" Orientation="Vertical">
+                            <Button Width="175"
+                                    Margin="0,0,0,10"
+                                    Command="{Binding AddMaterialCommand}"
+                                    Style="{DynamicResource SimpleButtonWithBorder}"
+                                    Visibility="{Binding Config.CanCreateMaterial, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBlock HorizontalAlignment="Center"
+                                           Style="{DynamicResource SimpleTextBlock}"
+                                           Text="Добавить материал" />
+                            </Button>
+                        </StackPanel>
+                    </Expander>
+                    <!--#endregion-->
+                    <!--#region Комментарии выбранного в расписании-->
+                    <Expander Margin="5"
+                              Header="Комментарии"
+                              IsExpanded="False"
+                              Visibility="{Binding Config.CanGetScheduleComments, UpdateSourceTrigger=PropertyChanged}" />
+                    <!--#endregion-->
+                </StackPanel>
             </StackPanel>
 
             <!--#endregion-->

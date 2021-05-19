@@ -238,7 +238,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 });
                 await Task.WhenAll(load);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

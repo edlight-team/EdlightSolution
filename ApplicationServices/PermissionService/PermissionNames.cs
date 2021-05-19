@@ -40,6 +40,12 @@ namespace ApplicationServices.PermissionService
         public const string CreateScheduleRecords = nameof(CreateScheduleRecords);
 
         /// <summary>
+        /// Редактировать запись расписания
+        /// </summary>
+        [PermissionDescription("Редактировать запись расписания")]
+        public const string EditScheduleRecords = nameof(EditScheduleRecords);
+
+        /// <summary>
         /// Установить статус записи расписания (Обычный / Отменен)
         /// </summary>
         [PermissionDescription("Установить статус записи расписания (Обычный / Отменен)")]

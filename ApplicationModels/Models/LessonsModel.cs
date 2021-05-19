@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Prism.Mvvm;
 using System;
-using System.Windows;
 
 namespace ApplicationModels.Models
 {
@@ -23,7 +22,9 @@ namespace ApplicationModels.Models
         private TypeClassesModel typeClass;
         private AudiencesModel audience;
         private GroupsModel group;
+        private string canceledReason;
         private bool isSelected;
+        private bool isCanceled;
 
         #endregion
         #region props
@@ -77,6 +78,12 @@ namespace ApplicationModels.Models
         public Guid IdGroup { get => idGroup; set => SetProperty(ref idGroup, value); }
 
         /// <summary>
+        /// Причина отмены занятия
+        /// </summary>
+        [JsonProperty(nameof(CanceledReason))]
+        public string CanceledReason { get => canceledReason ??= string.Empty; set => SetProperty(ref canceledReason, value); }
+
+        /// <summary>
         /// Занятие
         /// </summary>
         [JsonIgnore]
@@ -117,6 +124,12 @@ namespace ApplicationModels.Models
         /// </summary>
         [JsonIgnore]
         public bool IsSelected { get => isSelected; set => SetProperty(ref isSelected, value); }
+
+        /// <summary>
+        /// Модель отменена да/нет
+        /// </summary>
+        [JsonIgnore]
+        public bool IsCanceled { get => isCanceled; set => SetProperty(ref isCanceled, value); }
 
         #endregion
     }

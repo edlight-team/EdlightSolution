@@ -111,7 +111,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
                 aggregator.GetEvent<GridChildChangedEvent>().Publish(new object[] { card, model });
             }
-        } 
+        }
 
         #endregion
         #region Вычисления размеров сетки
@@ -153,7 +153,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
             await api.PutModel(target.TimeLessons, WebApiTableNames.TimeLessons);
             //ToDo: Добавть здесь метод Signal R
-        } 
+        }
 
         #endregion
 

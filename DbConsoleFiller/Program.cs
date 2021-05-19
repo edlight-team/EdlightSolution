@@ -183,23 +183,28 @@ namespace DbConsoleFiller
             await api.DeleteAll(WebApiTableNames.RolesPermissions);
 
             //Студент
-            await api.PostModel(new RolesPermissionsModel() {
+            await api.PostModel(new RolesPermissionsModel()
+            {
                 IdRole = studentRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleComments].Id
             }, WebApiTableNames.RolesPermissions);
-            await api.PostModel(new RolesPermissionsModel() {
+            await api.PostModel(new RolesPermissionsModel()
+            {
                 IdRole = studentRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.CreateScheduleComments].Id
             }, WebApiTableNames.RolesPermissions);
-            await api.PostModel(new RolesPermissionsModel() {
+            await api.PostModel(new RolesPermissionsModel()
+            {
                 IdRole = studentRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.EditScheduleComments].Id
             }, WebApiTableNames.RolesPermissions);
-            await api.PostModel(new RolesPermissionsModel() {
+            await api.PostModel(new RolesPermissionsModel()
+            {
                 IdRole = studentRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.DeleteScheduleComments].Id
             }, WebApiTableNames.RolesPermissions);
-            await api.PostModel(new RolesPermissionsModel() {
+            await api.PostModel(new RolesPermissionsModel()
+            {
                 IdRole = studentRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.GetFile].Id
             }, WebApiTableNames.RolesPermissions);
@@ -216,13 +221,15 @@ namespace DbConsoleFiller
             }, WebApiTableNames.RolesPermissions);
 
             //Преподаватель
-            await api.PostModel(new RolesPermissionsModel() {
+            await api.PostModel(new RolesPermissionsModel()
+            {
                 IdRole = teacherRole.Id,
-                IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleManaging].Id 
+                IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleManaging].Id
             }, WebApiTableNames.RolesPermissions);
-            await api.PostModel(new RolesPermissionsModel() {
+            await api.PostModel(new RolesPermissionsModel()
+            {
                 IdRole = teacherRole.Id,
-                IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleComments].Id 
+                IdPermission = permissionNamesDictionary[PermissionNames.GetScheduleComments].Id
             }, WebApiTableNames.RolesPermissions);
             await api.PostModel(new RolesPermissionsModel()
             {
@@ -306,6 +313,11 @@ namespace DbConsoleFiller
             {
                 IdRole = umoRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.CreateScheduleRecords].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.EditScheduleRecords].Id
             }, WebApiTableNames.RolesPermissions);
             await api.PostModel(new RolesPermissionsModel()
             {

@@ -1,12 +1,15 @@
 ﻿<UserControl x:Class="EdlightDesktopClient.Views.Schedule.AddScheduleView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:behaviors="clr-namespace:Styles.Behaviors;assembly=Styles"
+             xmlns:controls="clr-namespace:Styles.Controls;assembly=Styles"
              xmlns:converters="clr-namespace:Styles.Converters;assembly=Styles"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:prism="http://www.codeplex.com/prism"
              xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels.Schedule"
+             behaviors:LoadedBehavior.Command="{Binding LoadedCommand}"
              d:DataContext="{d:DesignInstance vm:AddScheduleViewModel}"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d">
@@ -38,6 +41,18 @@
                     <RowDefinition />
                     <RowDefinition Height="15" />
                 </Grid.RowDefinitions>
+
+                <!--#region Лоадер-->
+
+                <controls:LoaderBox Grid.Row="0"
+                                    Grid.RowSpan="4"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="3"
+                                    Panel.ZIndex="{Binding Loader.PanelIndex, UpdateSourceTrigger=PropertyChanged}"
+                                    IsActive="{Binding Loader.IsActive, UpdateSourceTrigger=PropertyChanged}"
+                                    Message="{Binding Loader.Message, UpdateSourceTrigger=PropertyChanged}" />
+
+                <!--#endregion-->
                 <!--#region header-->
 
                 <TextBlock Grid.Row="1"
@@ -235,7 +250,7 @@
                                        Width="200"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
-                                       SelectedDate="{Binding LessonDate, UpdateSourceTrigger=PropertyChanged}" />
+                                       SelectedDate="{Binding CurrentDate, UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock Grid.Row="0"
                                    Grid.Column="2"
@@ -263,13 +278,13 @@
                           VerticalAlignment="Center">
                         <Button Width="200"
                                 Height="35"
-                                Style="{DynamicResource SimpleButtonWithBorder}"
                                 Command="{Binding CreateRecordCommand}"
-                                Focusable="False">
+                                Focusable="False"
+                                Style="{DynamicResource SimpleButtonWithBorder}">
                             <TextBlock HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
                                        Style="{DynamicResource SimpleTextBlock}"
-                                       Text="Создать запись" />
+                                       Text="{Binding SaveButtonText, UpdateSourceTrigger=PropertyChanged}" />
                         </Button>
                         <ContentControl Width="25"
                                         Margin="250,0,0,0"
@@ -280,7 +295,7 @@
                                 <ToolTip Placement="Top">
                                     <TextBlock Width="200"
                                                Style="{DynamicResource ToolTipTextBlock}"
-                                               Text="{Binding TimeToSmallError, UpdateSourceTrigger=PropertyChanged}"
+                                               Text="{Binding Errors, UpdateSourceTrigger=PropertyChanged}"
                                                TextWrapping="Wrap" />
                                 </ToolTip>
                             </ContentControl.ToolTip>

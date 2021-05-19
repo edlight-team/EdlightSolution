@@ -12,7 +12,6 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Styles.Models;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace EdlightDesktopClient.ViewModels

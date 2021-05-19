@@ -7,6 +7,7 @@ using ApplicationWPFServices.MemoryService;
 using ApplicationWPFServices.NotificationService;
 using EdlightDesktopClient.AccessConfigurations;
 using EdlightDesktopClient.Views.Schedule;
+using HandyControl.Controls;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -37,9 +38,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         private bool _firstRun = true;
         private bool _isCardActionsEnabled;
+        private bool _isCardCancelingEnabled;
 
         private ScheduleConfig _config;
-        private LoaderModel _scheduleLoader;
+        private LoaderModel _loader;
         private DateTime _currentDate;
         private UserModel _currentUser;
         private GroupsModel _selectedGroup;
@@ -56,9 +58,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #region props
 
         public bool IsCardActionsEnabled { get => _isCardActionsEnabled; set => SetProperty(ref _isCardActionsEnabled, value); }
+        public bool IsCardCancelingEnabled { get => _isCardCancelingEnabled; set => SetProperty(ref _isCardCancelingEnabled, value); }
 
         public ScheduleConfig Config { get => _config ??= new(); set => SetProperty(ref _config, value); }
-        public LoaderModel ScheduleLoader { get => _scheduleLoader; set => SetProperty(ref _scheduleLoader, value); }
+        public LoaderModel Loader { get => _loader; set => SetProperty(ref _loader, value); }
         public DateTime CurrentDate
         {
             get => _currentDate;
@@ -103,6 +106,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         public DelegateCommand LoadedCommand { get; private set; }
 
         public DelegateCommand AddCardCommand { get; private set; }
+        public DelegateCommand EditCardCommand { get; private set; }
         public DelegateCommand CancelCardCommand { get; private set; }
         public DelegateCommand DeleteCardCommand { get; private set; }
 
@@ -126,6 +130,8 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             IEventAggregator aggregator,
             IPermissionService permissionService)
         {
+            Loader = new();
+
             this.manager = manager;
             this.memory = memory;
             this.api = api;
@@ -151,6 +157,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             #region Schedule managing
 
             AddCardCommand = new DelegateCommand(OnAddScheduleCard);
+            EditCardCommand = new DelegateCommand(OnEditScheduleCard);
             CancelCardCommand = new DelegateCommand(OnCancelCard);
             DeleteCardCommand = new DelegateCommand(OnDeleteCard);
 
@@ -171,7 +178,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         private async Task LoadingData()
         {
-            if(_firstRun)
+            if (_firstRun)
             {
                 Groups = new ObservableCollection<GroupsModel>(await api.GetModels<GroupsModel>(WebApiTableNames.Groups));
                 SelectedGroup = Groups.FirstOrDefault();
@@ -187,8 +194,9 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
             await Config.SetVisibilities(permissionService);
             await Config.ReadColors();
-            memory.StoreItem<TypeClassColors>(nameof(TypeClassColors), Config.TypeClassColors);
-        } 
+            memory.StoreItem(nameof(TypeClassColors), Config.TypeClassColors);
+            ClearSelected();
+        }
 
         #endregion
         #region Date clicks
@@ -203,40 +211,33 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         {
             try
             {
-                ScheduleLoader = new("Выполняется загрузка");
+                Loader.SetDefaultLoadingInfo();
+                await LoadingData();
 
-                Task load = Task.Run(async () =>
+                Models.Clear();
+
+                string condition = SelectedGroup == null ? $" Day = '{date.ToShortDateString()}'" : $" Day = '{date.ToShortDateString()}' and IdGroup = '{SelectedGroup.Id}'";
+                List<LessonsModel> lessons = await api.GetModels<LessonsModel>(WebApiTableNames.Lessons, condition);
+
+                foreach (LessonsModel lesson in lessons)
                 {
-                    Task loading = Task.Run(async () => await LoadingData());
-                    await Task.WhenAll(loading);
+                    LessonsModel lm = new();
+                    lm.Id = lesson.Id;
+                    lm.Day = lesson.Day;
+                    lm.Teacher = Teachers.FirstOrDefault(d => d.ID == lesson.IdTeacher);
+                    lm.AcademicDiscipline = Disciplines.FirstOrDefault(d => d.Id == lesson.IdAcademicDiscipline);
+                    lm.Audience = Audiences.FirstOrDefault(d => d.Id == lesson.IdAudience);
+                    lm.TypeClass = TypeClasses.FirstOrDefault(d => d.Id == lesson.IdTypeClass);
+                    lm.Group = Groups.FirstOrDefault(d => d.Id == lesson.IdGroup);
+                    lm.TimeLessons = TimeLessons.FirstOrDefault(d => d.Id == lesson.IdTimeLessons);
+                    lm.CanceledReason = lesson.CanceledReason;
 
-                    Models.Clear();
-
-                    string condition = SelectedGroup == null ? $" Day = '{date.ToShortDateString()}'" : $" Day = '{date.ToShortDateString()}' and IdGroup = '{SelectedGroup.Id}'";
-                    List <LessonsModel> lessons = await api.GetModels<LessonsModel>(WebApiTableNames.Lessons, condition);
-
-                    foreach (LessonsModel lesson in lessons)
-                    {
-                        LessonsModel lm = new();
-                        lm.Id = lesson.Id;
-                        lm.Day = lesson.Day;
-                        lm.Teacher = Teachers.FirstOrDefault(d => d.ID == lesson.IdTeacher);
-                        lm.AcademicDiscipline = Disciplines.FirstOrDefault(d => d.Id == lesson.IdAcademicDiscipline);
-                        lm.Audience = Audiences.FirstOrDefault(d => d.Id == lesson.IdAudience);
-                        lm.TypeClass = TypeClasses.FirstOrDefault(d => d.Id == lesson.IdTypeClass);
-                        lm.Group = Groups.FirstOrDefault(d => d.Id == lesson.IdGroup);
-                        lm.TimeLessons = TimeLessons.FirstOrDefault(d => d.Id == lesson.IdTimeLessons);
-
-                        Models.Add(lm);
-                    }
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        OnDateNavigated();
-                    });
-
-                    await Task.Delay(500);
+                    Models.Add(lm);
+                }
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    OnDateNavigated();
                 });
-                await Task.WhenAll(load);
             }
             catch (Exception)
             {
@@ -244,7 +245,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             }
             finally
             {
-                ScheduleLoader = new();
+                await Loader.Clear();
             }
         }
         private void OnDateNavigated()
@@ -263,28 +264,68 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         {
             LessonsModel card = Models.FirstOrDefault(c => c.Id.ToString().ToUpper() == pair.Key.ToUpper());
             card.IsSelected = pair.Value;
+            card.IsCanceled = string.IsNullOrEmpty(card.CanceledReason);
             IsCardActionsEnabled = !Models.All(m => !m.IsSelected);
+            if (Models.All(m => !m.IsCanceled))
+            {
+                IsCardCancelingEnabled = false;
+            }
+            else
+            {
+                IsCardCancelingEnabled = IsCardActionsEnabled && !card.IsCanceled;
+            }
+        }
+        private void ClearSelected()
+        {
+            foreach (var card in Models)
+            {
+                card.IsSelected = false;
+            }
+            IsCardActionsEnabled = false;
+            IsCardCancelingEnabled = false;
         }
 
         #endregion
         #region Управление карточками
 
-        private void OnAddScheduleCard() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddScheduleView));
-        private void OnCancelCard()
-        {
-        }
+        private void OnAddScheduleCard() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddScheduleView), new NavigationParameters()
+            {
+                { nameof(CurrentDate), CurrentDate },
+                { nameof(SelectedGroup), SelectedGroup }
+            });
+        private void OnEditScheduleCard() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddScheduleView), new NavigationParameters()
+            {
+                { "EditModel", Models.FirstOrDefault(m=>m.IsSelected) }
+            });
+        private void OnCancelCard() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(CancelScheduleRecordView), new NavigationParameters()
+            {
+                { "RecordId", Models.FirstOrDefault(m=>m.IsSelected).Id }
+            });
         private async void OnDeleteCard()
         {
             bool confirm = notification.ShowQuestion("Восстановить запись невозможно, продолжить действие?");
             if (!confirm) return;
-            ScheduleLoader = new("Выполняется загрузка");
+            try
+            {
+                Loader.SetDefaultLoadingInfo();
 
-            LessonsModel model = Models.FirstOrDefault(m => m.IsSelected);
-            await api.DeleteModel(model.Id, WebApiTableNames.Lessons);
-            aggregator.GetEvent<GridChildChangedEvent>().Publish(new object[] { model, true });
-            Models.Remove(model);
+                LessonsModel model = Models.FirstOrDefault(m => m.IsSelected);
+                await api.DeleteModel(model.Id, WebApiTableNames.Lessons);
+                await api.DeleteModel(model.TimeLessons.Id, WebApiTableNames.TimeLessons);
+                aggregator.GetEvent<GridChildChangedEvent>().Publish(new object[] { model, true });
+                Models.Remove(model);
 
-            ScheduleLoader = new();
+                IsCardActionsEnabled = false;
+                Growl.Info("Запись успешно Удалена", "Global");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                await Loader.Clear();
+            }
         }
 
         #endregion

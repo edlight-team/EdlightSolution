@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace Styles.Behaviors
+namespace Styles.Behaviors.KeyBehaviors
 {
     public class EnterPressedBehavior
     {

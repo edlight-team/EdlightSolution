@@ -14,6 +14,7 @@
              mc:Ignorable="d">
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+        <converters:BooleanRevert x:Key="BooleanRevert" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -26,9 +27,9 @@
 
         <controls:LoaderBox Grid.Row="0"
                             Grid.RowSpan="3"
-                            Panel.ZIndex="{Binding ScheduleLoader.PanelIndex, UpdateSourceTrigger=PropertyChanged}"
-                            IsActive="{Binding ScheduleLoader.IsActive, UpdateSourceTrigger=PropertyChanged}"
-                            Message="{Binding ScheduleLoader.Message, UpdateSourceTrigger=PropertyChanged}" />
+                            Panel.ZIndex="{Binding Loader.PanelIndex, UpdateSourceTrigger=PropertyChanged}"
+                            IsActive="{Binding Loader.IsActive, UpdateSourceTrigger=PropertyChanged}"
+                            Message="{Binding Loader.Message, UpdateSourceTrigger=PropertyChanged}" />
 
         <!--#endregion-->
         <!--#region Рамка-->
@@ -206,8 +207,18 @@
                         </Button>
                         <Button Width="175"
                                 Margin="0,0,0,10"
-                                Command="{Binding CancelCardCommand}"
+                                Command="{Binding EditCardCommand}"
                                 IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                Visibility="{Binding Config.CanEditScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBlock HorizontalAlignment="Center"
+                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Text="Редактировать запись" />
+                        </Button>
+                        <Button Width="175"
+                                Margin="0,0,0,10"
+                                Command="{Binding CancelCardCommand}"
+                                IsEnabled="{Binding IsCardCancelingEnabled, UpdateSourceTrigger=PropertyChanged}"
                                 Style="{DynamicResource SimpleButtonWithBorder}"
                                 Visibility="{Binding Config.CanSetScheduleStatus, UpdateSourceTrigger=PropertyChanged}">
                             <TextBlock HorizontalAlignment="Center"

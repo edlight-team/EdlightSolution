@@ -332,6 +332,36 @@
             </Canvas>
         </Viewbox>
     </ControlTemplate>
+    <ControlTemplate x:Key="Cancel" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Canvas Canvas.Left="0"
+                    Canvas.Top="0"
+                    Width="28"
+                    Height="28">
+                <Canvas.RenderTransform>
+                    <TranslateTransform X="0" Y="0" />
+                </Canvas.RenderTransform>
+                <Rectangle Width="28"
+                           Height="28"
+                           Fill="Transparent" />
+                <Canvas>
+                    <Canvas>
+                        <Path Fill="{TemplateBinding Foreground}">
+                            <Path.Data>
+                                <PathGeometry Figures="M24 11.518V0H0v24h11.518c1.614 2.411 4.361 3.999 7.482 4c4.971-0.002 8.998-4.029 9-9    C27.999 15.879 26.411 13.132 24 11.518z M11.517 14c-0.412 0.616-0.743 1.289-0.994 2H4v2h6.058C10.022 18.329 10 18.661 10 19    c0 1.055 0.19 2.061 0.523 3H2V2h20v8.523C21.061 10.19 20.055 10 19 10c-2.143 0-4.107 0.751-5.652 2H4v2H11.517z M19 25.883    c-3.801-0.009-6.876-3.084-6.885-6.883c0.009-3.801 3.084-6.876 6.885-6.884c3.799 0.008 6.874 3.083 6.883 6.884    C25.874 22.799 22.799 25.874 19 25.883z" FillRule="NonZero" />
+                            </Path.Data>
+                        </Path>
+                        <Polygon Fill="{TemplateBinding Foreground}"
+                                 FillRule="NonZero"
+                                 Points="20,8 4,8 4,10 19,10 20,10" />
+                        <Polygon Fill="{TemplateBinding Foreground}"
+                                 FillRule="NonZero"
+                                 Points="21,15 19,17 17,15 15,17 17,19 15,21 17,23 19,21 21,23 23,21 21,19 23,17" />
+                    </Canvas>
+                </Canvas>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
 
     <ControlTemplate x:Key="ClassType" TargetType="ContentControl">
         <Viewbox Stretch="Uniform">

@@ -28,6 +28,7 @@ namespace EdlightDesktopClient.Views.Schedule
         private readonly Style simpleTextBlockStyle = null;
         private readonly Style toolTipTextBlockStyle = null;
 
+        private readonly ControlTemplate cancelTemplate = null;
         private readonly ControlTemplate classTypeTemplate = null;
         private readonly ControlTemplate teacherTemplate = null;
         private readonly ControlTemplate doorTemplate = null;
@@ -35,6 +36,7 @@ namespace EdlightDesktopClient.Views.Schedule
         private readonly ControlTemplate groupTemplate = null;
         private readonly ControlTemplate commentTemplate = null;
 
+        private readonly SolidColorBrush falseOrErrorBrush = null;
         private readonly SolidColorBrush primaryBrush = null;
         private readonly SolidColorBrush innerBrush = null;
 
@@ -61,6 +63,7 @@ namespace EdlightDesktopClient.Views.Schedule
         {
             this.aggregator = aggregator;
             InitializeComponent();
+            Loaded += ScheduleDateViewerLoaded;
             Unloaded += ScheduleDateViewerUnloaded;
             aggregator.GetEvent<GridChildChangedEvent>().Subscribe(OnGridChildEvent);
 
@@ -89,12 +92,14 @@ namespace EdlightDesktopClient.Views.Schedule
             }
             foreach (var key in brushes.Keys)
             {
-                if (key.ToString() == "InactiveBackgroundTabHeaderBtush") innerBrush = (SolidColorBrush)brushes[key];
+                if (key.ToString() == "FalseOrErrorBrush") falseOrErrorBrush = (SolidColorBrush)brushes[key];
+                else if (key.ToString() == "InactiveBackgroundTabHeaderBtush") innerBrush = (SolidColorBrush)brushes[key];
                 else if (key.ToString() == "PrimaryFontBrush") primaryBrush = (SolidColorBrush)brushes[key];
             }
             foreach (var key in svg.Keys)
             {
-                if (key.ToString() == "ClassType") classTypeTemplate = (ControlTemplate)svg[key];
+                if (key.ToString() == "Cancel") cancelTemplate = (ControlTemplate)svg[key];
+                else if (key.ToString() == "ClassType") classTypeTemplate = (ControlTemplate)svg[key];
                 else if (key.ToString() == "Teacher") teacherTemplate = (ControlTemplate)svg[key];
                 else if (key.ToString() == "Door") doorTemplate = (ControlTemplate)svg[key];
                 else if (key.ToString() == "Book") bookTemplate = (ControlTemplate)svg[key];
@@ -104,10 +109,8 @@ namespace EdlightDesktopClient.Views.Schedule
 
             #endregion
         }
-        private void ScheduleDateViewerUnloaded(object sender, RoutedEventArgs e)
-        {
-            aggregator.GetEvent<GridChildChangedEvent>().Unsubscribe(OnGridChildEvent);
-        }
+        private void ScheduleDateViewerLoaded(object sender, RoutedEventArgs e) => OnClearEffects();
+        private void ScheduleDateViewerUnloaded(object sender, RoutedEventArgs e) => aggregator.GetEvent<GridChildChangedEvent>().Unsubscribe(OnGridChildEvent);
 
         #endregion
         #region Создание карточек
@@ -224,10 +227,26 @@ namespace EdlightDesktopClient.Views.Schedule
             #endregion
             #region Название дисциплины
 
-            ContentControl classType = CreateControl(classTypeTemplate, null, 25);
-            classType.Margin = new Thickness(15, 0, 0, 0);
-            SetRowColumns(classType, 1, 1);
-            infoGrid.Children.Add(classType);
+            ContentControl classType;
+            if (string.IsNullOrEmpty(lm.CanceledReason))
+            {
+                classType = CreateControl(classTypeTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                SetRowColumns(classType, 1, 1);
+                infoGrid.Children.Add(classType);
+            }
+            else
+            {
+                classType = CreateControl(cancelTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                classType.Foreground = falseOrErrorBrush;
+                SetRowColumns(classType, 1, 1);
+
+                ToolTip cancelTip = CreateToolTip("Занятие было отменено по причине:\r\n" + lm.CanceledReason);
+                classType.ToolTip = cancelTip;
+
+                infoGrid.Children.Add(classType);
+            }
 
             TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
             disciplineTextBlock.Margin = new Thickness(50, 0, 0, 0);
@@ -341,10 +360,26 @@ namespace EdlightDesktopClient.Views.Schedule
             #endregion
             #region Название дисциплины
 
-            ContentControl classType = CreateControl(classTypeTemplate, null, 25);
-            classType.Margin = new Thickness(15, 0, 0, 0);
-            SetRowColumns(classType, 1, 1);
-            infoGrid.Children.Add(classType);
+            ContentControl classType;
+            if (string.IsNullOrEmpty(lm.CanceledReason))
+            {
+                classType = CreateControl(classTypeTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                SetRowColumns(classType, 1, 1);
+                infoGrid.Children.Add(classType);
+            }
+            else
+            {
+                classType = CreateControl(cancelTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                classType.Foreground = falseOrErrorBrush;
+                SetRowColumns(classType, 1, 1);
+
+                ToolTip cancelTip = CreateToolTip("Занятие было отменено по причине:\r\n" + lm.CanceledReason);
+                classType.ToolTip = cancelTip;
+
+                infoGrid.Children.Add(classType);
+            }
 
             TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
             disciplineTextBlock.Margin = new Thickness(50, 0, 0, 0);
@@ -462,14 +497,31 @@ namespace EdlightDesktopClient.Views.Schedule
             #endregion
             #region Название дисциплины
 
-            ContentControl classType = CreateControl(classTypeTemplate, null, 25);
-            classType.Margin = new Thickness(15, 0, 0, 0);
-            SetRowColumns(classType, 1, 1);
-            infoGrid.Children.Add(classType);
+
+            ContentControl classType;
+            if (string.IsNullOrEmpty(lm.CanceledReason))
+            {
+                classType = CreateControl(classTypeTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                SetRowColumns(classType, 1, 1);
+                infoGrid.Children.Add(classType);
+            }
+            else
+            {
+                classType = CreateControl(cancelTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                classType.Foreground = falseOrErrorBrush;
+                SetRowColumns(classType, 1, 1);
+
+                ToolTip cancelTip = CreateToolTip("Занятие было отменено по причине:\r\n" + lm.CanceledReason);
+                classType.ToolTip = cancelTip;
+
+                infoGrid.Children.Add(classType);
+            }
 
             TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
             SetRowColumns(disciplineTextBlock, 1, 2);
-            infoGrid.Children.Add(disciplineTextBlock); 
+            infoGrid.Children.Add(disciplineTextBlock);
 
             #endregion
             #region Иконки с тултипами
@@ -717,6 +769,18 @@ namespace EdlightDesktopClient.Views.Schedule
                     rangeLimit++;
                 }
             }
+            else
+            {
+                TextBlock empty = new();
+                empty.Style = simpleTextBlockStyle;
+                empty.Margin = new Thickness(6);
+                empty.Text = "Комментарии пусты.";
+                empty.HorizontalAlignment = HorizontalAlignment.Center;
+                empty.VerticalAlignment = VerticalAlignment.Center;
+                empty.FontSize = 11;
+
+                controlsStack.Children.Add(empty);
+            }
 
             ToolTip toolTip = new();
             toolTip.Width = 400;
@@ -740,7 +804,7 @@ namespace EdlightDesktopClient.Views.Schedule
             Grid.SetColumn(element, collumn);
             if (rowSpan != 0) Grid.SetRowSpan(element, rowSpan);
             if (columnSpan != 0) Grid.SetColumnSpan(element, columnSpan);
-        } 
+        }
 
         #endregion
 
@@ -756,7 +820,7 @@ namespace EdlightDesktopClient.Views.Schedule
                     SetEffect(card, true);
                     foreach (var ch in ItemsGrid.Children)
                     {
-                        if(ch is Card other && other.Uid != card.Uid)
+                        if (ch is Card other && other.Uid != card.Uid)
                         {
                             SetEffect(other, false);
                         }
@@ -773,6 +837,16 @@ namespace EdlightDesktopClient.Views.Schedule
             if (!selected) card.Effect = null;
             else card.Effect = new DropShadowEffect() { Color = Colors.SpringGreen, Opacity = 0.5, ShadowDepth = 0, BlurRadius = 20, Direction = 0 };
             aggregator.GetEvent<CardSelectingEvent>().Publish(new KeyValuePair<string, bool>(card.Uid, selected));
+        }
+        private void OnClearEffects()
+        {
+            foreach (var ch in ItemsGrid.Children)
+            {
+                if (ch is Card card)
+                {
+                    SetEffect(card, false);
+                }
+            }
         }
 
         #endregion

@@ -455,6 +455,8 @@ namespace DbConsoleFiller
             watch.Start();
             await api.DeleteAll(WebApiTableNames.StudentsGroups);
 
+            await api.PostModel(new StudentsGroupsModel() { IdGroup = groups[0].Id, IdStudent = student.ID }, WebApiTableNames.StudentsGroups);
+
             Random random = new();
             for (int i = 0; i < otherusers.Count; i++)
             {

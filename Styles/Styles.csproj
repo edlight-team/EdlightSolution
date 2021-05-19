@@ -52,6 +52,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\MouseLeftButtonDown.cs" />
     <Compile Include="Behaviors\TabItemMouseDownBehavior.cs" />
     <Compile Include="Behaviors\UnloadedBehavior.cs" />
     <Compile Include="Controls\BindablePasswordBox.xaml.cs">
@@ -66,6 +67,7 @@
     <Compile Include="Converters\BooleanRevert.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\TimeZoneConverter.cs" />
+    <Compile Include="Extensions\VisibilityExtension.cs" />
     <Compile Include="Models\LoaderModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

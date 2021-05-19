@@ -303,6 +303,23 @@
             </Canvas>
         </Viewbox>
     </ControlTemplate>
+    <ControlTemplate x:Key="Play" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Canvas Width="24" Height="24">
+                <Canvas.RenderTransform>
+                    <TranslateTransform X="0" Y="0" />
+                </Canvas.RenderTransform>
+                <Rectangle Width="24"
+                           Height="24"
+                           Fill="Transparent" />
+                <Path Fill="{TemplateBinding Foreground}">
+                    <Path.Data>
+                        <PathGeometry Figures="M 9.6002223 17.3995 16.799555 12 9.6002223 6.6005002 Z M 12 0.00111157 C 5.3766136 0.00111157 0.00111157 5.3766135 0.00111157 12 0.00111157 18.623386 5.3766136 23.998889 12 23.998889 18.623387 23.998889 23.998889 18.623386 23.998889 12 23.998889 5.3766135 18.623387 0.00111157 12 0.00111157 Z M 12 21.59911 C 6.7084902 21.59911 2.4008893 17.291509 2.4008893 12 2.4008893 6.7084902 6.7084902 2.4008893 12 2.4008893 c 5.29151 0 9.599111 4.3076009 9.599111 9.5991107 0 5.291509 -4.307601 9.59911 -9.599111 9.59911 z" FillRule="NonZero" />
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
 
     <ControlTemplate x:Key="ClassType" TargetType="ContentControl">
         <Viewbox Stretch="Uniform">

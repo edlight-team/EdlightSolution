@@ -177,6 +177,17 @@ namespace DbConsoleFiller
                 IdPermission = permissionNamesDictionary[PermissionNames.GetFile].Id
             }, WebApiTableNames.RolesPermissions);
 
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = studentRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.TakeTest].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = studentRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.ViewSelfTestResults].Id
+            }, WebApiTableNames.RolesPermissions);
+
             //Преподаватель
             await api.PostModel(new RolesPermissionsModel() {
                 IdRole = teacherRole.Id,
@@ -216,6 +227,32 @@ namespace DbConsoleFiller
             {
                 IdRole = teacherRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.DeleteFile].Id
+            }, WebApiTableNames.RolesPermissions);
+
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.CreateTestRecords].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.UpdateTestRecord].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.DeleteTestRecord].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.SetTestFilter].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.ViewStudentTestResults].Id
             }, WebApiTableNames.RolesPermissions);
 
             //УМО
@@ -259,7 +296,16 @@ namespace DbConsoleFiller
                 IdRole = umoRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.DeleteFile].Id
             }, WebApiTableNames.RolesPermissions);
-
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.SetTestFilter].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = umoRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.ViewStudentTestResults].Id
+            }, WebApiTableNames.RolesPermissions);
 
             int count = (await api.GetModels<RolesPermissionsModel>(WebApiTableNames.RolesPermissions)).Count;
             Console.WriteLine("type " + nameof(RolesPermissionsModel) + " in db count = " + count);
@@ -460,7 +506,7 @@ namespace DbConsoleFiller
                     Surname = item.MiddleName,
                     Patrnymic = item.LastName,
                     Age = item.Age,
-                    Sex = item.FirstName.Length > 6 ? 1 : 0,
+                    Sex = item.FirstName.Length > 6 ? 2 : 1,
                     Login = new Regex(@"@+\w*").Replace(item.FirstName, ""),
                     Password = hashing.EncodeString(new Regex(@"@+\w*").Replace(item.FirstName, ""))
                 });

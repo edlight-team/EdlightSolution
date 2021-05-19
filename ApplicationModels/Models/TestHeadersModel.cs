@@ -15,6 +15,8 @@ namespace ApplicationModels.Models
         private string testType;
         private string testTime;
         private int countQuestions;
+
+        private bool isSelectedCard;
         #endregion
         #region props
         [JsonProperty(nameof(ID))]
@@ -40,6 +42,8 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(CountQuestions))]
         public int CountQuestions { get => countQuestions; set => SetProperty(ref countQuestions, value); }
+
+        public bool IsSelectedCard { get => isSelectedCard; set => SetProperty(ref isSelectedCard, value); }
         #endregion
     }
 }

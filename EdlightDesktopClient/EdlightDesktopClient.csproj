@@ -61,6 +61,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AccessConfigurations\ScheduleConfig.cs" />
+    <Compile Include="AccessConfigurations\TestConfig.cs" />
     <Compile Include="BaseMethods\RegionNames.cs" />
     <Compile Include="ViewModels\Groups\GroupsMainViewModel.cs" />
     <Compile Include="ViewModels\Learn\LearnMainViewModel.cs" />

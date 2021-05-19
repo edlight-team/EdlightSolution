@@ -94,7 +94,50 @@ namespace ApplicationServices.PermissionService
         public const string DeleteFile = nameof(DeleteFile);
 
         #endregion
-    } 
+        #region Тесты
+        /// <summary>
+        /// Создать тест
+        /// </summary>
+        [PermissionDescription("Создать тест")]
+        public const string CreateTestRecords = nameof(CreateTestRecords);
+
+        /// <summary>
+        /// Изменить тест
+        /// </summary>
+        [PermissionDescription("Изменить тест")]
+        public const string UpdateTestRecord = nameof(UpdateTestRecord);
+
+        /// <summary>
+        /// Удалить тест
+        /// </summary>
+        [PermissionDescription("Удалить тест")]
+        public const string DeleteTestRecord = nameof(DeleteTestRecord);
+
+        /// <summary>
+        /// Установить фильтер тестов
+        /// </summary>
+        [PermissionDescription("Установить фильтер тестов")]
+        public const string SetTestFilter = nameof(SetTestFilter);
+
+        /// <summary>
+        /// Пройти тест
+        /// </summary>
+        [PermissionDescription("Пройти тест")]
+        public const string TakeTest = nameof(TakeTest);
+
+        /// <summary>
+        /// Просмотреть результаты теста всех студентов
+        /// </summary>
+        [PermissionDescription("Просмотреть результаты теста всех студентов")]
+        public const string ViewStudentTestResults = nameof(ViewStudentTestResults);
+
+        /// <summary>
+        /// Просмотреть свои результаты теста
+        /// </summary>
+        [PermissionDescription("Просмотреть свои результаты теста")]
+        public const string ViewSelfTestResults = nameof(ViewSelfTestResults);
+        #endregion
+    }
 
     #endregion
 }

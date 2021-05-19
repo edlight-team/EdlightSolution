@@ -103,6 +103,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
                 currentUser = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
                 await permission.ConfigureService(api, currentUser);
                 RolesModel student_role = await permission.GetRoleByName("student");
+                RolesModel teacher_role = await permission.GetRoleByName("teacher");
 
                 Task loading_task = Task.Run(async () => await LoadingData());
                 await Task.WhenAll(loading_task);

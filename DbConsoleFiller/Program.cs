@@ -296,16 +296,6 @@ namespace DbConsoleFiller
                 IdRole = umoRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.DeleteFile].Id
             }, WebApiTableNames.RolesPermissions);
-            await api.PostModel(new RolesPermissionsModel()
-            {
-                IdRole = umoRole.Id,
-                IdPermission = permissionNamesDictionary[PermissionNames.SetTestFilter].Id
-            }, WebApiTableNames.RolesPermissions);
-            await api.PostModel(new RolesPermissionsModel()
-            {
-                IdRole = umoRole.Id,
-                IdPermission = permissionNamesDictionary[PermissionNames.ViewStudentTestResults].Id
-            }, WebApiTableNames.RolesPermissions);
 
             int count = (await api.GetModels<RolesPermissionsModel>(WebApiTableNames.RolesPermissions)).Count;
             Console.WriteLine("type " + nameof(RolesPermissionsModel) + " in db count = " + count);

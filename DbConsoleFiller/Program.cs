@@ -204,6 +204,17 @@ namespace DbConsoleFiller
                 IdPermission = permissionNamesDictionary[PermissionNames.GetFile].Id
             }, WebApiTableNames.RolesPermissions);
 
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = studentRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.TakeTest].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = studentRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.ViewSelfTestResults].Id
+            }, WebApiTableNames.RolesPermissions);
+
             //Преподаватель
             await api.PostModel(new RolesPermissionsModel() {
                 IdRole = teacherRole.Id,
@@ -247,6 +258,32 @@ namespace DbConsoleFiller
             {
                 IdRole = teacherRole.Id,
                 IdPermission = permissionNamesDictionary[PermissionNames.DeleteFile].Id
+            }, WebApiTableNames.RolesPermissions);
+
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.CreateTestRecords].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.UpdateTestRecord].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.DeleteTestRecord].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.SetTestFilter].Id
+            }, WebApiTableNames.RolesPermissions);
+            await api.PostModel(new RolesPermissionsModel()
+            {
+                IdRole = teacherRole.Id,
+                IdPermission = permissionNamesDictionary[PermissionNames.ViewStudentTestResults].Id
             }, WebApiTableNames.RolesPermissions);
 
             //УМО

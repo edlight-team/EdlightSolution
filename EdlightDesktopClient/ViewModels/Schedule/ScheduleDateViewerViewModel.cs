@@ -1,4 +1,5 @@
 ﻿using ApplicationEventsWPF.Events;
+using ApplicationModels.Config;
 using ApplicationModels.Models;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
@@ -6,7 +7,6 @@ using HandyControl.Controls;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -19,6 +19,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
     {
         #region services
 
+        private readonly IMemoryService memory;
         private readonly IEventAggregator aggregator;
         private readonly IWebApiService api;
 
@@ -45,6 +46,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         public ScheduleDateViewerViewModel(IMemoryService memory, IEventAggregator aggregator, IWebApiService api)
         {
+            this.memory = memory;
             this.aggregator = aggregator;
             this.api = api;
             Models = memory.GetItem<ObservableCollection<LessonsModel>>("TimeLessons");
@@ -64,7 +66,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             CreateCards();
             aggregator.GetEvent<CardMoveOrResizeEvent>().Subscribe(UpdateCard);
         }
-        private void OnUnloaded() => aggregator.GetEvent<CardMoveOrResizeEvent>().Unsubscribe(UpdateCard);
+        private void OnUnloaded()
+        {
+            aggregator.GetEvent<CardMoveOrResizeEvent>().Unsubscribe(UpdateCard);
+        }
 
         #endregion
         #region Заполнение времени и карточек
@@ -86,15 +91,22 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private void CreateCards()
         {
             aggregator.GetEvent<GridChildChangedEvent>().Publish(null);
-
+            TypeClassColors t_colors = memory.GetItem<TypeClassColors>(nameof(TypeClassColors));
             foreach (LessonsModel model in Models)
             {
                 Card card = new();
                 card.Uid = model.Id.ToString().ToUpper();
-                card.Width = 600;
+                card.Width = 550;
                 card.Height = CalculateHeightByStartTimeAndEndTime(model.TimeLessons.StartTime, model.TimeLessons.EndTime);
                 card.VerticalAlignment = VerticalAlignment.Top;
-                card.Background = new SolidColorBrush(Colors.DarkMagenta);
+                card.Background = model.TypeClass.Title switch
+                {
+                    "Лекция" => new SolidColorBrush(t_colors.LectionColor),
+                    "Лабораторная работа" => new SolidColorBrush(t_colors.LaboratoryColor),
+                    "Практика" => new SolidColorBrush(t_colors.PracticeColor),
+                    "Экзамен" => new SolidColorBrush(t_colors.ExaminationColor),
+                    _ => new SolidColorBrush(t_colors.DefaultColor),
+                };
                 card.Margin = CalculateTopMarginByStartTime(model.TimeLessons.StartTime);
 
                 aggregator.GetEvent<GridChildChangedEvent>().Publish(new object[] { card, model });
@@ -106,15 +118,15 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         private string CalculateStartTimeByTopMargin(double topMargin)
         {
-            var index = (int)Math.Round(topMargin / 17);
-            if (index > 0) return TimeZones[index - 1];
+            var index = (int)topMargin / 17;
+            if (index > 0) return TimeZones[index];
             else return TimeZones.FirstOrDefault();
         }
         private string CalculateEndTimeByStartTimeAndHeight(string startTime, double height)
         {
-            int different = (int)Math.Round(height / 17);
+            int different = (int)height / 17;
             int startIndexTime = TimeZones.IndexOf(startTime);
-            return TimeZones[startIndexTime + different + 1];
+            return TimeZones[startIndexTime + different];
         }
         private Thickness CalculateTopMarginByStartTime(string startTime)
         {

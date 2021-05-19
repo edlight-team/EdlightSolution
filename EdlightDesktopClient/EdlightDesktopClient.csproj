@@ -164,6 +164,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Content Include="ScheduleTypeClassColorsConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator">
@@ -171,6 +174,9 @@
     </PackageReference>
     <PackageReference Include="HandyControls">
       <Version>3.3.5</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="Prism.Unity" Version="8.0.0.1909" />
   </ItemGroup>

@@ -52,6 +52,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\ComboSelectedIndexChangedBehavior.cs" />
+    <Compile Include="Behaviors\EnterPressedBehavior.cs" />
     <Compile Include="Behaviors\MouseLeftButtonDown.cs" />
     <Compile Include="Behaviors\TabItemMouseDownBehavior.cs" />
     <Compile Include="Behaviors\UnloadedBehavior.cs" />

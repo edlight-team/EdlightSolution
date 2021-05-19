@@ -119,7 +119,7 @@
                             Background="{DynamicResource ActiveBackgroundTabHeaderBtush}"
                             Visibility="Collapsed" />
                     <hc:Card Name="AdornerCardTemplate"
-                             Width="600"
+                             Width="550"
                              Opacity="1" />
                 </StackPanel>
 

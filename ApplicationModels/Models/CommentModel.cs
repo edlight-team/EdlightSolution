@@ -11,6 +11,7 @@ namespace ApplicationModels.Models
         private Guid id;
         private Guid idLesson;
         private Guid idUser;
+        private UserModel user;
         private DateTime date;
         private string message;
 
@@ -25,6 +26,9 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(IdUser))]
         public Guid IdUser { get => idUser; set => SetProperty(ref idUser, value); }
+
+        [JsonIgnore]
+        public UserModel User { get => user; set => SetProperty(ref user, value); }
 
         [JsonProperty(nameof(Date))]
         public DateTime Date { get => date; set => SetProperty(ref date, value); }

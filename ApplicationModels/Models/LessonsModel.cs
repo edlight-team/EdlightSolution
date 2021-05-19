@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Prism.Mvvm;
 using System;
+using System.Windows;
 
 namespace ApplicationModels.Models
 {
@@ -22,6 +23,7 @@ namespace ApplicationModels.Models
         private TypeClassesModel typeClass;
         private AudiencesModel audience;
         private GroupsModel group;
+        private bool isSelected;
 
         #endregion
         #region props
@@ -109,6 +111,12 @@ namespace ApplicationModels.Models
         /// </summary>
         [JsonIgnore]
         public GroupsModel Group { get => group; set => SetProperty(ref group, value); }
+
+        /// <summary>
+        /// Модель выбрана да/нет
+        /// </summary>
+        [JsonIgnore]
+        public bool IsSelected { get => isSelected; set => SetProperty(ref isSelected, value); }
 
         #endregion
     }

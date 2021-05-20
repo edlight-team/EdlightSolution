@@ -125,7 +125,9 @@
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0"
@@ -241,6 +243,80 @@
                                Grid.Column="2"
                                TextWrapping="Wrap"
                                Text="{Binding SelectedCardHeader.CountQuestions}"/>
+                </Grid>
+
+                <Grid Grid.Row="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="1"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="4*"/>
+                        <ColumnDefinition Width="15"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CardSelected}" Value="true">
+                                    <Setter Property="Visibility" Value="{Binding Config.CanViewSelfTestResults}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding CardSelected}" Value="false">
+                                    <Setter Property="Visibility" Value="Hidden"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+
+                    <Border Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            Grid.Row="0"
+                            Background="{DynamicResource ActiveBackgroundTabHeaderBtush}"/>
+                    <TextBlock Grid.Column="1"
+                               Grid.ColumnSpan="2"
+                               Grid.Row="1"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Результаты"/>
+                    <Border Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            Grid.Row="2"
+                            Background="{DynamicResource ActiveBackgroundTabHeaderBtush}"/>
+
+                    <TextBlock Grid.Row="4"
+                               Grid.Column="1"
+                               Text="Статус:"/>
+                    <TextBlock Grid.Row="4"
+                               Grid.Column="2"
+                               TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedTestResult.TestCompleted}" Value="true">
+                                        <Setter Property="Text" Value="Тест пройден"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedTestResult.TestCompleted}" Value="false">
+                                        <Setter Property="Text" Value="Тест не пройден"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <TextBlock Grid.Row="6"
+                               Grid.Column="1"
+                               Text="Баллы:"/>
+                    <TextBlock Grid.Row="6"
+                               Grid.Column="2"
+                               TextWrapping="Wrap"
+                               Text="{Binding SelectedTestResult.CorrectAnswers}"/>
                 </Grid>
             </Grid>
         </Grid>

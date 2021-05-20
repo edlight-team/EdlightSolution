@@ -4,6 +4,7 @@ using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
 using ApplicationWPFServices.NotificationService;
 using EdlightDesktopClient.AccessConfigurations;
+using EdlightDesktopClient.Views.Learn;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
@@ -34,10 +35,11 @@ namespace EdlightDesktopClient.ViewModels.Learn
 
         private ObservableCollection<GroupsModel> groups;
         private ObservableCollection<TestHeadersModel> testCards;
-        private ObservableCollection<TestResultsModel> testResults;
+        private List<TestResultsModel> testResults;
         private CollectionViewSource filteredTestCards;
         private GroupsModel selectedGroup;
         private TestHeadersModel selectedCardHeader;
+        private TestResultsModel selectedTestResult;
         private bool cardSelected;
 
         private readonly GroupsModel allTests;
@@ -48,9 +50,9 @@ namespace EdlightDesktopClient.ViewModels.Learn
 
         public ObservableCollection<GroupsModel> Groups { get => groups; set => SetProperty(ref groups, value); }
         public ObservableCollection<TestHeadersModel> TestCards { get => testCards ??= new(); set => SetProperty(ref testCards, value); }
-        public ObservableCollection<TestResultsModel> TestResults { get => testResults ??= new(); set => SetProperty(ref testResults, value); }
         public CollectionViewSource FilteredTestCards { get => filteredTestCards ??= new(); set => SetProperty(ref filteredTestCards, value); }
         public TestHeadersModel SelectedCardHeader { get => selectedCardHeader ??= new(); set => SetProperty(ref selectedCardHeader, value); }
+        public TestResultsModel SelectedTestResult { get => selectedTestResult ??= new(); set => SetProperty(ref selectedTestResult, value); }
         public GroupsModel SelectedGroup
         {
             get => selectedGroup ??= new();
@@ -114,9 +116,9 @@ namespace EdlightDesktopClient.ViewModels.Learn
                 {
                     FilteredTestCards.Filter += CardFilterStudent;
                     List<StudentsGroupsModel> studentsGroup = await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups, $"IdStudent = '{currentUser.ID}'");
-                    selectedGroup = Groups.FirstOrDefault(g => g.Id == studentsGroup[0].IdGroup);
+                    SelectedGroup = Groups.FirstOrDefault(g => g.Id == studentsGroup[0].IdGroup);
                 }
-                else
+                if(await permission.IsInRole(teacher_role))
                 {
                     FilteredTestCards.Filter += CardsFilter;
                     SelectedGroup = allTests;
@@ -174,7 +176,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
                     Groups.Add(item);
             });
             TestCards = new ObservableCollection<TestHeadersModel>(await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders));
-            TestResults = new ObservableCollection<TestResultsModel>(await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults));
+            testResults = await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults);
         }
         #region command methods
         private void OnCardClick(object parameter)
@@ -186,6 +188,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
                     card.IsSelectedCard = true;
                     CardSelected = true;
                     SelectedCardHeader = card;
+                    SelectedTestResult = testResults.Where(r => r.TestID == card.TestID && r.UserID == currentUser.ID).FirstOrDefault();
                 }
             }
         }
@@ -196,6 +199,15 @@ namespace EdlightDesktopClient.ViewModels.Learn
             {
                 card.IsSelectedCard = true;
                 SelectedCardHeader = card;
+                SelectedTestResult = testResults.Where(r => r.TestID == card.TestID && r.UserID == currentUser.ID).FirstOrDefault();
+                if (SelectedTestResult.TestCompleted)
+                {
+                    notification.ShowInformation("Тест уже пройден");
+                }
+                else
+                {
+                    notification.ShowInformation("Тест уже пройден");
+                }
             }
         }
 
@@ -206,12 +218,21 @@ namespace EdlightDesktopClient.ViewModels.Learn
 
         private void OnAddTest()
         {
-
+            NavigationParameters parameter = new()
+            {
+                { "iscreate", true }
+            };
+            manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddTestView),parameter);
         }
 
         private void OnUpdateTest()
         {
-
+            NavigationParameters parameter = new()
+            {
+                { "iscreate", true },
+                { "testid", SelectedCardHeader.TestID }
+            };
+            manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddTestView), parameter);
         }
 
         private void OnDeleteTest()

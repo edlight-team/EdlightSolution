@@ -64,7 +64,10 @@
     <Compile Include="AccessConfigurations\TestConfig.cs" />
     <Compile Include="BaseMethods\RegionNames.cs" />
     <Compile Include="ViewModels\Groups\GroupsMainViewModel.cs" />
+    <Compile Include="ViewModels\Learn\AddTestViewModel.cs" />
     <Compile Include="ViewModels\Learn\LearnMainViewModel.cs" />
+    <Compile Include="ViewModels\Learn\PassingTestViewModel.cs" />
+    <Compile Include="ViewModels\Learn\ResultsTestViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileMainViewModel.cs" />
     <Compile Include="ViewModels\Schedule\AddScheduleViewModel.cs" />
     <Compile Include="ViewModels\Schedule\ScheduleDateViewerViewModel.cs" />
@@ -73,8 +76,17 @@
     <Compile Include="Views\Groups\GroupsMainView.xaml.cs">
       <DependentUpon>GroupsMainView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Learn\AddTestView.xaml.cs">
+      <DependentUpon>AddTestView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Learn\LearnMainView.xaml.cs">
       <DependentUpon>LearnMainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Learn\PassingTestView.xaml.cs">
+      <DependentUpon>PassingTestView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Learn\ResultsTestView.xaml.cs">
+      <DependentUpon>ResultsTestView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Profile\ProfileMainView.xaml.cs">
       <DependentUpon>ProfileMainView.xaml</DependentUpon>
@@ -99,7 +111,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Learn\AddTestView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Learn\LearnMainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Learn\PassingTestView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Learn\ResultsTestView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -126,7 +126,6 @@ namespace EdlightDesktopClient.Views.Schedule
             {
                 ItemsGrid.Children.Clear();
             }
-            //ToDo: Добавить передачу комментариев
             else if (childAndModel[0] is Card card && childAndModel[1] is LessonsModel lm && childAndModel[2] is IEnumerable<CommentModel> comments)
             {
                 //Указываем обратный порядок чтобы сетка с dnd была сверху
@@ -703,7 +702,7 @@ namespace EdlightDesktopClient.Views.Schedule
             controlsStack.HorizontalAlignment = HorizontalAlignment.Center;
             controlsStack.VerticalAlignment = VerticalAlignment.Top;
 
-            if (comments != null)
+            if (comments != null && comments.Count != 0)
             {
                 comments.Reverse();
                 int rangeLimit = 1;
@@ -776,7 +775,7 @@ namespace EdlightDesktopClient.Views.Schedule
                 TextBlock empty = new();
                 empty.Style = simpleTextBlockStyle;
                 empty.Margin = new Thickness(6);
-                empty.Text = "Комментарии пусты.";
+                empty.Text = "Нет комментариев.";
                 empty.HorizontalAlignment = HorizontalAlignment.Center;
                 empty.VerticalAlignment = VerticalAlignment.Center;
                 empty.FontSize = 11;

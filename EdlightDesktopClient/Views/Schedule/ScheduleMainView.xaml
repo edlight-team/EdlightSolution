@@ -6,6 +6,7 @@
              xmlns:converters="clr-namespace:Styles.Converters;assembly=Styles"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:keys="clr-namespace:Styles.Behaviors.KeyBehaviors;assembly=Styles"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:prism="http://www.codeplex.com/prism"
              xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels.Schedule"
@@ -354,10 +355,11 @@
                                         Orientation="Horizontal">
                                 <TextBox Width="235"
                                          VerticalAlignment="Bottom"
+                                         keys:EnterPressedBehavior.Command="{Binding AddCommentCommand, UpdateSourceTrigger=PropertyChanged}"
                                          Text="{Binding CommentText, UpdateSourceTrigger=PropertyChanged}" />
                                 <Button Margin="10,0,0,0"
                                         HorizontalAlignment="Center"
-                                        Command="{Binding AddCommentCommand}"
+                                        Command="{Binding AddCommentCommand, UpdateSourceTrigger=PropertyChanged}"
                                         Style="{DynamicResource SimpleButton}">
                                     <ContentControl Height="30"
                                                     Foreground="{DynamicResource PrimaryFontBrush}"

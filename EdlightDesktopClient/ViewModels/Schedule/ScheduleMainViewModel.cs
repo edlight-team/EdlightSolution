@@ -223,6 +223,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
             Comments = new();
             List<CommentModel> api_comments = await api.GetModels<CommentModel>(WebApiTableNames.Comments);
+            api_comments.Reverse();
             foreach (CommentModel comment in api_comments)
             {
                 comment.User = Teachers.FirstOrDefault(t => t.ID == comment.IdUser);
@@ -563,6 +564,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
             Comments.Clear();
             List<CommentModel> api_comments = await api.GetModels<CommentModel>(WebApiTableNames.Comments);
+            api_comments.Reverse();
             foreach (CommentModel comment in api_comments)
             {
                 comment.User = Teachers.FirstOrDefault(t => t.ID == comment.IdUser);

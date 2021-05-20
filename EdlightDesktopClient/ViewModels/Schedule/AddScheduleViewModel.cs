@@ -143,7 +143,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 {
                     TimeZonesFrom.Add(i.ToString() + ":" + 0.ToString("D2"));
                     TimeZonesTo.Add(i.ToString() + ":" + 0.ToString("D2"));
-                    foreach (var interval in intervals)
+                    foreach (int interval in intervals)
                     {
                         TimeZonesFrom.Add(i.ToString() + ":" + interval.ToString("D2"));
                         TimeZonesTo.Add(i.ToString() + ":" + interval.ToString("D2"));

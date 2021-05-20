@@ -17,7 +17,7 @@ namespace ApplicationXamarinService.MemoryService
                 string serializedObject = Preferences.Get(alias, string.Empty);
                 if (!string.IsNullOrEmpty(serializedObject))
                 {
-                    var data = JsonConvert.DeserializeObject<TData>(serializedObject);
+                    TData data = JsonConvert.DeserializeObject<TData>(serializedObject);
                     return data;
                 }
                 return default;

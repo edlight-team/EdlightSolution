@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
 
@@ -10,10 +11,13 @@ namespace ApplicationModels.Models
 
         private Guid id;
         private Guid idLesson;
-        private Guid isUser;
+        private Guid idUser;
         private string title;
         private string description;
         private string materialPath;
+
+        private DelegateCommand<object> loadMaterialCommand;
+        private DelegateCommand<object> deleteMaterialCommand;
 
         #endregion
         #region props
@@ -24,8 +28,8 @@ namespace ApplicationModels.Models
         [JsonProperty(nameof(IdLesson))]
         public Guid IdLesson { get => idLesson; set => SetProperty(ref idLesson, value); }
 
-        [JsonProperty(nameof(IsUser))]
-        public Guid IsUser { get => isUser; set => SetProperty(ref isUser, value); }
+        [JsonProperty(nameof(IdUser))]
+        public Guid IdUser { get => idUser; set => SetProperty(ref idUser, value); }
 
         [JsonProperty(nameof(Title))]
         public string Title { get => title ??= string.Empty; set => SetProperty(ref title, value); }
@@ -35,6 +39,11 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(MaterialPath))]
         public string MaterialPath { get => materialPath ??= string.Empty; set => SetProperty(ref materialPath, value); }
+
+        [JsonIgnore]
+        public DelegateCommand<object> LoadMaterialCommand { get => loadMaterialCommand; set => SetProperty(ref loadMaterialCommand, value); }
+        [JsonIgnore]
+        public DelegateCommand<object> DeleteMaterialCommand { get => deleteMaterialCommand; set => SetProperty(ref deleteMaterialCommand, value); }
 
         #endregion
     }

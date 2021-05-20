@@ -24,7 +24,8 @@ namespace EdlightDesktopClient.Views
                 SetRegionManager(manager, ModalRegion, BaseMethods.RegionNames.ModalRegion);
             }
         }
-        void SetRegionManager(IRegionManager regionManager, DependencyObject regionTarget, string regionName)
+
+        private void SetRegionManager(IRegionManager regionManager, DependencyObject regionTarget, string regionName)
         {
             RegionManager.SetRegionName(regionTarget, regionName);
             RegionManager.SetRegionManager(regionTarget, regionManager);

@@ -11,29 +11,25 @@ using System.Threading.Tasks;
 
 namespace DbConsoleFiller
 {
-    class Program
+    internal class Program
     {
-        static RolesModel studentRole;
-        static RolesModel teacherRole;
-        static RolesModel umoRole;
+        private static RolesModel studentRole;
+        private static RolesModel teacherRole;
+        private static RolesModel umoRole;
+        private static UserModel student;
+        private static UserModel teacher;
+        private static UserModel umoadmin;
+        private static List<UserModel> otherusers;
+        private static List<UsersRolesModel> otherUserRoles;
+        private static List<GroupsModel> groups;
+        private static TestsModel test;
+        private static readonly Dictionary<string, PermissionsModel> permissionNamesDictionary = new();
+        private static IWebApiService api;
+        private static IHashingService hashing;
 
-        static UserModel student;
-        static UserModel teacher;
-        static UserModel umoadmin;
+        private static void Main() => RunFill().Wait();
 
-        static List<UserModel> otherusers;
-        static List<UsersRolesModel> otherUserRoles;
-
-        static List<GroupsModel> groups;
-        static TestsModel test;
-
-        static Dictionary<string, PermissionsModel> permissionNamesDictionary = new();
-
-        static IWebApiService api;
-        static IHashingService hashing;
-
-        static void Main() => RunFill().Wait();
-        static async Task RunFill()
+        private static async Task RunFill()
         {
             Stopwatch all_watch = new();
             Console.WriteLine("Start filling");
@@ -60,7 +56,8 @@ namespace DbConsoleFiller
             Console.WriteLine(all_watch.Elapsed.TotalSeconds + " sec.");
             Console.ReadKey();
         }
-        static async Task FillAcademicDisciplines()
+
+        private static async Task FillAcademicDisciplines()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -83,7 +80,8 @@ namespace DbConsoleFiller
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillAudiencesModel()
+
+        private static async Task FillAudiencesModel()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -106,7 +104,8 @@ namespace DbConsoleFiller
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillTypeClassesModel()
+
+        private static async Task FillTypeClassesModel()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -127,7 +126,8 @@ namespace DbConsoleFiller
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillRolesModel()
+
+        private static async Task FillRolesModel()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -149,14 +149,15 @@ namespace DbConsoleFiller
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillPermissions()
+
+        private static async Task FillPermissions()
         {
             Stopwatch watch = new();
             watch.Start();
             await api.DeleteAll(WebApiTableNames.Permissions);
 
             Type permission_class_type = typeof(PermissionNames);
-            foreach (var member in permission_class_type.GetMembers())
+            foreach (System.Reflection.MemberInfo member in permission_class_type.GetMembers())
             {
                 object[] attr = member.GetCustomAttributes(typeof(PermissionDescription), true);
                 if (attr.Length != 0)
@@ -176,7 +177,8 @@ namespace DbConsoleFiller
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillRolePermissions()
+
+        private static async Task FillRolePermissions()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -351,7 +353,8 @@ namespace DbConsoleFiller
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillUsersModel()
+
+        private static async Task FillUsersModel()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -393,14 +396,15 @@ namespace DbConsoleFiller
 
             otherusers = new();
             List<UserModel> users = GenerateRandomUsers(50);
-            foreach (var item in users)
+            foreach (UserModel item in users)
                 otherusers.Add(await api.PostModel(item, WebApiTableNames.Users));
             int count = (await api.GetModels<UserModel>(WebApiTableNames.Users)).Count;
             Console.Write("type " + model.GetType().Name + " in db count = " + count);
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillUsersRolesModel()
+
+        private static async Task FillUsersRolesModel()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -418,7 +422,7 @@ namespace DbConsoleFiller
             model.IdUser = umoadmin.ID;
             await api.PostModel(model, WebApiTableNames.UsersRoles);
 
-            foreach (var item in otherusers)
+            foreach (UserModel item in otherusers)
                 otherUserRoles.Add(await api.PostModel(new UsersRolesModel()
                 {
                     IdRole = item.Age >= 22 ? teacherRole.Id : studentRole.Id,
@@ -430,7 +434,8 @@ namespace DbConsoleFiller
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillGroupsModel()
+
+        private static async Task FillGroupsModel()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -449,7 +454,8 @@ namespace DbConsoleFiller
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillStudentsGroupsModel()
+
+        private static async Task FillStudentsGroupsModel()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -474,7 +480,8 @@ namespace DbConsoleFiller
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillTestsModel()
+
+        private static async Task FillTestsModel()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -508,7 +515,8 @@ namespace DbConsoleFiller
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillTestHeaderModel()
+
+        private static async Task FillTestHeaderModel()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -529,7 +537,8 @@ namespace DbConsoleFiller
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
-        static async Task FillTestResult()
+
+        private static async Task FillTestResult()
         {
             Stopwatch watch = new();
             watch.Start();
@@ -564,11 +573,11 @@ namespace DbConsoleFiller
             };
             PersonGenerator.PersonGenerator generator = new(settings);
 
-            var generated = generator.Generate(countUsers);
+            List<PersonGenerator.Person> generated = generator.Generate(countUsers);
 
             List<UserModel> users = new();
 
-            foreach (var item in generated)
+            foreach (PersonGenerator.Person item in generated)
             {
                 users.Add(new UserModel()
                 {

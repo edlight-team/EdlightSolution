@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
+using System.Windows;
 
 namespace ApplicationModels.Models
 {
@@ -36,6 +38,15 @@ namespace ApplicationModels.Models
         [JsonProperty(nameof(Message))]
         public string Message { get => message ??= string.Empty; set => SetProperty(ref message, value); }
 
+        #endregion
+        #region commands
+        private Visibility contextMenuVisibility;
+        private DelegateCommand<object> deleteCommentCommand;
+
+        [JsonIgnore]
+        public Visibility ContextMenuVisibility { get => contextMenuVisibility; set => SetProperty(ref contextMenuVisibility, value); }
+        [JsonIgnore]
+        public DelegateCommand<object> DeleteCommentCommand { get => deleteCommentCommand; set => SetProperty(ref deleteCommentCommand, value); }
         #endregion
     }
 }

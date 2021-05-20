@@ -57,7 +57,7 @@ namespace EdlightDesktopClient.AccessConfigurations
     }
     public static class ShceduleConfigExtension
     {
-        private static string TypeClassColorsPath = Environment.CurrentDirectory + "\\ScheduleTypeClassColorsConfig.json";
+        private static readonly string TypeClassColorsPath = Environment.CurrentDirectory + "\\ScheduleTypeClassColorsConfig.json";
 
         /// <summary>
         /// Установить видимость объектов конфига

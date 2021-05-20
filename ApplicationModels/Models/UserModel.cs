@@ -82,6 +82,9 @@ namespace ApplicationModels.Models
         [JsonIgnore]
         public string FullName { get => $"{Surname} {Name} {Patrnymic}"; }
 
+        [JsonIgnore]
+        public string Initials { get => $"{Surname} {Name[0]}.{Patrnymic[0]}."; }
+
         #endregion
     }
 }

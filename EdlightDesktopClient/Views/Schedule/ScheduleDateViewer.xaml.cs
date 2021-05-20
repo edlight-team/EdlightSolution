@@ -5,6 +5,7 @@ using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -85,18 +86,18 @@ namespace EdlightDesktopClient.Views.Schedule
                 else if (rd.Source.OriginalString.Contains("SolidBrushes")) brushes = rd;
                 else if (rd.Source.OriginalString.Contains("SVGCollection")) svg = rd;
             }
-            foreach (var key in textBlocks.Keys)
+            foreach (object key in textBlocks.Keys)
             {
                 if (key.ToString() == "SimpleTextBlock") simpleTextBlockStyle = (Style)textBlocks[key];
                 else if (key.ToString() == "ToolTipTextBlock") toolTipTextBlockStyle = (Style)textBlocks[key];
             }
-            foreach (var key in brushes.Keys)
+            foreach (object key in brushes.Keys)
             {
                 if (key.ToString() == "FalseOrErrorBrush") falseOrErrorBrush = (SolidColorBrush)brushes[key];
                 else if (key.ToString() == "InactiveBackgroundTabHeaderBtush") innerBrush = (SolidColorBrush)brushes[key];
                 else if (key.ToString() == "PrimaryFontBrush") primaryBrush = (SolidColorBrush)brushes[key];
             }
-            foreach (var key in svg.Keys)
+            foreach (object key in svg.Keys)
             {
                 if (key.ToString() == "Cancel") cancelTemplate = (ControlTemplate)svg[key];
                 else if (key.ToString() == "ClassType") classTypeTemplate = (ControlTemplate)svg[key];
@@ -126,13 +127,13 @@ namespace EdlightDesktopClient.Views.Schedule
                 ItemsGrid.Children.Clear();
             }
             //ToDo: Добавить передачу комментариев
-            else if (childAndModel[0] is Card card && childAndModel[1] is LessonsModel lm)
+            else if (childAndModel[0] is Card card && childAndModel[1] is LessonsModel lm && childAndModel[2] is IEnumerable<CommentModel> comments)
             {
                 //Указываем обратный порядок чтобы сетка с dnd была сверху
                 Grid content = new();
-                content.Children.Add(CreateCardBigInfoGrid(card, lm, null));
-                content.Children.Add(CreateCardLargeInfoGrid(card, lm, null));
-                content.Children.Add(CreateCardSmallInfoGrid(card, lm, null));
+                content.Children.Add(CreateCardBigInfoGrid(card, lm, comments.ToList()));
+                content.Children.Add(CreateCardLargeInfoGrid(card, lm, comments.ToList()));
+                content.Children.Add(CreateCardSmallInfoGrid(card, lm, comments.ToList()));
                 content.Children.Add(CreateDragAndDropGrid());
                 //Сбрасываем фоновый цвет т.к. используется в сетках
                 card.Background = new SolidColorBrush(Colors.Transparent);
@@ -605,7 +606,7 @@ namespace EdlightDesktopClient.Views.Schedule
             move_control.HorizontalAlignment = HorizontalAlignment.Left;
             move_control.VerticalAlignment = VerticalAlignment.Top;
             move_control.Cursor = Cursors.SizeAll;
-            foreach (var key in svg.Keys)
+            foreach (object key in svg.Keys)
             {
                 if (key.ToString() == "Move")
                 {
@@ -624,7 +625,7 @@ namespace EdlightDesktopClient.Views.Schedule
             up_arrow.HorizontalAlignment = HorizontalAlignment.Right;
             up_arrow.VerticalAlignment = VerticalAlignment.Top;
             up_arrow.Cursor = Cursors.SizeNS;
-            foreach (var key in svg.Keys)
+            foreach (object key in svg.Keys)
             {
                 if (key.ToString() == "Up")
                 {
@@ -644,7 +645,7 @@ namespace EdlightDesktopClient.Views.Schedule
             down_arrow.HorizontalAlignment = HorizontalAlignment.Right;
             down_arrow.VerticalAlignment = VerticalAlignment.Bottom;
             down_arrow.Cursor = Cursors.SizeNS;
-            foreach (var key in svg.Keys)
+            foreach (object key in svg.Keys)
             {
                 if (key.ToString() == "Down")
                 {
@@ -658,6 +659,7 @@ namespace EdlightDesktopClient.Views.Schedule
             #endregion
             return subGrid;
         }
+        //Todo: Обновление комментов при создании
 
         #region Создание контролов
 
@@ -818,7 +820,7 @@ namespace EdlightDesktopClient.Views.Schedule
                 if (card.Effect == null)
                 {
                     SetEffect(card, true);
-                    foreach (var ch in ItemsGrid.Children)
+                    foreach (object ch in ItemsGrid.Children)
                     {
                         if (ch is Card other && other.Uid != card.Uid)
                         {
@@ -840,7 +842,7 @@ namespace EdlightDesktopClient.Views.Schedule
         }
         private void OnClearEffects()
         {
-            foreach (var ch in ItemsGrid.Children)
+            foreach (object ch in ItemsGrid.Children)
             {
                 if (ch is Card card)
                 {
@@ -860,7 +862,7 @@ namespace EdlightDesktopClient.Views.Schedule
 
             if (card.Content is Grid mgr)
             {
-                foreach (var child in mgr.Children)
+                foreach (object child in mgr.Children)
                 {
                     if (child is Grid ch_gr)
                     {
@@ -890,11 +892,11 @@ namespace EdlightDesktopClient.Views.Schedule
 
         private Brush FindBorderBackgroundBrush(Grid source)
         {
-            foreach (var ch in source.Children)
+            foreach (object ch in source.Children)
             {
                 if (ch is Grid ch_gr && ch_gr.Name == "SmallInfo")
                 {
-                    foreach (var sub_ch in ch_gr.Children)
+                    foreach (object sub_ch in ch_gr.Children)
                     {
                         if (sub_ch is Border brd && brd.Name == "SmallGridBorder")
                         {
@@ -1011,8 +1013,8 @@ namespace EdlightDesktopClient.Views.Schedule
         }
         private void ScheduleMarkupDragEnter(object sender, DragEventArgs e)
         {
-            var position = e.GetPosition(ScheduleMarkup);
-            var data = e.Data.GetData("HandyControl.Controls.Card");
+            Point position = e.GetPosition(ScheduleMarkup);
+            object data = e.Data.GetData("HandyControl.Controls.Card");
             if (data == null) return;
             if (data is Card card)
             {
@@ -1048,8 +1050,8 @@ namespace EdlightDesktopClient.Views.Schedule
         }
         private void CardsListScrollDrop(object sender, DragEventArgs e)
         {
-            var position = e.GetPosition(ScheduleMarkup);
-            var data = e.Data.GetData("HandyControl.Controls.Card");
+            Point position = e.GetPosition(ScheduleMarkup);
+            object data = e.Data.GetData("HandyControl.Controls.Card");
             if (data == null) return;
             if (data is Card card)
             {

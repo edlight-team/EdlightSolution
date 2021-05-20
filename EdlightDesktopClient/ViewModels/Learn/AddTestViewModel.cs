@@ -1,6 +1,11 @@
-﻿using ApplicationModels.Models;
+﻿using ApplicationEventsWPF.Events;
+using ApplicationModels.Models;
+using ApplicationServices.WebApiService;
+using ApplicationWPFServices.MemoryService;
 using ApplicationWPFServices.NotificationService;
+using Newtonsoft.Json;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using Styles.Models;
@@ -18,16 +23,21 @@ namespace EdlightDesktopClient.ViewModels.Learn
         #region services
         INotificationService notification;
         IRegionManager manager;
+        IWebApiService api;
+        IMemoryService memory;
+        IEventAggregator aggregator;
         #endregion
         #region filed
         private LoaderModel testLoader;
+        private UserModel currentUser;
         private Guid testID;
+        private Guid testHeaderID;
         private List<GroupsModel> groups;
         private string[] testTypes;
 
         private string testName;
         private string testType;
-        private string testGroupName;
+        private GroupsModel testGroupName;
         private int testTime;
 
         private bool isCreateTest;
@@ -43,8 +53,18 @@ namespace EdlightDesktopClient.ViewModels.Learn
 
         public string TestName { get => testName; set => SetProperty(ref testName, value); }
         public string TestType { get => testType; set => SetProperty(ref testType, value); }
-        public string TestGroupName { get => testGroupName; set => SetProperty(ref testGroupName, value); }
-        public int TestTime { get => testTime; set => SetProperty(ref testTime, value); }
+        public GroupsModel TestGroupName { get => testGroupName; set => SetProperty(ref testGroupName, value); }
+        public int TestTime
+        {
+            get => testTime;
+            set
+            {
+                if (value >= 0)
+                    SetProperty(ref testTime, value);
+                else
+                    RaisePropertyChanged(nameof(TestTime));
+            }
+        }
 
         public LoaderModel TestLoader { get => testLoader; set => SetProperty(ref testLoader, value); }
         public ObservableCollection<QuestionsModel> Questions { get => questions ??= new(); set => SetProperty(ref questions, value); }
@@ -64,12 +84,17 @@ namespace EdlightDesktopClient.ViewModels.Learn
         public DelegateCommand SaveTestCommand { get; private set; }
         #endregion
         #region constructor
-        public AddTestViewModel(INotificationService notification, IRegionManager manager)
+        public AddTestViewModel(INotificationService notification, IRegionManager manager, IWebApiService api, IMemoryService memory, IEventAggregator aggregator)
         {
             this.notification = notification;
             this.manager = manager;
+            this.api = api;
+            this.memory = memory;
+            this.aggregator = aggregator;
 
             TestTypes = new[] { "Контрольна работа", "Экзамен", "Зачёт", "Тест"};
+
+            currentUser = currentUser = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
 
             LoadedCommand = new(OnLoaded);
 
@@ -92,6 +117,18 @@ namespace EdlightDesktopClient.ViewModels.Learn
             {
                 TestLoader = new("Выполняется загрузка");
 
+                Groups = await api.GetModels<GroupsModel>(WebApiTableNames.Groups);
+                if (!isCreateTest)
+                {
+                    TestsModel test = (await api.GetModels<TestsModel>(WebApiTableNames.Tests, $"ID = '{testID}'")).FirstOrDefault();
+                    TestHeadersModel testHeader = (await api.GetModels<TestHeadersModel>(WebApiTableNames.TestHeaders, $"TestID = '{testID}'")).FirstOrDefault();
+                    testHeaderID = testHeader.ID;
+                    TestName = testHeader.TestName;
+                    TestType = testHeader.TestType;
+                    TestGroupName = Groups.Where(g => g.Id == testHeader.GroupID).FirstOrDefault();
+                    TestTime = (int)Convert.ToDateTime(testHeader.TestTime).TimeOfDay.TotalMinutes;
+                    Questions = new(JsonConvert.DeserializeObject<List<QuestionsModel>>(test.Questions));
+                }
             }
             catch (Exception ex)
             {
@@ -153,9 +190,95 @@ namespace EdlightDesktopClient.ViewModels.Learn
                 NewQuestion.AnswerOptions.Remove(answer);
         }
 
-        private void OnSaveTest()
+        private async void OnSaveTest()
         {
+            try
+            {
+                if (string.IsNullOrEmpty(TestName))
+                {
+                    notification.ShowInformation("Введите имя теста");
+                    return;
+                }
+                if (string.IsNullOrEmpty(TestType))
+                {
+                    notification.ShowInformation("Выберите тип теста");
+                    return;
+                }
+                if (TestGroupName == null)
+                {
+                    notification.ShowInformation("Выберите группу");
+                    return;
+                }
+                if (TestTime == 0)
+                {
+                    notification.ShowInformation("Выберите время прохождения");
+                    return;
+                }
+                if (Questions.Count == 0)
+                {
+                    notification.ShowInformation("Добавьте вопросы");
+                    return;
+                }
 
+                TestLoader = new("Сохранение теста");
+
+                TestHeadersModel testHeader = new();
+                TestsModel test = new();
+
+                testHeader.TestName = TestName;
+                testHeader.TestType = TestType;
+                int hours = TestTime / 60;
+                int minutes = TestTime - hours * 60;
+                testHeader.TestTime = Convert.ToDateTime(new DateTime(2020, 3, 1) + new TimeSpan(hours, minutes, 0)).ToShortTimeString();
+                testHeader.TeacherID = currentUser.ID;
+                testHeader.GroupID = TestGroupName.Id;
+
+                test.Questions = JsonConvert.SerializeObject(Questions.ToList());
+                if (isCreateTest)
+                {
+                    test = await api.PostModel(test, WebApiTableNames.Tests);
+
+                    testHeader.TestID = test.ID;
+                    testHeader = await api.PostModel(testHeader, WebApiTableNames.TestHeaders);
+
+                    List<StudentsGroupsModel> studentsGroups = await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups, $"IdGroup = '{testHeader.GroupID}'");
+                    List<UserModel> students = new();
+                    foreach (var item in studentsGroups)
+                        students.Add((await api.GetModels<UserModel>(WebApiTableNames.Users, $"ID = '{item.IdStudent}'")).FirstOrDefault());
+                    foreach (var item in students)
+                    {
+                        await api.PostModel(new TestResultsModel()
+                        {
+                            UserID = item.ID,
+                            StudentName = item.Name,
+                            StudentSurname = item.Surname,
+                            TestID = test.ID,
+                            TestCompleted = false,
+                            CorrectAnswers = 0
+                        }, WebApiTableNames.TestResults);
+                    }
+                }
+                else
+                {
+                    test.ID = testID;
+                    await api.PutModel(test, WebApiTableNames.Tests);
+
+                    testHeader.ID = testHeaderID;
+                    testHeader.TestID = testID;
+                    testHeader = await api.PutModel(testHeader, WebApiTableNames.TestHeaders);
+                }
+            }
+            catch (Exception ex)
+            {
+                notification.ShowError("Во время загрузки произошла ошибка: " + ex.Message);
+                throw;
+            }
+            finally
+            {
+                TestLoader = new();
+                manager.Regions[BaseMethods.RegionNames.ModalRegion].RemoveAll();
+                aggregator.GetEvent<TestCollectionUpdatedEvent>().Publish();
+            }
         }
         #endregion
 

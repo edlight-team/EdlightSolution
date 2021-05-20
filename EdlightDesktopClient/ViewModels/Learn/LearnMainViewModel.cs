@@ -1,4 +1,5 @@
-﻿using ApplicationModels.Models;
+﻿using ApplicationEventsWPF.Events;
+using ApplicationModels.Models;
 using ApplicationServices.PermissionService;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
@@ -6,6 +7,7 @@ using ApplicationWPFServices.NotificationService;
 using EdlightDesktopClient.AccessConfigurations;
 using EdlightDesktopClient.Views.Learn;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using Styles.Models;
@@ -27,6 +29,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
         private IWebApiService api;
         private INotificationService notification;
         private IPermissionService permission;
+        private IEventAggregator aggregator;
         #endregion
         #region fields
         private LoaderModel testLoader;
@@ -74,13 +77,14 @@ namespace EdlightDesktopClient.ViewModels.Learn
         public DelegateCommand ViewTestResultsCommand { get; private set; }
         #endregion
         #region constructor
-        public LearnMainViewModel(IRegionManager manager, IMemoryService memory, IWebApiService api, INotificationService notification, IPermissionService permission)
+        public LearnMainViewModel(IRegionManager manager, IMemoryService memory, IWebApiService api, INotificationService notification, IPermissionService permission, IEventAggregator aggregator)
         {
             this.manager = manager;
             this.memory = memory;
             this.api = api;
             this.notification = notification;
             this.permission = permission;
+            this.aggregator = aggregator;
 
             allTests = new() { Group = "Все группы" };
 
@@ -92,6 +96,8 @@ namespace EdlightDesktopClient.ViewModels.Learn
             DeleteTestCommand = new(OnDeleteTest);
             StartTestCommand = new(OnStartTest);
             ViewTestResultsCommand = new(OnViewTestResults);
+
+            aggregator.GetEvent<TestCollectionUpdatedEvent>().Subscribe(OnLoaded);
         }
         #endregion
         #region methods
@@ -140,13 +146,16 @@ namespace EdlightDesktopClient.ViewModels.Learn
             if (SelectedGroup != null)
             {
                 TestHeadersModel card = e.Item as TestHeadersModel;
-                if (card.TeacherID != currentUser.ID)
+                if (!Equals(SelectedGroup, allTests))
                 {
-                    if (card.GroupID.ToString().ToLower() != selectedGroup.Id.ToString().ToLower() ||
-                        !Equals(SelectedGroup, allTests))
+                    if (card.GroupID.ToString().ToLower() != selectedGroup.Id.ToString().ToLower())
                     {
                         e.Accepted = false;
                     }
+                }
+                if (card.TeacherID != currentUser.ID)
+                {
+                    e.Accepted = false;
                 }
             }
         }
@@ -229,15 +238,34 @@ namespace EdlightDesktopClient.ViewModels.Learn
         {
             NavigationParameters parameter = new()
             {
-                { "iscreate", true },
+                { "iscreate", false },
                 { "testid", SelectedCardHeader.TestID }
             };
             manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddTestView), parameter);
         }
 
-        private void OnDeleteTest()
+        private async void OnDeleteTest()
         {
-
+            try
+            {
+                TestLoader = new("Выполняется загрузка");
+                List<TestResultsModel> testResults = await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults, $"TestID = '{SelectedCardHeader.TestID}'");
+                foreach (var item in testResults)
+                    await api.DeleteModel(item.ID, WebApiTableNames.TestResults);
+                await api.DeleteModel(SelectedCardHeader.ID, WebApiTableNames.TestHeaders);
+                await api.DeleteModel(SelectedCardHeader.TestID, WebApiTableNames.Tests);
+            }
+            catch (Exception ex)
+            {
+                notification.ShowError("Во время загрузки произошла ошибка: " + ex.Message);
+                throw;
+            }
+            finally
+            {
+                TestLoader = new();
+                TestCards.Remove(SelectedCardHeader);
+                FilteredTestCards.View?.Refresh();
+            }
         }
         #endregion
         #endregion

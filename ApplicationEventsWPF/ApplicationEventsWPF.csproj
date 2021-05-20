@@ -51,6 +51,7 @@
     <Compile Include="Events\CardSelectingEvent.cs" />
     <Compile Include="Events\DateChangedEvent.cs" />
     <Compile Include="Events\GridChildChangedEvent.cs" />
+    <Compile Include="Events\TestCollectionUpdatedEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

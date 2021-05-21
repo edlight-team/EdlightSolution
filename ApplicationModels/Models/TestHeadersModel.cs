@@ -15,6 +15,8 @@ namespace ApplicationModels.Models
         private string testType;
         private string testTime;
         private int countQuestions;
+        private string testStartDate;
+        private string testEndDate;
         #endregion
         #region props
         [JsonProperty(nameof(ID))]
@@ -40,6 +42,12 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(CountQuestions))]
         public int CountQuestions { get => countQuestions; set => SetProperty(ref countQuestions, value); }
+
+        [JsonProperty(nameof(TestStartDate))]
+        public string TestStartDate { get => testStartDate; set => SetProperty(ref testStartDate, value); }
+
+        [JsonProperty(nameof(TestEndDate))]
+        public string TestEndDate { get => testEndDate; set => SetProperty(ref testEndDate, value); }
         #endregion
     }
 }

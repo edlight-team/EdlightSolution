@@ -17,6 +17,7 @@ namespace ApplicationModels.Models
         private int countQuestions;
         private string testStartDate;
         private string testEndDate;
+        private int countPoints;
         #endregion
         #region props
         [JsonProperty(nameof(ID))]
@@ -48,6 +49,9 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(TestEndDate))]
         public string TestEndDate { get => testEndDate; set => SetProperty(ref testEndDate, value); }
+
+        [JsonProperty(nameof(CountPoints))]
+        public int CountPoints { get => countPoints; set => SetProperty(ref countPoints, value); }
         #endregion
     }
 }

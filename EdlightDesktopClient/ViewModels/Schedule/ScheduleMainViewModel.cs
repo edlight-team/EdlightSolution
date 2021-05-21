@@ -310,16 +310,13 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         {
             LessonsModel card = Models.FirstOrDefault(c => c.Id.ToString().ToUpper() == pair.Key.ToUpper());
             card.IsSelected = pair.Value;
-            card.IsCanceled = string.IsNullOrEmpty(card.CanceledReason);
+            foreach (LessonsModel other in Models.Where(c => c.Id != card.Id))
+            {
+                other.IsSelected = false;
+            }
+            card.IsCanceled = !string.IsNullOrEmpty(card.CanceledReason);
             IsCardActionsEnabled = !Models.All(m => !m.IsSelected);
-            if (Models.All(m => !m.IsCanceled))
-            {
-                IsCardCancelingEnabled = false;
-            }
-            else
-            {
-                IsCardCancelingEnabled = IsCardActionsEnabled && !card.IsCanceled;
-            }
+            IsCardCancelingEnabled = IsCardActionsEnabled && !card.IsCanceled;
             FilteredMaterials?.View?.Refresh();
             SetHelpTipVisibility();
         }

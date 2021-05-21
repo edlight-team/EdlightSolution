@@ -71,8 +71,8 @@ namespace EdlightDesktopClient.ViewModels
             Password = "student";
             Login = "teacher";
             Password = "teacher";
-            //Login = "umoadmin";
-            //Password = "umoadmin";
+            Login = "umoadmin";
+            Password = "umoadmin";
 #endif
 
             CloseCommand = new DelegateCommand(StaticCommands.Shutdown);

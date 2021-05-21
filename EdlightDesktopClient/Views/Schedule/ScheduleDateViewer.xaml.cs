@@ -818,7 +818,7 @@ namespace EdlightDesktopClient.Views.Schedule
             {
                 if (card.Effect == null)
                 {
-                    SetEffect(card, true);
+                    SetEffect(card, true, true);
                     foreach (object ch in ItemsGrid.Children)
                     {
                         if (ch is Card other && other.Uid != card.Uid)
@@ -829,15 +829,18 @@ namespace EdlightDesktopClient.Views.Schedule
                 }
                 else
                 {
-                    SetEffect(card, false);
+                    SetEffect(card, false, true);
                 }
             }
         }
-        private void SetEffect(Card card, bool selected)
+        private void SetEffect(Card card, bool selected, bool sendEventMessage = false)
         {
             if (!selected) card.Effect = null;
             else card.Effect = new DropShadowEffect() { Color = Colors.SpringGreen, Opacity = 0.5, ShadowDepth = 0, BlurRadius = 20, Direction = 0 };
-            aggregator.GetEvent<CardSelectingEvent>().Publish(new KeyValuePair<string, bool>(card.Uid, selected));
+            if (sendEventMessage)
+            {
+                aggregator.GetEvent<CardSelectingEvent>().Publish(new KeyValuePair<string, bool>(card.Uid, selected));
+            }
         }
         private void OnClearEffects()
         {
@@ -845,7 +848,7 @@ namespace EdlightDesktopClient.Views.Schedule
             {
                 if (ch is Card card)
                 {
-                    SetEffect(card, false);
+                    SetEffect(card, false, true);
                 }
             }
         }

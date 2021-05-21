@@ -72,7 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ApplicationModels\ApplicationModels.csproj">
-      <Project>{3BC9C9C3-3EE8-476B-AFEE-6C113A9D5650}</Project>
+      <Project>{3bc9c9c3-3ee8-476b-afee-6c113a9d5650}</Project>
       <Name>ApplicationModels</Name>
     </ProjectReference>
   </ItemGroup>

@@ -153,6 +153,17 @@
                          SelectedItem="{Binding SelectedGroup, UpdateSourceTrigger=PropertyChanged}" />
             <!--#endregion-->
 
+
+            <Button Width="175"
+                    Margin="20,0,0,0"
+                    Command="{Binding AddCardCommand}"
+                    Style="{DynamicResource SimpleButtonWithBorder}"
+                    Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock HorizontalAlignment="Center"
+                           Style="{DynamicResource SimpleTextBlock}"
+                           Text="Новая запись" />
+            </Button>
+
         </StackPanel>
 
         <!--#endregion-->
@@ -194,48 +205,39 @@
                 <StackPanel Orientation="Vertical" Visibility="{Binding IsCardActionsEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
                     <!--#region Кнопки управления-->
                     <Expander Margin="5"
-                              Header="Управление"
-                              IsExpanded="True"
-                              Visibility="{Binding Config.CanManageSchedule, UpdateSourceTrigger=PropertyChanged}">
+                          Header="Управление"
+                          IsExpanded="True"
+                          Visibility="{Binding Config.CanManageSchedule, UpdateSourceTrigger=PropertyChanged}">
                         <StackPanel Margin="0,10,0,0" Orientation="Vertical">
                             <Button Width="175"
-                                    Margin="0,0,0,10"
-                                    Command="{Binding AddCardCommand}"
-                                    Style="{DynamicResource SimpleButtonWithBorder}"
-                                    Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                                Margin="0,0,0,10"
+                                Command="{Binding EditCardCommand}"
+                                IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                Visibility="{Binding Config.CanEditScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBlock HorizontalAlignment="Center"
-                                           Style="{DynamicResource SimpleTextBlock}"
-                                           Text="Новая запись" />
+                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Text="Редактировать запись" />
                             </Button>
                             <Button Width="175"
-                                    Margin="0,0,0,10"
-                                    Command="{Binding EditCardCommand}"
-                                    IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
-                                    Style="{DynamicResource SimpleButtonWithBorder}"
-                                    Visibility="{Binding Config.CanEditScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                                Margin="0,0,0,10"
+                                Command="{Binding CancelCardCommand}"
+                                IsEnabled="{Binding IsCardCancelingEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                Visibility="{Binding Config.CanSetScheduleStatus, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBlock HorizontalAlignment="Center"
-                                           Style="{DynamicResource SimpleTextBlock}"
-                                           Text="Редактировать запись" />
+                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Text="Отменить занятие" />
                             </Button>
                             <Button Width="175"
-                                    Margin="0,0,0,10"
-                                    Command="{Binding CancelCardCommand}"
-                                    IsEnabled="{Binding IsCardCancelingEnabled, UpdateSourceTrigger=PropertyChanged}"
-                                    Style="{DynamicResource SimpleButtonWithBorder}"
-                                    Visibility="{Binding Config.CanSetScheduleStatus, UpdateSourceTrigger=PropertyChanged}">
+                                Margin="0,0,0,10"
+                                Command="{Binding DeleteCardCommand}"
+                                IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                Visibility="{Binding Config.CanDeleteScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBlock HorizontalAlignment="Center"
-                                           Style="{DynamicResource SimpleTextBlock}"
-                                           Text="Отменить занятие" />
-                            </Button>
-                            <Button Width="175"
-                                    Margin="0,0,0,10"
-                                    Command="{Binding DeleteCardCommand}"
-                                    IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
-                                    Style="{DynamicResource SimpleButtonWithBorder}"
-                                    Visibility="{Binding Config.CanDeleteScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
-                                <TextBlock HorizontalAlignment="Center"
-                                           Style="{DynamicResource SimpleTextBlock}"
-                                           Text="Удалить запись" />
+                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Text="Удалить запись" />
                             </Button>
                         </StackPanel>
                     </Expander>
@@ -310,7 +312,25 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <ScrollViewer MinHeight="200"
+                            <StackPanel Grid.Row="0"
+                                        Margin="5"
+                                        Orientation="Horizontal">
+                                <TextBox Width="235"
+                                         VerticalAlignment="Top"
+                                         keys:EnterPressedBehavior.Command="{Binding AddCommentCommand, UpdateSourceTrigger=PropertyChanged}"
+                                         Text="{Binding CommentText, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button Margin="10,0,0,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Top"
+                                        Command="{Binding AddCommentCommand, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{DynamicResource SimpleButton}">
+                                    <ContentControl Height="30"
+                                                    Foreground="{DynamicResource PrimaryFontBrush}"
+                                                    Template="{DynamicResource Send}" />
+                                </Button>
+                            </StackPanel>
+                            <ScrollViewer Grid.Row="1"
+                                          MinHeight="200"
                                           MaxHeight="200"
                                           Margin="5"
                                           VerticalScrollBarVisibility="Visible">
@@ -350,22 +370,6 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                             </ScrollViewer>
-                            <StackPanel Grid.Row="1"
-                                        Margin="5"
-                                        Orientation="Horizontal">
-                                <TextBox Width="235"
-                                         VerticalAlignment="Bottom"
-                                         keys:EnterPressedBehavior.Command="{Binding AddCommentCommand, UpdateSourceTrigger=PropertyChanged}"
-                                         Text="{Binding CommentText, UpdateSourceTrigger=PropertyChanged}" />
-                                <Button Margin="10,0,0,0"
-                                        HorizontalAlignment="Center"
-                                        Command="{Binding AddCommentCommand, UpdateSourceTrigger=PropertyChanged}"
-                                        Style="{DynamicResource SimpleButton}">
-                                    <ContentControl Height="30"
-                                                    Foreground="{DynamicResource PrimaryFontBrush}"
-                                                    Template="{DynamicResource Send}" />
-                                </Button>
-                            </StackPanel>
                         </Grid>
                     </Expander>
                     <!--#endregion-->

@@ -1,7 +1,7 @@
 ﻿using ApplicationModels.Models;
+using ApplicationServices.PermissionService;
 using ApplicationServices.WebApiService;
 using ApplicationXamarinService.MemoryService;
-using ApplicationXamarinService.PermissionService;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Mvvm;

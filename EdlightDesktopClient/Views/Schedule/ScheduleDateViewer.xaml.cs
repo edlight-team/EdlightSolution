@@ -1,4 +1,4 @@
-﻿using ApplicationEventsWPF.Events;
+﻿using ApplicationEventsWPF.Events.ScheduleEvents;
 using ApplicationModels.Models;
 using HandyControl.Controls;
 using Prism.Events;

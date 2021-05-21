@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdlightMobileClient", "Edli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdlightMobileClient.Android", "EdlightMobileClient\EdlightMobileClient.Android\EdlightMobileClient.Android.csproj", "{011B19F9-412F-405A-9FC8-4EACA634039A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaticCollections", "StaticCollections\StaticCollections.csproj", "{9B6B1942-17D6-40C5-9838-2BD8E4D833CC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,10 +53,6 @@ Global
 		{011B19F9-412F-405A-9FC8-4EACA634039A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{011B19F9-412F-405A-9FC8-4EACA634039A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{011B19F9-412F-405A-9FC8-4EACA634039A}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{9B6B1942-17D6-40C5-9838-2BD8E4D833CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B6B1942-17D6-40C5-9838-2BD8E4D833CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9B6B1942-17D6-40C5-9838-2BD8E4D833CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9B6B1942-17D6-40C5-9838-2BD8E4D833CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,7 +64,6 @@ Global
 		{85AA63C8-3100-4151-A96F-EAC74682CFE3} = {A929A7B1-1569-490B-A4D5-0E3A7E4CFB3D}
 		{872DB979-A630-4CCE-9ECB-52084A75B354} = {315097F2-F33C-4F1B-8EA9-837CF673D256}
 		{011B19F9-412F-405A-9FC8-4EACA634039A} = {315097F2-F33C-4F1B-8EA9-837CF673D256}
-		{9B6B1942-17D6-40C5-9838-2BD8E4D833CC} = {315097F2-F33C-4F1B-8EA9-837CF673D256}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E1EB21CA-6957-4728-9B45-E48BAB563634}

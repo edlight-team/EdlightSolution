@@ -1,4 +1,4 @@
-﻿using ApplicationEventsWPF.Events;
+﻿using ApplicationEventsWPF.Events.ScheduleEvents;
 using ApplicationModels;
 using ApplicationModels.Config;
 using ApplicationModels.Models;
@@ -148,7 +148,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             IEventAggregator aggregator,
             IPermissionService permissionService)
         {
-            HelpTipText = $"Для начала работы необходимо выбрать запись в расписании.{Environment.NewLine}(двойной клик левой кнопки мыши)";
+            HelpTipText = $"Для начала работы необходимо выбрать запись в расписании или создать новую.{Environment.NewLine}(двойной клик левой кнопки мыши)";
             Loader = new();
 
             this.manager = manager;

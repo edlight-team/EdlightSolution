@@ -22,5 +22,8 @@
         public static string TestHeaders = nameof(TestHeaders);
         public static string TestResults = nameof(TestResults);
         public static string Tests = nameof(Tests);
+        public static string StoragesHeaders = nameof(StoragesHeaders);
+        public static string StorageFiles = nameof(StorageFiles);
+        public static string ManualsFiles = nameof(ManualsFiles);
     }
 }

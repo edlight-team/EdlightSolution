@@ -558,7 +558,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             com.Message = CommentText;
             com.Date = DateTime.Now;
 
-            await api.PostModel(com, WebApiTableNames.Comments);
+            var posted = await api.PostModel(com, WebApiTableNames.Comments);
 
             Comments.Clear();
             List<CommentModel> api_comments = await api.GetModels<CommentModel>(WebApiTableNames.Comments);
@@ -574,6 +574,8 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
             CommentText = string.Empty;
             Growl.Info("Комментарий успешно добавлен", "Global");
+            aggregator.GetEvent<CommentsChangedEvent>()
+                .Publish(new KeyValuePair<string, IEnumerable<CommentModel>>(posted.IdLesson.ToString(), Comments.Where(c => c.IdLesson == posted.IdLesson)));
         }
         private async void OnDeleteComment(object commentModel)
         {
@@ -587,6 +589,8 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                         throw new Exception("При попытке удаления комментария произошла ошибка");
                     }
                     Comments.Remove(com);
+                    aggregator.GetEvent<CommentsChangedEvent>()
+                        .Publish(new KeyValuePair<string, IEnumerable<CommentModel>>(com.IdLesson.ToString(), Comments.Where(c => c.IdLesson == com.IdLesson)));
                     Growl.Info("Комментарий успешно удален", "Global");
                     FilteredComments?.View?.Refresh();
                 }
@@ -594,7 +598,6 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 {
                     throw;
                 }
-
             }
         }
 

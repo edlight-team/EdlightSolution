@@ -70,6 +70,7 @@
     <Compile Include="Converters\BooleanRevert.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\TimeZoneConverter.cs" />
+    <Compile Include="Extensions\UIElementExtension.cs" />
     <Compile Include="Models\LoaderModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

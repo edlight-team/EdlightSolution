@@ -4,6 +4,7 @@ using ApplicationWPFServices.MemoryService;
 using EdlightDesktopClient.AccessConfigurations;
 using HandyControl.Controls;
 using Prism.Events;
+using Styles.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -71,6 +72,7 @@ namespace EdlightDesktopClient.Views.Schedule
             Loaded += ScheduleDateViewerLoaded;
             Unloaded += ScheduleDateViewerUnloaded;
             aggregator.GetEvent<GridChildChangedEvent>().Subscribe(OnGridChildEvent);
+            aggregator.GetEvent<CommentsChangedEvent>().Subscribe(OnCardCommentsChanged);
 
             zoneShowAnimation = new(0.0, 0.5, TimeSpan.FromMilliseconds(500));
             zoneHideAnimation = new(0.5, 0.0, TimeSpan.FromMilliseconds(500));
@@ -115,7 +117,11 @@ namespace EdlightDesktopClient.Views.Schedule
             #endregion
         }
         private void ScheduleDateViewerLoaded(object sender, RoutedEventArgs e) => OnClearEffects();
-        private void ScheduleDateViewerUnloaded(object sender, RoutedEventArgs e) => aggregator.GetEvent<GridChildChangedEvent>().Unsubscribe(OnGridChildEvent);
+        private void ScheduleDateViewerUnloaded(object sender, RoutedEventArgs e)
+        {
+            aggregator.GetEvent<GridChildChangedEvent>().Unsubscribe(OnGridChildEvent);
+            aggregator.GetEvent<CommentsChangedEvent>().Unsubscribe(OnCardCommentsChanged);
+        }
 
         #endregion
         #region Создание карточек
@@ -212,17 +218,17 @@ namespace EdlightDesktopClient.Views.Schedule
             Border border = new();
             border.CornerRadius = new CornerRadius(5);
             border.Background = card.Background;
-            SetRowColumns(border, 0, 0, 8, 5);
+            border.SetGridPosition(0, 0, 8, 5);
 
             Border innerBorder = new();
             innerBorder.CornerRadius = new CornerRadius(5);
             innerBorder.Background = innerBrush;
-            SetRowColumns(innerBorder, 1, 1, columnSpan: 2);
+            innerBorder.SetGridPosition(1, 1, columnSpan: 2);
 
             Border innerBorderOther = new();
             innerBorderOther.CornerRadius = new CornerRadius(5);
             innerBorderOther.Background = innerBrush;
-            SetRowColumns(innerBorderOther, 3, 1, 4, 3);
+            innerBorderOther.SetGridPosition(3, 1, 4, 3);
 
             infoGrid.Children.Add(border);
             infoGrid.Children.Add(innerBorder);
@@ -236,7 +242,7 @@ namespace EdlightDesktopClient.Views.Schedule
             {
                 classType = CreateControl(classTypeTemplate, null, 25);
                 classType.Margin = new Thickness(15, 0, 0, 0);
-                SetRowColumns(classType, 1, 1);
+                classType.SetGridPosition(1, 1);
                 infoGrid.Children.Add(classType);
             }
             else
@@ -244,7 +250,7 @@ namespace EdlightDesktopClient.Views.Schedule
                 classType = CreateControl(cancelTemplate, null, 25);
                 classType.Margin = new Thickness(15, 0, 0, 0);
                 classType.Foreground = falseOrErrorBrush;
-                SetRowColumns(classType, 1, 1);
+                classType.SetGridPosition(1, 1);
 
                 ToolTip cancelTip = CreateToolTip("Занятие было отменено по причине:\r\n" + lm.CanceledReason);
                 classType.ToolTip = cancelTip;
@@ -254,15 +260,16 @@ namespace EdlightDesktopClient.Views.Schedule
 
             TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
             disciplineTextBlock.Margin = new Thickness(50, 0, 0, 0);
-            SetRowColumns(disciplineTextBlock, 1, 2);
+            disciplineTextBlock.SetGridPosition(1, 2);
             infoGrid.Children.Add(disciplineTextBlock);
 
             #endregion
             #region Комментарии
 
             ContentControl comments = CreateControl(commentTemplate, CreateCommentsToolTip(commentsList), 40);
+            comments.Name = "GridComments";
             comments.HorizontalAlignment = HorizontalAlignment.Center;
-            SetRowColumns(comments, 1, 3);
+            comments.SetGridPosition(1, 3);
             infoGrid.Children.Add(comments);
 
             #endregion
@@ -278,10 +285,10 @@ namespace EdlightDesktopClient.Views.Schedule
             disciplineControl.Margin = new Thickness(15, 0, 0, 0);
             groupControl.Margin = new Thickness(15, 0, 0, 0);
 
-            SetRowColumns(teacherControl, 3, 1);
-            SetRowColumns(audienceControl, 4, 1);
-            SetRowColumns(disciplineControl, 5, 1);
-            SetRowColumns(groupControl, 6, 1);
+            teacherControl.SetGridPosition(3, 1);
+            audienceControl.SetGridPosition(4, 1);
+            disciplineControl.SetGridPosition(5, 1);
+            groupControl.SetGridPosition(6, 1);
 
             infoGrid.Children.Add(teacherControl);
             infoGrid.Children.Add(audienceControl);
@@ -293,10 +300,10 @@ namespace EdlightDesktopClient.Views.Schedule
             TextBlock disciplineText = CreateTextBlock(lm.AcademicDiscipline?.Title);
             TextBlock groupText = CreateTextBlock(lm.Group?.Group);
 
-            SetRowColumns(teacherText, 3, 2);
-            SetRowColumns(audienceText, 4, 2);
-            SetRowColumns(disciplineText, 5, 2);
-            SetRowColumns(groupText, 6, 2);
+            teacherText.SetGridPosition(3, 2);
+            audienceText.SetGridPosition(4, 2);
+            disciplineText.SetGridPosition(5, 2);
+            groupText.SetGridPosition(6, 2);
 
             infoGrid.Children.Add(teacherText);
             infoGrid.Children.Add(audienceText);
@@ -351,12 +358,12 @@ namespace EdlightDesktopClient.Views.Schedule
             Border border = new();
             border.CornerRadius = new CornerRadius(5);
             border.Background = card.Background;
-            SetRowColumns(border, 0, 0, 4, 4);
+            border.SetGridPosition(0, 0, 4, 4);
 
             Border innerBorder = new();
             innerBorder.CornerRadius = new CornerRadius(5);
             innerBorder.Background = innerBrush;
-            SetRowColumns(innerBorder, 1, 1);
+            innerBorder.SetGridPosition(1, 1);
 
             infoGrid.Children.Add(border);
             infoGrid.Children.Add(innerBorder);
@@ -369,7 +376,7 @@ namespace EdlightDesktopClient.Views.Schedule
             {
                 classType = CreateControl(classTypeTemplate, null, 25);
                 classType.Margin = new Thickness(15, 0, 0, 0);
-                SetRowColumns(classType, 1, 1);
+                classType.SetGridPosition(1, 1);
                 infoGrid.Children.Add(classType);
             }
             else
@@ -377,7 +384,7 @@ namespace EdlightDesktopClient.Views.Schedule
                 classType = CreateControl(cancelTemplate, null, 25);
                 classType.Margin = new Thickness(15, 0, 0, 0);
                 classType.Foreground = falseOrErrorBrush;
-                SetRowColumns(classType, 1, 1);
+                classType.SetGridPosition(1, 1);
 
                 ToolTip cancelTip = CreateToolTip("Занятие было отменено по причине:\r\n" + lm.CanceledReason);
                 classType.ToolTip = cancelTip;
@@ -387,15 +394,16 @@ namespace EdlightDesktopClient.Views.Schedule
 
             TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
             disciplineTextBlock.Margin = new Thickness(50, 0, 0, 0);
-            SetRowColumns(disciplineTextBlock, 1, 1);
+            disciplineTextBlock.SetGridPosition(1, 1);
             infoGrid.Children.Add(disciplineTextBlock);
 
             #endregion
             #region Комментарии
 
             ContentControl comments = CreateControl(commentTemplate, CreateCommentsToolTip(commentsList), 40);
+            comments.Name = "GridComments";
             comments.HorizontalAlignment = HorizontalAlignment.Center;
-            SetRowColumns(comments, 1, 2);
+            comments.SetGridPosition(1, 2);
             infoGrid.Children.Add(comments);
 
             #endregion
@@ -422,17 +430,17 @@ namespace EdlightDesktopClient.Views.Schedule
             others.ColumnDefinitions.Add(col4);
             others.ColumnDefinitions.Add(new ColumnDefinition());
 
-            SetRowColumns(others, 2, 1, columnSpan: 2);
+            others.SetGridPosition(2, 1, columnSpan: 2);
 
             ContentControl teacherControl = CreateControl(teacherTemplate, CreateToolTip(lm.Teacher?.FullName), 30);
             ContentControl audienceControl = CreateControl(doorTemplate, CreateToolTip(lm.Audience?.NumberAudience), 30);
             ContentControl disciplineControl = CreateControl(bookTemplate, CreateToolTip(lm.AcademicDiscipline?.Title), 45);
             ContentControl groupControl = CreateControl(groupTemplate, CreateToolTip(lm.Group?.Group), 40);
 
-            SetRowColumns(teacherControl, 0, 1);
-            SetRowColumns(audienceControl, 0, 2);
-            SetRowColumns(disciplineControl, 0, 3);
-            SetRowColumns(groupControl, 0, 4);
+            teacherControl.SetGridPosition(0, 1);
+            audienceControl.SetGridPosition(0, 2);
+            disciplineControl.SetGridPosition(0, 3);
+            groupControl.SetGridPosition(0, 4);
 
             others.Children.Add(teacherControl);
             others.Children.Add(audienceControl);
@@ -488,12 +496,12 @@ namespace EdlightDesktopClient.Views.Schedule
             border.Name = "SmallGridBorder";
             border.CornerRadius = new CornerRadius(5);
             border.Background = card.Background;
-            SetRowColumns(border, 0, 0, 3, 5);
+            border.SetGridPosition(0, 0, 3, 5);
 
             Border innerBorder = new();
             innerBorder.CornerRadius = new CornerRadius(5);
             innerBorder.Background = innerBrush;
-            SetRowColumns(innerBorder, 1, 1, columnSpan: 2);
+            innerBorder.SetGridPosition(1, 1, columnSpan: 2);
 
             infoGrid.Children.Add(border);
             infoGrid.Children.Add(innerBorder);
@@ -501,13 +509,12 @@ namespace EdlightDesktopClient.Views.Schedule
             #endregion
             #region Название дисциплины
 
-
             ContentControl classType;
             if (string.IsNullOrEmpty(lm.CanceledReason))
             {
                 classType = CreateControl(classTypeTemplate, null, 25);
                 classType.Margin = new Thickness(15, 0, 0, 0);
-                SetRowColumns(classType, 1, 1);
+                classType.SetGridPosition(1, 1);
                 infoGrid.Children.Add(classType);
             }
             else
@@ -515,7 +522,7 @@ namespace EdlightDesktopClient.Views.Schedule
                 classType = CreateControl(cancelTemplate, null, 25);
                 classType.Margin = new Thickness(15, 0, 0, 0);
                 classType.Foreground = falseOrErrorBrush;
-                SetRowColumns(classType, 1, 1);
+                classType.SetGridPosition(1, 1);
 
                 ToolTip cancelTip = CreateToolTip("Занятие было отменено по причине:\r\n" + lm.CanceledReason);
                 classType.ToolTip = cancelTip;
@@ -524,18 +531,19 @@ namespace EdlightDesktopClient.Views.Schedule
             }
 
             TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
-            SetRowColumns(disciplineTextBlock, 1, 2);
+            disciplineTextBlock.SetGridPosition(1, 2);
             infoGrid.Children.Add(disciplineTextBlock);
 
             #endregion
             #region Иконки с тултипами
 
             StackPanel controlsStack = new();
+            controlsStack.Name = "IconsStack";
             controlsStack.Orientation = Orientation.Horizontal;
             controlsStack.HorizontalAlignment = HorizontalAlignment.Center;
             controlsStack.VerticalAlignment = VerticalAlignment.Center;
             controlsStack.Margin = new Thickness(10, 0, 0, 0);
-            SetRowColumns(controlsStack, 1, 3);
+            controlsStack.SetGridPosition(1, 3);
 
             #region Преподаватель
             controlsStack.Children.Add(CreateControl(teacherTemplate, CreateToolTip(lm.Teacher?.FullName), 30));
@@ -550,7 +558,9 @@ namespace EdlightDesktopClient.Views.Schedule
             controlsStack.Children.Add(CreateControl(groupTemplate, CreateToolTip(lm.Group?.Group), 40));
             #endregion
             #region Комменты
-            controlsStack.Children.Add(CreateControl(commentTemplate, CreateCommentsToolTip(commentsList), 40));
+            ContentControl commentsControl = CreateControl(commentTemplate, CreateCommentsToolTip(commentsList), 40);
+            commentsControl.Name = "GridComments";
+            controlsStack.Children.Add(commentsControl);
             #endregion
 
             infoGrid.Children.Add(controlsStack);
@@ -593,11 +603,11 @@ namespace EdlightDesktopClient.Views.Schedule
 
                 Border transparent_border_up = new();
                 transparent_border_up.Background = new SolidColorBrush(Colors.Transparent);
-                SetRowColumns(transparent_border_up, 0, 0, columnSpan: 3);
+                transparent_border_up.SetGridPosition(0, 0, columnSpan: 3);
 
                 Border transparent_border_down = new();
                 transparent_border_down.Background = new SolidColorBrush(Colors.Transparent);
-                SetRowColumns(transparent_border_down, 2, 0, columnSpan: 3);
+                transparent_border_down.SetGridPosition(2, 0, columnSpan: 3);
 
                 subGrid.Children.Add(transparent_border_up);
                 subGrid.Children.Add(transparent_border_down);
@@ -638,7 +648,7 @@ namespace EdlightDesktopClient.Views.Schedule
                     }
                 }
                 up_arrow.MouseDown += UpArrowMouseDown;
-                SetRowColumns(up_arrow, 0, 3);
+                up_arrow.SetGridPosition(0, 3);
                 subGrid.Children.Add(up_arrow);
 
                 #endregion
@@ -658,14 +668,13 @@ namespace EdlightDesktopClient.Views.Schedule
                     }
                 }
                 down_arrow.MouseDown += DownArrowMouseDown;
-                SetRowColumns(down_arrow, 3, 3);
+                down_arrow.SetGridPosition(3, 3);
                 subGrid.Children.Add(down_arrow);
 
                 #endregion
             }
             return subGrid;
         }
-        //Todo: Обновление комментов при создании
 
         #region Создание контролов
 
@@ -711,7 +720,6 @@ namespace EdlightDesktopClient.Views.Schedule
 
             if (comments != null && comments.Count != 0)
             {
-                comments.Reverse();
                 int rangeLimit = 1;
                 foreach (CommentModel com in comments)
                 {
@@ -754,6 +762,7 @@ namespace EdlightDesktopClient.Views.Schedule
                     msg.TextWrapping = TextWrapping.Wrap;
 
                     Grid gr = new();
+                    gr.Uid = com.Id.ToString().ToUpper();
                     gr.Height = 70;
                     gr.Width = 330;
 
@@ -798,24 +807,47 @@ namespace EdlightDesktopClient.Views.Schedule
 
             return toolTip;
         }
-        /// <summary>
-        /// Установить для элемента Row и Column
-        /// </summary>
-        /// <param name="element">Элемент</param>
-        /// <param name="row">Строка</param>
-        /// <param name="collumn">Столбец</param>
-        /// <param name="rowSpan">Объединение строк</param>
-        /// <param name="columnSpan">Объединение столбцов</param>
-        private void SetRowColumns(UIElement element, int row, int collumn, int rowSpan = 0, int columnSpan = 0)
+
+        #endregion
+        #region Обновление комментов ивентом
+
+        private void OnCardCommentsChanged(KeyValuePair<string, IEnumerable<CommentModel>> pair)
         {
-            Grid.SetRow(element, row);
-            Grid.SetColumn(element, collumn);
-            if (rowSpan != 0) Grid.SetRowSpan(element, rowSpan);
-            if (columnSpan != 0) Grid.SetColumnSpan(element, columnSpan);
+            foreach (var ch in ItemsGrid.Children)
+            {
+                if (ch is Card card && card.Uid.ToUpper() == pair.Key.ToUpper())
+                {
+                    Grid content = card.Content as Grid;
+                    foreach (var sub_ch in content.Children)
+                    {
+                        if (sub_ch is Grid sub_grid)
+                        {
+                            foreach (var infoGrid in sub_grid.Children)
+                            {
+                                if (infoGrid is ContentControl cc && cc.Name == "GridComments")
+                                {
+                                    var tip = CreateCommentsToolTip(pair.Value.ToList());
+                                    cc.ToolTip = tip;
+                                }
+                                if (infoGrid is StackPanel sp && sp.Name == "IconsStack")
+                                {
+                                    foreach (var sp_ch in sp.Children)
+                                    {
+                                        if (sp_ch is ContentControl sp_cc && sp_cc.Name == "GridComments")
+                                        {
+                                            var tip = CreateCommentsToolTip(pair.Value.ToList());
+                                            sp_cc.ToolTip = tip;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         #endregion
-
         #endregion
         #region Метод выбора карточки
 

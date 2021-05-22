@@ -116,10 +116,6 @@
     <AndroidResource Include="Resources\values\strings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ApplicationServices\ApplicationServices.csproj">
-      <Project>{e41aac81-c245-4a3b-8afa-33120c36b53a}</Project>
-      <Name>ApplicationServices</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EdlightMobileClient\EdlightMobileClient.csproj">
       <Project>{A682884C-CB44-4A89-B752-27BB634E0ABE}</Project>
       <Name>EdlightMobileClient</Name>

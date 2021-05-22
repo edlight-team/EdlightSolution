@@ -347,7 +347,6 @@ namespace DbConsoleFiller
                 IdPermission = permissionNamesDictionary[PermissionNames.DeleteFile].Id
             }, WebApiTableNames.RolesPermissions);
 
-
             int count = (await api.GetModels<RolesPermissionsModel>(WebApiTableNames.RolesPermissions)).Count;
             Console.Write("type " + nameof(RolesPermissionsModel) + " in db count = " + count);
             watch.Stop();
@@ -587,7 +586,7 @@ namespace DbConsoleFiller
                     Surname = item.MiddleName,
                     Patrnymic = item.LastName,
                     Age = item.Age,
-                    Sex = item.FirstName.Length > 6 ? 1 : 0,
+                    Sex = item.FirstName.Length > 6 ? 2 : 1,
                     Login = new Regex(@"@+\w*").Replace(item.FirstName, ""),
                     Password = hashing.EncodeString(new Regex(@"@+\w*").Replace(item.FirstName, ""))
                 });

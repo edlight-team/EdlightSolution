@@ -11,5 +11,6 @@ namespace ApplicationWPFServices.NotificationService
             System.Windows.MessageBoxResult result = MessageBox.Show(message, "Подтвердите выбор", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
             return result == System.Windows.MessageBoxResult.Yes;
         }
+        public void ShowInformation(string message) => MessageBox.Show(message, "Сообщение", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
     }
 }

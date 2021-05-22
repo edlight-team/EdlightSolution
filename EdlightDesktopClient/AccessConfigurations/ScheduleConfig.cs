@@ -16,6 +16,7 @@ namespace EdlightDesktopClient.AccessConfigurations
     {
         #region Видимость кнопок / Контролов
 
+        private bool _canMoveOrResizeScheduleCards;
         private Visibility _canManageSchedule;
         private Visibility _canCreateScheduleRecord;
         private Visibility _canEditScheduleRecord;
@@ -31,6 +32,7 @@ namespace EdlightDesktopClient.AccessConfigurations
         private Visibility _canCreateMaterial;
         private Visibility _canDeleteMaterial;
 
+        public bool CanMoveOrResizeScheduleCards { get => _canMoveOrResizeScheduleCards; set => SetProperty(ref _canMoveOrResizeScheduleCards, value); }
         public Visibility CanManageSchedule { get => _canManageSchedule; set => SetProperty(ref _canManageSchedule, value); }
         public Visibility CanCreateScheduleRecord { get => _canCreateScheduleRecord; set => SetProperty(ref _canCreateScheduleRecord, value); }
         public Visibility CanEditScheduleRecord { get => _canEditScheduleRecord; set => SetProperty(ref _canEditScheduleRecord, value); }
@@ -66,6 +68,8 @@ namespace EdlightDesktopClient.AccessConfigurations
         /// <param name="permissionService">Сервис разрешений</param>
         public static async Task SetVisibilities(this ScheduleConfig config, IPermissionService permissionService)
         {
+            config.CanMoveOrResizeScheduleCards = await permissionService.IsInPermission(PermissionNames.EditScheduleRecords);
+
             config.CanManageSchedule = await permissionService.IsInPermission(PermissionNames.GetScheduleManaging) ? Visibility.Visible : Visibility.Collapsed;
             config.CanEditScheduleRecord = await permissionService.IsInPermission(PermissionNames.EditScheduleRecords) ? Visibility.Visible : Visibility.Collapsed;
             config.CanCreateScheduleRecord = await permissionService.IsInPermission(PermissionNames.CreateScheduleRecords) ? Visibility.Visible : Visibility.Collapsed;

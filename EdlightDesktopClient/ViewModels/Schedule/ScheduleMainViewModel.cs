@@ -239,6 +239,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             SetHelpTipVisibility();
 
             memory.StoreItem(nameof(TypeClassColors), Config.TypeClassColors);
+            memory.StoreItem(nameof(ScheduleConfig), Config);
             memory.StoreItem(nameof(Comments), Comments);
             ClearSelected();
         }

@@ -1,5 +1,7 @@
 ﻿using ApplicationEventsWPF.Events.ScheduleEvents;
 using ApplicationModels.Models;
+using ApplicationWPFServices.MemoryService;
+using EdlightDesktopClient.AccessConfigurations;
 using HandyControl.Controls;
 using Prism.Events;
 using System;
@@ -45,6 +47,7 @@ namespace EdlightDesktopClient.Views.Schedule
         #region fields and services
 
         private readonly IEventAggregator aggregator;
+        private readonly IMemoryService memory;
         private bool isMoving = false;
         private bool isResizeUp = false;
         private bool isResizeDown = false;
@@ -60,9 +63,10 @@ namespace EdlightDesktopClient.Views.Schedule
         #endregion
         #region Конструктор и выгрузка
 
-        public ScheduleDateViewer(IEventAggregator aggregator)
+        public ScheduleDateViewer(IEventAggregator aggregator, IMemoryService memory)
         {
             this.aggregator = aggregator;
+            this.memory = memory;
             InitializeComponent();
             Loaded += ScheduleDateViewerLoaded;
             Unloaded += ScheduleDateViewerUnloaded;
@@ -562,100 +566,103 @@ namespace EdlightDesktopClient.Views.Schedule
         {
             Grid subGrid = new();
             subGrid.Name = "TopGrid";
-            #region Разметка
-
-            ColumnDefinition smallColumn1 = new();
-            smallColumn1.Width = new GridLength(15);
-            ColumnDefinition smallColumn2 = new();
-            smallColumn2.Width = new GridLength(15);
-
-            subGrid.ColumnDefinitions.Add(smallColumn1);
-            subGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            subGrid.ColumnDefinitions.Add(smallColumn2);
-
-            RowDefinition smallRow = new();
-            smallRow.Height = new GridLength(15);
-            RowDefinition endRow = new();
-            endRow.Height = new GridLength(15);
-
-            subGrid.RowDefinitions.Add(smallRow);
-            subGrid.RowDefinitions.Add(new RowDefinition());
-            subGrid.RowDefinitions.Add(endRow);
-
-            #endregion
-            #region Прозрачная рамка
-
-            Border transparent_border_up = new();
-            transparent_border_up.Background = new SolidColorBrush(Colors.Transparent);
-            SetRowColumns(transparent_border_up, 0, 0, columnSpan: 3);
-
-            Border transparent_border_down = new();
-            transparent_border_down.Background = new SolidColorBrush(Colors.Transparent);
-            SetRowColumns(transparent_border_down, 2, 0, columnSpan: 3);
-
-            subGrid.Children.Add(transparent_border_up);
-            subGrid.Children.Add(transparent_border_down);
-
-            #endregion
-            #region Контрол передвигающий карту
-
-            ContentControl move_control = new();
-            move_control.Height = 12;
-            move_control.Margin = new Thickness(3);
-            move_control.HorizontalAlignment = HorizontalAlignment.Left;
-            move_control.VerticalAlignment = VerticalAlignment.Top;
-            move_control.Cursor = Cursors.SizeAll;
-            foreach (object key in svg.Keys)
+            if (memory.GetItem<ScheduleConfig>(nameof(ScheduleConfig)).CanMoveOrResizeScheduleCards)
             {
-                if (key.ToString() == "Move")
+                #region Разметка
+
+                ColumnDefinition smallColumn1 = new();
+                smallColumn1.Width = new GridLength(15);
+                ColumnDefinition smallColumn2 = new();
+                smallColumn2.Width = new GridLength(15);
+
+                subGrid.ColumnDefinitions.Add(smallColumn1);
+                subGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                subGrid.ColumnDefinitions.Add(smallColumn2);
+
+                RowDefinition smallRow = new();
+                smallRow.Height = new GridLength(15);
+                RowDefinition endRow = new();
+                endRow.Height = new GridLength(15);
+
+                subGrid.RowDefinitions.Add(smallRow);
+                subGrid.RowDefinitions.Add(new RowDefinition());
+                subGrid.RowDefinitions.Add(endRow);
+
+                #endregion
+                #region Прозрачная рамка
+
+                Border transparent_border_up = new();
+                transparent_border_up.Background = new SolidColorBrush(Colors.Transparent);
+                SetRowColumns(transparent_border_up, 0, 0, columnSpan: 3);
+
+                Border transparent_border_down = new();
+                transparent_border_down.Background = new SolidColorBrush(Colors.Transparent);
+                SetRowColumns(transparent_border_down, 2, 0, columnSpan: 3);
+
+                subGrid.Children.Add(transparent_border_up);
+                subGrid.Children.Add(transparent_border_down);
+
+                #endregion
+                #region Контрол передвигающий карту
+
+                ContentControl move_control = new();
+                move_control.Height = 12;
+                move_control.Margin = new Thickness(3);
+                move_control.HorizontalAlignment = HorizontalAlignment.Left;
+                move_control.VerticalAlignment = VerticalAlignment.Top;
+                move_control.Cursor = Cursors.SizeAll;
+                foreach (object key in svg.Keys)
                 {
-                    move_control.Template = (ControlTemplate)svg[key];
+                    if (key.ToString() == "Move")
+                    {
+                        move_control.Template = (ControlTemplate)svg[key];
+                    }
                 }
-            }
-            move_control.MouseDown += CardMouseDown;
-            subGrid.Children.Add(move_control);
+                move_control.MouseDown += CardMouseDown;
+                subGrid.Children.Add(move_control);
 
-            #endregion
-            #region Контрол увеличивающий вверх
+                #endregion
+                #region Контрол увеличивающий вверх
 
-            ContentControl up_arrow = new();
-            up_arrow.Height = 12;
-            up_arrow.Margin = new Thickness(3);
-            up_arrow.HorizontalAlignment = HorizontalAlignment.Right;
-            up_arrow.VerticalAlignment = VerticalAlignment.Top;
-            up_arrow.Cursor = Cursors.SizeNS;
-            foreach (object key in svg.Keys)
-            {
-                if (key.ToString() == "Up")
+                ContentControl up_arrow = new();
+                up_arrow.Height = 12;
+                up_arrow.Margin = new Thickness(3);
+                up_arrow.HorizontalAlignment = HorizontalAlignment.Right;
+                up_arrow.VerticalAlignment = VerticalAlignment.Top;
+                up_arrow.Cursor = Cursors.SizeNS;
+                foreach (object key in svg.Keys)
                 {
-                    up_arrow.Template = (ControlTemplate)svg[key];
+                    if (key.ToString() == "Up")
+                    {
+                        up_arrow.Template = (ControlTemplate)svg[key];
+                    }
                 }
-            }
-            up_arrow.MouseDown += UpArrowMouseDown;
-            SetRowColumns(up_arrow, 0, 3);
-            subGrid.Children.Add(up_arrow);
+                up_arrow.MouseDown += UpArrowMouseDown;
+                SetRowColumns(up_arrow, 0, 3);
+                subGrid.Children.Add(up_arrow);
 
-            #endregion
-            #region Контрол увеличивающий вниз
+                #endregion
+                #region Контрол увеличивающий вниз
 
-            ContentControl down_arrow = new();
-            down_arrow.Height = 12;
-            down_arrow.Margin = new Thickness(3);
-            down_arrow.HorizontalAlignment = HorizontalAlignment.Right;
-            down_arrow.VerticalAlignment = VerticalAlignment.Bottom;
-            down_arrow.Cursor = Cursors.SizeNS;
-            foreach (object key in svg.Keys)
-            {
-                if (key.ToString() == "Down")
+                ContentControl down_arrow = new();
+                down_arrow.Height = 12;
+                down_arrow.Margin = new Thickness(3);
+                down_arrow.HorizontalAlignment = HorizontalAlignment.Right;
+                down_arrow.VerticalAlignment = VerticalAlignment.Bottom;
+                down_arrow.Cursor = Cursors.SizeNS;
+                foreach (object key in svg.Keys)
                 {
-                    down_arrow.Template = (ControlTemplate)svg[key];
+                    if (key.ToString() == "Down")
+                    {
+                        down_arrow.Template = (ControlTemplate)svg[key];
+                    }
                 }
-            }
-            down_arrow.MouseDown += DownArrowMouseDown;
-            SetRowColumns(down_arrow, 3, 3);
-            subGrid.Children.Add(down_arrow);
+                down_arrow.MouseDown += DownArrowMouseDown;
+                SetRowColumns(down_arrow, 3, 3);
+                subGrid.Children.Add(down_arrow);
 
-            #endregion
+                #endregion
+            }
             return subGrid;
         }
         //Todo: Обновление комментов при создании

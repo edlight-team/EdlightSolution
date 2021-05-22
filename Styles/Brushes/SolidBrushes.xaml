@@ -1,9 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <SolidColorBrush x:Key="BackgroundBrush" Color="#0E1D31" />
-    <SolidColorBrush x:Key="BorderBrush" Color="#0E1D31" />
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#F9F9F9" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#F9F9F9" />
     <SolidColorBrush x:Key="InnerElementBackgroundBrush" Color="#07575B" />
     <SolidColorBrush x:Key="InnerElementBorderBrush" Color="#07575B" />
-    <SolidColorBrush x:Key="PrimaryFontBrush" Color="#F9F9F9" />
+    <SolidColorBrush x:Key="PrimaryFontBrush" Color="#050505" />
     <SolidColorBrush x:Key="ElementFontBrush" Color="#F9F9F9" />
     <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#003B46" />
     <SolidColorBrush x:Key="ActiveBackgroundTabHeaderBtush" Color="#07575B" />

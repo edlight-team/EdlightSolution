@@ -109,6 +109,8 @@
                     <hc:ComboBox Grid.Row="0"
                                  Grid.Column="2"
                                  VerticalAlignment="Center"
+                                 BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                 BorderThickness="2"
                                  DisplayMemberPath="FullName"
                                  ItemsSource="{Binding Teachers, UpdateSourceTrigger=PropertyChanged}"
                                  SelectedItem="{Binding SelectedTeacher, UpdateSourceTrigger=PropertyChanged}" />
@@ -125,6 +127,8 @@
                     <hc:ComboBox Grid.Row="1"
                                  Grid.Column="2"
                                  VerticalAlignment="Center"
+                                 BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                 BorderThickness="2"
                                  DisplayMemberPath="Title"
                                  ItemsSource="{Binding Disciplines, UpdateSourceTrigger=PropertyChanged}"
                                  SelectedItem="{Binding SelectedDiscipline, UpdateSourceTrigger=PropertyChanged}" />
@@ -141,6 +145,8 @@
                     <hc:ComboBox Grid.Row="2"
                                  Grid.Column="2"
                                  VerticalAlignment="Center"
+                                 BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                 BorderThickness="2"
                                  DisplayMemberPath="NumberAudience"
                                  ItemsSource="{Binding Audiences, UpdateSourceTrigger=PropertyChanged}"
                                  SelectedItem="{Binding SelectedAudience, UpdateSourceTrigger=PropertyChanged}" />
@@ -157,6 +163,8 @@
                     <hc:ComboBox Grid.Row="3"
                                  Grid.Column="2"
                                  VerticalAlignment="Center"
+                                 BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                 BorderThickness="2"
                                  DisplayMemberPath="Title"
                                  ItemsSource="{Binding TypeClasses, UpdateSourceTrigger=PropertyChanged}"
                                  SelectedItem="{Binding SelectedTypeClass, UpdateSourceTrigger=PropertyChanged}" />
@@ -173,6 +181,8 @@
                     <hc:ComboBox Grid.Row="4"
                                  Grid.Column="2"
                                  VerticalAlignment="Center"
+                                 BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                 BorderThickness="2"
                                  DisplayMemberPath="Group"
                                  ItemsSource="{Binding Groups, UpdateSourceTrigger=PropertyChanged}"
                                  SelectedItem="{Binding SelectedGroup, UpdateSourceTrigger=PropertyChanged}" />
@@ -204,6 +214,8 @@
                                      Width="200"
                                      HorizontalAlignment="Center"
                                      VerticalAlignment="Center"
+                                     BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                     BorderThickness="2"
                                      ItemsSource="{Binding TimeZonesFrom, UpdateSourceTrigger=PropertyChanged}"
                                      SelectedIndex="{Binding IndexTimeZonesFrom, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -219,6 +231,8 @@
                                      Width="200"
                                      HorizontalAlignment="Center"
                                      VerticalAlignment="Center"
+                                     BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                     BorderThickness="2"
                                      ItemsSource="{Binding TimeZonesTo, UpdateSourceTrigger=PropertyChanged}"
                                      SelectedIndex="{Binding IndexTimeZonesTo, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -250,6 +264,8 @@
                                        Width="200"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
+                                       BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                       BorderThickness="2"
                                        SelectedDate="{Binding CurrentDate, UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock Grid.Row="0"
@@ -264,6 +280,8 @@
                                           Width="200"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
+                                          BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                          BorderThickness="2"
                                           Maximum="60"
                                           Value="{Binding BreakTime, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -283,7 +301,7 @@
                                 Style="{DynamicResource SimpleButtonWithBorder}">
                             <TextBlock HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
-                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Style="{DynamicResource ElementTextBlock}"
                                        Text="{Binding SaveButtonText, UpdateSourceTrigger=PropertyChanged}" />
                         </Button>
                         <ContentControl Width="25"

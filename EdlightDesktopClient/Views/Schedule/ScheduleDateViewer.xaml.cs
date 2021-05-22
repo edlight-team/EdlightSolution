@@ -29,6 +29,7 @@ namespace EdlightDesktopClient.Views.Schedule
         private readonly ResourceDictionary brushes = null;
         private readonly ResourceDictionary svg = null;
 
+        private readonly Style elementTextBlockStyle = null;
         private readonly Style simpleTextBlockStyle = null;
         private readonly Style toolTipTextBlockStyle = null;
 
@@ -42,6 +43,7 @@ namespace EdlightDesktopClient.Views.Schedule
 
         private readonly SolidColorBrush falseOrErrorBrush = null;
         private readonly SolidColorBrush primaryBrush = null;
+        private readonly SolidColorBrush elementFontBrush = null;
         private readonly SolidColorBrush innerBrush = null;
 
         #endregion
@@ -94,14 +96,16 @@ namespace EdlightDesktopClient.Views.Schedule
             }
             foreach (object key in textBlocks.Keys)
             {
-                if (key.ToString() == "SimpleTextBlock") simpleTextBlockStyle = (Style)textBlocks[key];
+                if (key.ToString() == "ElementTextBlock") elementTextBlockStyle = (Style)textBlocks[key];
                 else if (key.ToString() == "ToolTipTextBlock") toolTipTextBlockStyle = (Style)textBlocks[key];
+                else if (key.ToString() == "SimpleTextBlock") simpleTextBlockStyle = (Style)textBlocks[key];
             }
             foreach (object key in brushes.Keys)
             {
                 if (key.ToString() == "FalseOrErrorBrush") falseOrErrorBrush = (SolidColorBrush)brushes[key];
                 else if (key.ToString() == "InactiveBackgroundTabHeaderBtush") innerBrush = (SolidColorBrush)brushes[key];
                 else if (key.ToString() == "PrimaryFontBrush") primaryBrush = (SolidColorBrush)brushes[key];
+                else if (key.ToString() == "ElementFontBrush") elementFontBrush = (SolidColorBrush)brushes[key];
             }
             foreach (object key in svg.Keys)
             {
@@ -628,6 +632,7 @@ namespace EdlightDesktopClient.Views.Schedule
                         move_control.Template = (ControlTemplate)svg[key];
                     }
                 }
+                move_control.Foreground = elementFontBrush;
                 move_control.MouseDown += CardMouseDown;
                 subGrid.Children.Add(move_control);
 
@@ -647,6 +652,7 @@ namespace EdlightDesktopClient.Views.Schedule
                         up_arrow.Template = (ControlTemplate)svg[key];
                     }
                 }
+                up_arrow.Foreground = elementFontBrush;
                 up_arrow.MouseDown += UpArrowMouseDown;
                 up_arrow.SetGridPosition(0, 3);
                 subGrid.Children.Add(up_arrow);
@@ -667,6 +673,7 @@ namespace EdlightDesktopClient.Views.Schedule
                         down_arrow.Template = (ControlTemplate)svg[key];
                     }
                 }
+                down_arrow.Foreground = elementFontBrush;
                 down_arrow.MouseDown += DownArrowMouseDown;
                 down_arrow.SetGridPosition(3, 3);
                 subGrid.Children.Add(down_arrow);
@@ -683,7 +690,7 @@ namespace EdlightDesktopClient.Views.Schedule
             ContentControl control = new();
             control.Width = size;
             control.Margin = new Thickness(0, 0, 5, 0);
-            control.Foreground = primaryBrush;
+            control.Foreground = elementFontBrush;
             control.Template = template;
             control.HorizontalAlignment = HorizontalAlignment.Left;
             control.VerticalAlignment = VerticalAlignment.Center;
@@ -694,7 +701,7 @@ namespace EdlightDesktopClient.Views.Schedule
         {
             TextBlock txt = new();
             txt.Text = message;
-            txt.Style = simpleTextBlockStyle;
+            txt.Style = elementTextBlockStyle;
             txt.HorizontalAlignment = HorizontalAlignment.Left;
             txt.VerticalAlignment = VerticalAlignment.Center;
             return txt;
@@ -737,7 +744,7 @@ namespace EdlightDesktopClient.Views.Schedule
                     split.Background = new SolidColorBrush(Colors.White);
 
                     TextBlock from = new();
-                    from.Style = simpleTextBlockStyle;
+                    from.Style = elementTextBlockStyle;
                     from.Margin = new Thickness(6);
                     from.Text = com.User.Surname + " " + com.User.Name;
                     from.HorizontalAlignment = HorizontalAlignment.Left;
@@ -745,7 +752,7 @@ namespace EdlightDesktopClient.Views.Schedule
                     from.FontSize = 11;
 
                     TextBlock time = new();
-                    time.Style = simpleTextBlockStyle;
+                    time.Style = elementTextBlockStyle;
                     time.Margin = new Thickness(6);
                     time.Text = com.Date.ToString();
                     time.HorizontalAlignment = HorizontalAlignment.Right;
@@ -753,7 +760,7 @@ namespace EdlightDesktopClient.Views.Schedule
                     time.FontSize = 11;
 
                     TextBlock msg = new();
-                    msg.Style = simpleTextBlockStyle;
+                    msg.Style = elementTextBlockStyle;
                     msg.Margin = new Thickness(6);
                     msg.Text = com.Message;
                     msg.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -875,7 +882,7 @@ namespace EdlightDesktopClient.Views.Schedule
         private void SetEffect(Card card, bool selected, bool sendEventMessage = false)
         {
             if (!selected) card.Effect = null;
-            else card.Effect = new DropShadowEffect() { Color = Colors.SpringGreen, Opacity = 0.5, ShadowDepth = 0, BlurRadius = 20, Direction = 0 };
+            else card.Effect = new DropShadowEffect() { Color = Colors.Red, Opacity = 0.85, ShadowDepth = 0, BlurRadius = 20, Direction = 0 };
             if (sendEventMessage)
             {
                 aggregator.GetEvent<CardSelectingEvent>().Publish(new KeyValuePair<string, bool>(card.Uid, selected));

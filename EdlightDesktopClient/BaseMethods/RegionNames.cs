@@ -7,6 +7,10 @@
         /// </summary>
         internal static string ScheduleRegion = nameof(ScheduleRegion);
         /// <summary>
+        /// Справочники
+        /// </summary>
+        internal static string DictionariesRegion = nameof(DictionariesRegion);
+        /// <summary>
         /// Профиль
         /// </summary>
         internal static string ProfileRegion = nameof(ProfileRegion);

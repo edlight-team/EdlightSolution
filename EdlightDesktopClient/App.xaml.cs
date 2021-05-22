@@ -4,12 +4,14 @@ using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
 using ApplicationWPFServices.NotificationService;
 using EdlightDesktopClient.ViewModels;
+using EdlightDesktopClient.ViewModels.Dictionaries;
 using EdlightDesktopClient.ViewModels.Groups;
 using EdlightDesktopClient.ViewModels.Learn;
 using EdlightDesktopClient.ViewModels.Profile;
 using EdlightDesktopClient.ViewModels.Schedule;
 using EdlightDesktopClient.ViewModels.Settings;
 using EdlightDesktopClient.Views;
+using EdlightDesktopClient.Views.Dictionaries;
 using EdlightDesktopClient.Views.Groups;
 using EdlightDesktopClient.Views.Learn;
 using EdlightDesktopClient.Views.Profile;
@@ -51,6 +53,7 @@ namespace EdlightDesktopClient
             ViewModelLocationProvider.Register<ScheduleDateViewer, ScheduleDateViewerViewModel>();
             ViewModelLocationProvider.Register<AddScheduleView, AddScheduleViewModel>();
             ViewModelLocationProvider.Register<CancelScheduleRecordView, CancelScheduleRecordViewModel>();
+            ViewModelLocationProvider.Register<DictionariesMainView, DictionariesMainViewModel>();
         }
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
@@ -62,6 +65,7 @@ namespace EdlightDesktopClient
             containerRegistry.RegisterForNavigation<ScheduleDateViewer>();
             containerRegistry.RegisterForNavigation<AddScheduleView>();
             containerRegistry.RegisterForNavigation<CancelScheduleRecordView>();
+            containerRegistry.RegisterForNavigation<DictionariesMainView>();
 
             containerRegistry.RegisterSingleton<IHashingService, HashingImplementation>();
             containerRegistry.RegisterSingleton<IMemoryService, MemoryImplementation>();

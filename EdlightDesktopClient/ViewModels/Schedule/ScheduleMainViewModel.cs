@@ -43,6 +43,8 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private bool _firstRun = true;
         private bool _isCardActionsEnabled;
         private bool _isCardCancelingEnabled;
+        private bool _isFirstHalfYearTime;
+        private bool _isUpWeek;
         private Visibility _helpTextVisibility;
         private string _helpTipText;
         private string _commentText;
@@ -70,6 +72,8 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         public bool IsCardActionsEnabled { get => _isCardActionsEnabled; set => SetProperty(ref _isCardActionsEnabled, value); }
         public bool IsCardCancelingEnabled { get => _isCardCancelingEnabled; set => SetProperty(ref _isCardCancelingEnabled, value); }
+        public bool IsFirstHalfYearTime { get => _isFirstHalfYearTime; set => SetProperty(ref _isFirstHalfYearTime, value); }
+        public bool IsUpWeek { get => _isUpWeek; set => SetProperty(ref _isUpWeek, value); }
         public Visibility HelpTextVisibility { get => _helpTextVisibility; set => SetProperty(ref _helpTextVisibility, value); }
         public string HelpTipText { get => _helpTipText; set => SetProperty(ref _helpTipText, value); }
         public string CommentText { get => _commentText; set => SetProperty(ref _commentText, value); }
@@ -81,6 +85,24 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             get => _currentDate;
             set
             {
+                //Проверяем семестр
+                DateTime autumnDateStart = new(value.Year, 09, 01);
+                DateTime springDateStart = new(value.Year, 02, 09);
+                IsFirstHalfYearTime = value.DayOfYear < autumnDateStart.DayOfYear;
+
+                int week = value.DayOfYear / 7;
+                int autumnWeekStart = autumnDateStart.DayOfYear / 7;
+                int springWeekStart = springDateStart.DayOfYear / 7;
+
+                if (IsFirstHalfYearTime)
+                {
+                    IsUpWeek = (week - springWeekStart) % 2 == 0;
+                }
+                else
+                {
+                    IsUpWeek = (week - autumnWeekStart) % 2 == 0;
+                }
+
                 if (_currentDate.ToLongDateString() != value.ToLongDateString())
                 {
                     OnLoadModelsByDate(value);
@@ -124,6 +146,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         public DelegateCommand LoadedCommand { get; private set; }
 
         public DelegateCommand AddCardCommand { get; private set; }
+        public DelegateCommand ImportCardsCommand { get; private set; }
         public DelegateCommand EditCardCommand { get; private set; }
         public DelegateCommand CancelCardCommand { get; private set; }
         public DelegateCommand DeleteCardCommand { get; private set; }
@@ -178,6 +201,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             #region Schedule managing
 
             AddCardCommand = new DelegateCommand(OnAddScheduleCard);
+            ImportCardsCommand = new DelegateCommand(OnImportCards);
             EditCardCommand = new DelegateCommand(OnEditScheduleCard);
             CancelCardCommand = new DelegateCommand(OnCancelCard);
             DeleteCardCommand = new DelegateCommand(OnDeleteCard);
@@ -373,6 +397,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             {
                 await Loader.Clear();
             }
+        }
+        private void OnImportCards()
+        {
+
         }
 
         #endregion

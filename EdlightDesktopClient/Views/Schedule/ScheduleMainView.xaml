@@ -50,9 +50,81 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
 
+            <!--#region Семестр-->
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="10,0,10,0"
+                           Style="{DynamicResource SimpleTextBlock}"
+                           Text="Семестр" />
+                <ContentControl Width="26"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Spring}"
+                                Visibility="{Binding IsFirstHalfYearTime, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                    <ContentControl.ToolTip>
+                        <ToolTip HorizontalOffset="15"
+                                 Placement="Right"
+                                 Style="{DynamicResource SimpleToolTip}"
+                                 VerticalOffset="25">
+                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Весна" />
+                        </ToolTip>
+                    </ContentControl.ToolTip>
+                </ContentControl>
+                <ContentControl Width="30"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Autumn}"
+                                Visibility="{Binding IsFirstHalfYearTime, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                    <ContentControl.ToolTip>
+                        <ToolTip HorizontalOffset="15"
+                                 Placement="Right"
+                                 Style="{DynamicResource SimpleToolTip}"
+                                 VerticalOffset="25">
+                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Осень" />
+                        </ToolTip>
+                    </ContentControl.ToolTip>
+                </ContentControl>
+            </StackPanel>
+
+            <!--#endregion-->
+            <!--#region Неделя-->
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="10,0,10,0"
+                           Style="{DynamicResource SimpleTextBlock}"
+                           Text="Неделя" />
+                <ContentControl Width="18"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Up}"
+                                Visibility="{Binding IsUpWeek, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                    <ContentControl.ToolTip>
+                        <ToolTip HorizontalOffset="15"
+                                 Placement="Right"
+                                 Style="{DynamicResource SimpleToolTip}"
+                                 VerticalOffset="25">
+                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Верхняя" />
+                        </ToolTip>
+                    </ContentControl.ToolTip>
+                </ContentControl>
+                <ContentControl Width="18"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Down}"
+                                Visibility="{Binding IsUpWeek, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                    <ContentControl.ToolTip>
+                        <ToolTip HorizontalOffset="15"
+                                 Placement="Right"
+                                 Style="{DynamicResource SimpleToolTip}"
+                                 VerticalOffset="25">
+                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Нижняя" />
+                        </ToolTip>
+                    </ContentControl.ToolTip>
+                </ContentControl>
+            </StackPanel>
+
+            <!--#endregion-->
             <!--#region Предыдущий-->
 
-            <Button Command="{Binding PrevDayCommand}" Style="{DynamicResource SimpleButtonWithBorder}">
+            <Button Margin="10,0,10,0"
+                    Command="{Binding PrevDayCommand}"
+                    Style="{DynamicResource SimpleButtonWithBorder}">
                 <Button.ToolTip>
                     <ToolTip HorizontalOffset="15"
                              Placement="Right"
@@ -152,9 +224,9 @@
                          ItemsSource="{Binding Groups, UpdateSourceTrigger=PropertyChanged}"
                          SelectedItem="{Binding SelectedGroup, UpdateSourceTrigger=PropertyChanged}" />
             <!--#endregion-->
+            <!--#region Создание записей-->
 
-
-            <Button Width="175"
+            <Button Width="125"
                     Margin="20,0,0,0"
                     Command="{Binding AddCardCommand}"
                     Style="{DynamicResource SimpleButtonWithBorder}"
@@ -163,6 +235,17 @@
                            Style="{DynamicResource SimpleTextBlock}"
                            Text="Новая запись" />
             </Button>
+            <Button Width="125"
+                    Margin="20,0,0,0"
+                    Command="{Binding ImportCardsCommand}"
+                    Style="{DynamicResource SimpleButtonWithBorder}"
+                    Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock HorizontalAlignment="Center"
+                           Style="{DynamicResource SimpleTextBlock}"
+                           Text="Импорт" />
+            </Button>
+
+            <!--#endregion-->
 
         </StackPanel>
 
@@ -205,39 +288,39 @@
                 <StackPanel Orientation="Vertical" Visibility="{Binding IsCardActionsEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
                     <!--#region Кнопки управления-->
                     <Expander Margin="5"
-                          Header="Управление"
-                          IsExpanded="True"
-                          Visibility="{Binding Config.CanManageSchedule, UpdateSourceTrigger=PropertyChanged}">
+                              Header="Управление"
+                              IsExpanded="True"
+                              Visibility="{Binding Config.CanManageSchedule, UpdateSourceTrigger=PropertyChanged}">
                         <StackPanel Margin="0,10,0,0" Orientation="Vertical">
                             <Button Width="175"
-                                Margin="0,0,0,10"
-                                Command="{Binding EditCardCommand}"
-                                IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
-                                Style="{DynamicResource SimpleButtonWithBorder}"
-                                Visibility="{Binding Config.CanEditScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                                    Margin="0,0,0,10"
+                                    Command="{Binding EditCardCommand}"
+                                    IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource SimpleButtonWithBorder}"
+                                    Visibility="{Binding Config.CanEditScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBlock HorizontalAlignment="Center"
-                                       Style="{DynamicResource SimpleTextBlock}"
-                                       Text="Редактировать запись" />
+                                           Style="{DynamicResource SimpleTextBlock}"
+                                           Text="Редактировать запись" />
                             </Button>
                             <Button Width="175"
-                                Margin="0,0,0,10"
-                                Command="{Binding CancelCardCommand}"
-                                IsEnabled="{Binding IsCardCancelingEnabled, UpdateSourceTrigger=PropertyChanged}"
-                                Style="{DynamicResource SimpleButtonWithBorder}"
-                                Visibility="{Binding Config.CanSetScheduleStatus, UpdateSourceTrigger=PropertyChanged}">
+                                    Margin="0,0,0,10"
+                                    Command="{Binding CancelCardCommand}"
+                                    IsEnabled="{Binding IsCardCancelingEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource SimpleButtonWithBorder}"
+                                    Visibility="{Binding Config.CanSetScheduleStatus, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBlock HorizontalAlignment="Center"
-                                       Style="{DynamicResource SimpleTextBlock}"
-                                       Text="Отменить занятие" />
+                                           Style="{DynamicResource SimpleTextBlock}"
+                                           Text="Отменить занятие" />
                             </Button>
                             <Button Width="175"
-                                Margin="0,0,0,10"
-                                Command="{Binding DeleteCardCommand}"
-                                IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
-                                Style="{DynamicResource SimpleButtonWithBorder}"
-                                Visibility="{Binding Config.CanDeleteScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                                    Margin="0,0,0,10"
+                                    Command="{Binding DeleteCardCommand}"
+                                    IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource SimpleButtonWithBorder}"
+                                    Visibility="{Binding Config.CanDeleteScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBlock HorizontalAlignment="Center"
-                                       Style="{DynamicResource SimpleTextBlock}"
-                                       Text="Удалить запись" />
+                                           Style="{DynamicResource SimpleTextBlock}"
+                                           Text="Удалить запись" />
                             </Button>
                         </StackPanel>
                     </Expander>

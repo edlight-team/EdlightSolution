@@ -12,7 +12,7 @@ using System;
 namespace EdlightDesktopClient.ViewModels.Dictionaries
 {
     [RegionMemberLifetime(KeepAlive = false)]
-    public class EditDisciplinesViewModel : BindableBase, INavigationAware
+    public class EditAudienceViewModel : BindableBase, INavigationAware
     {
         #region services
 
@@ -24,14 +24,14 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         #region fields
 
         private LoaderModel _loader;
-        private AcademicDisciplinesModel _model;
+        private AudiencesModel _model;
         private string _saveButtonText;
 
         #endregion
         #region props
 
         public LoaderModel Loader { get => _loader; set => SetProperty(ref _loader, value); }
-        public AcademicDisciplinesModel Model { get => _model ??= new(); set => SetProperty(ref _model, value); }
+        public AudiencesModel Model { get => _model ??= new(); set => SetProperty(ref _model, value); }
         public string SaveButtonText { get => _saveButtonText; set => SetProperty(ref _saveButtonText, value); }
 
         #endregion
@@ -53,7 +53,7 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         #endregion
         #region ctor
 
-        public EditDisciplinesViewModel(IRegionManager manager, IWebApiService api, IEventAggregator aggregator)
+        public EditAudienceViewModel(IRegionManager manager, IWebApiService api, IEventAggregator aggregator)
         {
             Loader = new();
             this.manager = manager;
@@ -61,10 +61,10 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
             this.aggregator = aggregator;
 
             LoadedCommand = new DelegateCommand(OnLoaded);
-            ConfirmCommand = new DelegateCommand(OnConfirm, CanConfirm).ObservesProperty(() => Model.Title);
+            ConfirmCommand = new DelegateCommand(OnConfirm, CanConfirm).ObservesProperty(() => Model.NumberAudience);
             CloseModalCommand = new DelegateCommand(OnCloseModal);
         }
-        private void OnLoaded() => SaveButtonText = string.IsNullOrEmpty(Model.Title) ? "Создать запись" : "Сохранить запись";
+        private void OnLoaded() => SaveButtonText = string.IsNullOrEmpty(Model.NumberAudience) ? "Создать запись" : "Сохранить запись";
 
         #endregion
         #region methods
@@ -72,9 +72,9 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         private bool CanConfirm()
         {
             HasErrors = false;
-            if (string.IsNullOrEmpty(Model.Title))
+            if (string.IsNullOrEmpty(Model.NumberAudience))
             {
-                Errors += "Название дисциплины является обязательным";
+                Errors += "Название аудитории является обязательным";
                 HasErrors = true;
             }
             return !HasErrors;
@@ -86,14 +86,14 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
                 Loader.SetDefaultLoadingInfo();
                 if (SaveButtonText == "Создать запись")
                 {
-                    await api.PostModel(Model, WebApiTableNames.AcademicDisciplines);
+                    await api.PostModel(Model, WebApiTableNames.Audiences);
                     aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(Model);
                     Growl.Info("Запись успешно создана", "Global");
                     OnCloseModal();
                 }
                 else
                 {
-                    await api.PutModel(Model, WebApiTableNames.AcademicDisciplines);
+                    await api.PutModel(Model, WebApiTableNames.Audiences);
                     Growl.Info("Запись успешно сохранена", "Global");
                     OnCloseModal();
                 }
@@ -114,7 +114,7 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            if (navigationContext.Parameters.ContainsKey(nameof(Model)) && navigationContext.Parameters[nameof(Model)] is AcademicDisciplinesModel navModel)
+            if (navigationContext.Parameters.ContainsKey(nameof(Model)) && navigationContext.Parameters[nameof(Model)] is AudiencesModel navModel)
             {
                 Model = navModel;
             }

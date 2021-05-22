@@ -54,6 +54,7 @@ namespace EdlightDesktopClient
             ViewModelLocationProvider.Register<AddScheduleView, AddScheduleViewModel>();
             ViewModelLocationProvider.Register<CancelScheduleRecordView, CancelScheduleRecordViewModel>();
             ViewModelLocationProvider.Register<DictionariesMainView, DictionariesMainViewModel>();
+            ViewModelLocationProvider.Register<EditDisciplinesView, EditDisciplinesViewModel>();
             ViewModelLocationProvider.Register<AddTestView, AddTestViewModel>();
             ViewModelLocationProvider.Register<PassingTestView, PassingTestViewModel>();
             ViewModelLocationProvider.Register<ResultsTestView, ResultsTestViewModel>();
@@ -69,6 +70,7 @@ namespace EdlightDesktopClient
             containerRegistry.RegisterForNavigation<AddScheduleView>();
             containerRegistry.RegisterForNavigation<CancelScheduleRecordView>();
             containerRegistry.RegisterForNavigation<DictionariesMainView>();
+            containerRegistry.RegisterForNavigation<EditDisciplinesView>();
             containerRegistry.RegisterForNavigation<AddTestView>();
             containerRegistry.RegisterForNavigation<PassingTestView>();
             containerRegistry.RegisterForNavigation<ResultsTestView>();

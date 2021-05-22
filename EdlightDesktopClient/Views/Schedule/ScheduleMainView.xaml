@@ -63,7 +63,6 @@
                     <ContentControl.ToolTip>
                         <ToolTip HorizontalOffset="15"
                                  Placement="Right"
-                                 Style="{DynamicResource SimpleToolTip}"
                                  VerticalOffset="25">
                             <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Весна" />
                         </ToolTip>
@@ -76,7 +75,6 @@
                     <ContentControl.ToolTip>
                         <ToolTip HorizontalOffset="15"
                                  Placement="Right"
-                                 Style="{DynamicResource SimpleToolTip}"
                                  VerticalOffset="25">
                             <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Осень" />
                         </ToolTip>
@@ -98,7 +96,6 @@
                     <ContentControl.ToolTip>
                         <ToolTip HorizontalOffset="15"
                                  Placement="Right"
-                                 Style="{DynamicResource SimpleToolTip}"
                                  VerticalOffset="25">
                             <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Верхняя" />
                         </ToolTip>
@@ -111,7 +108,6 @@
                     <ContentControl.ToolTip>
                         <ToolTip HorizontalOffset="15"
                                  Placement="Right"
-                                 Style="{DynamicResource SimpleToolTip}"
                                  VerticalOffset="25">
                             <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Нижняя" />
                         </ToolTip>
@@ -128,7 +124,6 @@
                 <Button.ToolTip>
                     <ToolTip HorizontalOffset="15"
                              Placement="Right"
-                             Style="{DynamicResource SimpleToolTip}"
                              VerticalOffset="25">
                         <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Предыдущий день" />
                     </ToolTip>
@@ -163,7 +158,6 @@
                 <Button.ToolTip>
                     <ToolTip HorizontalOffset="0"
                              Placement="Right"
-                             Style="{DynamicResource SimpleToolTip}"
                              VerticalOffset="25">
                         <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Сегодня" />
                     </ToolTip>
@@ -183,7 +177,6 @@
                 <Button.ToolTip>
                     <ToolTip HorizontalOffset="0"
                              Placement="Right"
-                             Style="{DynamicResource SimpleToolTip}"
                              VerticalOffset="25">
                         <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Следующий день" />
                     </ToolTip>
@@ -203,7 +196,6 @@
                 <Button.ToolTip>
                     <ToolTip HorizontalOffset="0"
                              Placement="Right"
-                             Style="{DynamicResource SimpleToolTip}"
                              VerticalOffset="25">
                         <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Обновить" />
                     </ToolTip>
@@ -229,28 +221,29 @@
                          SelectedItem="{Binding SelectedGroup, UpdateSourceTrigger=PropertyChanged}" />
             <!--#endregion-->
             <!--#region Создание записей-->
-
-            <Button Width="125"
-                    Margin="20,0,0,0"
-                    Command="{Binding AddCardCommand}"
-                    Style="{DynamicResource SimpleButtonWithBorder}"
-                    Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
-                <TextBlock HorizontalAlignment="Center"
-                           Style="{DynamicResource ElementTextBlock}"
-                           Text="Новая запись" />
-            </Button>
-            <Button Width="125"
-                    Margin="20,0,0,0"
-                    Command="{Binding ImportCardsCommand}"
-                    Style="{DynamicResource SimpleButtonWithBorder}"
-                    Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
-                <TextBlock HorizontalAlignment="Center"
-                           Style="{DynamicResource ElementTextBlock}"
-                           Text="Импорт" />
-            </Button>
-
-            <!--#endregion-->
-
+            <hc:SplitButton Name="SplitCreatingButton"
+                            Width="125"
+                            Margin="20,0,0,0"
+                            Background="{DynamicResource InnerElementBackgroundBrush}"
+                            Content="Создание"
+                            Focusable="False"
+                            HitMode="Hover"
+                            Style="{DynamicResource SplitButtonPrimary}">
+                <hc:SplitButton.DropDownContent>
+                    <StackPanel>
+                        <MenuItem Background="{DynamicResource InnerElementBackgroundBrush}"
+                                  Command="{Binding AddCardCommand}"
+                                  Foreground="{DynamicResource ElementFontBrush}"
+                                  Header="Новая запись"
+                                  Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}" />
+                        <MenuItem Background="{DynamicResource InnerElementBackgroundBrush}"
+                                  Command="{Binding ImportCardsCommand}"
+                                  Foreground="{DynamicResource ElementFontBrush}"
+                                  Header="Импорт"
+                                  Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </hc:SplitButton.DropDownContent>
+            </hc:SplitButton>
         </StackPanel>
 
         <!--#endregion-->

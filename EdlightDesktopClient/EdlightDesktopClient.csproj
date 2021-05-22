@@ -64,6 +64,7 @@
     <Compile Include="AccessConfigurations\TestConfig.cs" />
     <Compile Include="BaseMethods\RegionNames.cs" />
     <Compile Include="ViewModels\Dictionaries\DictionariesMainViewModel.cs" />
+    <Compile Include="ViewModels\Dictionaries\EditDisciplinesViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupsMainViewModel.cs" />
     <Compile Include="ViewModels\Learn\AddTestViewModel.cs" />
     <Compile Include="ViewModels\Learn\LearnMainViewModel.cs" />
@@ -77,6 +78,9 @@
     <Compile Include="ViewModels\Settings\SettingsMainViewModel.cs" />
     <Compile Include="Views\Dictionaries\DictionariesMainView.xaml.cs">
       <DependentUpon>DictionariesMainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dictionaries\EditDisciplinesView.xaml.cs">
+      <DependentUpon>EditDisciplinesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Groups\GroupsMainView.xaml.cs">
       <DependentUpon>GroupsMainView.xaml</DependentUpon>
@@ -116,6 +120,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dictionaries\DictionariesMainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dictionaries\EditDisciplinesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

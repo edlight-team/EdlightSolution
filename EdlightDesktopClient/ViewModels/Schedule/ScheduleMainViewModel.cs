@@ -130,6 +130,8 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #endregion
         #region commands
 
+        public DelegateCommand LoadedCommand { get; private set; }
+
         #region Date clicks
 
         public DelegateCommand PrevDayCommand { get; private set; }
@@ -142,8 +144,6 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         #endregion
         #region Schedule managing
-
-        public DelegateCommand LoadedCommand { get; private set; }
 
         public DelegateCommand AddCardCommand { get; private set; }
         public DelegateCommand ImportCardsCommand { get; private set; }

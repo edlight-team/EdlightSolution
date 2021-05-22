@@ -53,6 +53,7 @@
     <Compile Include="Events\ScheduleEvents\CommentsChangedEvent.cs" />
     <Compile Include="Events\ScheduleEvents\DateChangedEvent.cs" />
     <Compile Include="Events\ScheduleEvents\GridChildChangedEvent.cs" />
+    <Compile Include="Events\TestCollectionUpdatedEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

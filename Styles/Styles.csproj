@@ -59,6 +59,7 @@
     <Compile Include="Behaviors\KeyBehaviors\DeletePressedBehavior.cs" />
     <Compile Include="Behaviors\KeyBehaviors\EnterPressedBehavior.cs" />
     <Compile Include="Behaviors\KeyBehaviors\EscapePressedBehavior.cs" />
+    <Compile Include="Behaviors\MouseLeftButtonDown.cs" />
     <Compile Include="Behaviors\TabItemMouseDownBehavior.cs" />
     <Compile Include="Behaviors\UnloadedBehavior.cs" />
     <Compile Include="Controls\BindablePasswordBox.xaml.cs">
@@ -74,6 +75,7 @@
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\TimeZoneConverter.cs" />
     <Compile Include="Extensions\UIElementExtension.cs" />
+    <Compile Include="Extensions\VisibilityExtension.cs" />
     <Compile Include="Models\LoaderModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

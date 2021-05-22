@@ -18,6 +18,8 @@ namespace ApplicationModels.Models
         private string testStartDate;
         private string testEndDate;
         private int countPoints;
+
+        private bool isSelectedCard;
         #endregion
         #region props
         [JsonProperty(nameof(ID))]
@@ -52,6 +54,8 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(CountPoints))]
         public int CountPoints { get => countPoints; set => SetProperty(ref countPoints, value); }
+
+        public bool IsSelectedCard { get => isSelectedCard; set => SetProperty(ref isSelectedCard, value); }
         #endregion
     }
 }

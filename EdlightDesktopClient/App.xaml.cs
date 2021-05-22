@@ -56,6 +56,9 @@ namespace EdlightDesktopClient
             ViewModelLocationProvider.Register<DictionariesMainView, DictionariesMainViewModel>();
             ViewModelLocationProvider.Register<EditDisciplinesView, EditDisciplinesViewModel>();
             ViewModelLocationProvider.Register<EditAudienceView, EditAudienceViewModel>();
+            ViewModelLocationProvider.Register<AddTestView, AddTestViewModel>();
+            ViewModelLocationProvider.Register<PassingTestView, PassingTestViewModel>();
+            ViewModelLocationProvider.Register<ResultsTestView, ResultsTestViewModel>();
         }
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
@@ -70,6 +73,9 @@ namespace EdlightDesktopClient
             containerRegistry.RegisterForNavigation<DictionariesMainView>();
             containerRegistry.RegisterForNavigation<EditDisciplinesView>();
             containerRegistry.RegisterForNavigation<EditAudienceView>();
+            containerRegistry.RegisterForNavigation<AddTestView>();
+            containerRegistry.RegisterForNavigation<PassingTestView>();
+            containerRegistry.RegisterForNavigation<ResultsTestView>();
 
             containerRegistry.RegisterSingleton<IHashingService, HashingImplementation>();
             containerRegistry.RegisterSingleton<IMemoryService, MemoryImplementation>();

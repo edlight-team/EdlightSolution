@@ -63,7 +63,6 @@
                     <ContentControl.ToolTip>
                         <ToolTip HorizontalOffset="15"
                                  Placement="Right"
-                                 Style="{DynamicResource SimpleToolTip}"
                                  VerticalOffset="25">
                             <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Весна" />
                         </ToolTip>
@@ -76,7 +75,6 @@
                     <ContentControl.ToolTip>
                         <ToolTip HorizontalOffset="15"
                                  Placement="Right"
-                                 Style="{DynamicResource SimpleToolTip}"
                                  VerticalOffset="25">
                             <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Осень" />
                         </ToolTip>
@@ -98,7 +96,6 @@
                     <ContentControl.ToolTip>
                         <ToolTip HorizontalOffset="15"
                                  Placement="Right"
-                                 Style="{DynamicResource SimpleToolTip}"
                                  VerticalOffset="25">
                             <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Верхняя" />
                         </ToolTip>
@@ -111,7 +108,6 @@
                     <ContentControl.ToolTip>
                         <ToolTip HorizontalOffset="15"
                                  Placement="Right"
-                                 Style="{DynamicResource SimpleToolTip}"
                                  VerticalOffset="25">
                             <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Нижняя" />
                         </ToolTip>
@@ -128,7 +124,6 @@
                 <Button.ToolTip>
                     <ToolTip HorizontalOffset="15"
                              Placement="Right"
-                             Style="{DynamicResource SimpleToolTip}"
                              VerticalOffset="25">
                         <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Предыдущий день" />
                     </ToolTip>
@@ -163,7 +158,6 @@
                 <Button.ToolTip>
                     <ToolTip HorizontalOffset="0"
                              Placement="Right"
-                             Style="{DynamicResource SimpleToolTip}"
                              VerticalOffset="25">
                         <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Сегодня" />
                     </ToolTip>
@@ -183,7 +177,6 @@
                 <Button.ToolTip>
                     <ToolTip HorizontalOffset="0"
                              Placement="Right"
-                             Style="{DynamicResource SimpleToolTip}"
                              VerticalOffset="25">
                         <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Следующий день" />
                     </ToolTip>
@@ -203,7 +196,6 @@
                 <Button.ToolTip>
                     <ToolTip HorizontalOffset="0"
                              Placement="Right"
-                             Style="{DynamicResource SimpleToolTip}"
                              VerticalOffset="25">
                         <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Обновить" />
                     </ToolTip>

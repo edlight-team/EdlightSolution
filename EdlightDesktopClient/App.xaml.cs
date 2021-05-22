@@ -54,6 +54,7 @@ namespace EdlightDesktopClient
             ViewModelLocationProvider.Register<AddScheduleView, AddScheduleViewModel>();
             ViewModelLocationProvider.Register<CancelScheduleRecordView, CancelScheduleRecordViewModel>();
             ViewModelLocationProvider.Register<DictionariesMainView, DictionariesMainViewModel>();
+            ViewModelLocationProvider.Register<EditDisciplinesView, EditDisciplinesViewModel>();
         }
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
@@ -66,6 +67,7 @@ namespace EdlightDesktopClient
             containerRegistry.RegisterForNavigation<AddScheduleView>();
             containerRegistry.RegisterForNavigation<CancelScheduleRecordView>();
             containerRegistry.RegisterForNavigation<DictionariesMainView>();
+            containerRegistry.RegisterForNavigation<EditDisciplinesView>();
 
             containerRegistry.RegisterSingleton<IHashingService, HashingImplementation>();
             containerRegistry.RegisterSingleton<IMemoryService, MemoryImplementation>();

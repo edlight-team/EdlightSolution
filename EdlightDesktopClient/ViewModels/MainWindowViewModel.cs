@@ -2,6 +2,7 @@
 using ApplicationServices.PermissionService;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
+using EdlightDesktopClient.AccessConfigurations;
 using EdlightDesktopClient.BaseMethods;
 using EdlightDesktopClient.Views.Dictionaries;
 using EdlightDesktopClient.Views.Groups;
@@ -24,7 +25,7 @@ namespace EdlightDesktopClient.ViewModels
         private readonly IRegionManager manager;
         private readonly IMemoryService memory;
         private readonly IWebApiService api;
-        private readonly IPermissionService accessManager;
+        private readonly IPermissionService permissionService;
 
         #endregion
         #region fields
@@ -32,7 +33,7 @@ namespace EdlightDesktopClient.ViewModels
         private string _title = "Edlight";
         private WindowState _currentState;
         private LoaderModel _loader;
-        private Visibility _groupsVisibility;
+        private MainConfig _config;
 
         #endregion
         #region props
@@ -40,7 +41,7 @@ namespace EdlightDesktopClient.ViewModels
         public string Title { get => _title; set => SetProperty(ref _title, value); }
         public WindowState CurrentState { get => _currentState; set => SetProperty(ref _currentState, value); }
         public LoaderModel Loader { get => _loader; set => SetProperty(ref _loader, value); }
-        public Visibility GroupsVisibility { get => _groupsVisibility; set => SetProperty(ref _groupsVisibility, value); }
+        public MainConfig Config { get => _config ??= new(); set => SetProperty(ref _config, value); }
 
         #endregion
         #region commands
@@ -52,14 +53,13 @@ namespace EdlightDesktopClient.ViewModels
         #endregion
         #region ctor
 
-        public MainWindowViewModel(IRegionManager manager, IMemoryService memory, IWebApiService api, IPermissionService accessManager)
+        public MainWindowViewModel(IRegionManager manager, IMemoryService memory, IWebApiService api, IPermissionService permissionService)
         {
             Loader = new();
-            GroupsVisibility = Visibility.Collapsed;
             this.manager = manager;
             this.memory = memory;
             this.api = api;
-            this.accessManager = accessManager;
+            this.permissionService = permissionService;
 
             MinimizeCommand = new DelegateCommand(() => CurrentState = StaticCommands.ChangeWindowState(CurrentState));
             CloseCommand = new DelegateCommand(StaticCommands.Shutdown);
@@ -67,11 +67,8 @@ namespace EdlightDesktopClient.ViewModels
         }
         private async void OnLoaded()
         {
-            //Проверяем пользователя
-            UserModel current_user = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
-            await accessManager.ConfigureService(api, current_user);
-            RolesModel teacher_role = await accessManager.GetRoleByName("teacher");
-            if (await accessManager.IsInRole(teacher_role)) GroupsVisibility = Visibility.Visible;
+            await permissionService.ConfigureService(api, memory.GetItem<UserModel>(MemoryAlliases.CurrentUser));
+            await Config.SetVisibilities(permissionService);
 
             manager.RequestNavigate(BaseMethods.RegionNames.LearnRegion, nameof(LearnMainView));
             manager.RequestNavigate(BaseMethods.RegionNames.ProfileRegion, nameof(ProfileMainView));

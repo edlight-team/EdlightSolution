@@ -125,7 +125,9 @@
                 </TabItem.Header>
                 <ContentControl Name="ScheduleRegion" />
             </TabItem>
-            <TabItem Margin="0" Template="{DynamicResource SimpleTabItem}">
+            <TabItem Margin="0"
+                     Template="{DynamicResource SimpleTabItem}"
+                     Visibility="{Binding Config.CanManageDictionaries, UpdateSourceTrigger=PropertyChanged}">
                 <TabItem.Header>
                     <StackPanel Width="100"
                                 Height="25"
@@ -183,7 +185,7 @@
             </TabItem>
             <TabItem Margin="0"
                      Template="{DynamicResource SimpleTabItem}"
-                     Visibility="{Binding GroupsVisibility, UpdateSourceTrigger=PropertyChanged}">
+                     Visibility="{Binding Config.CanManageGroups, UpdateSourceTrigger=PropertyChanged}">
                 <TabItem.Header>
                     <StackPanel Width="100"
                                 Height="25"

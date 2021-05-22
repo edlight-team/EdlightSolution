@@ -60,6 +60,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AccessConfigurations\MainConfig.cs" />
     <Compile Include="AccessConfigurations\ScheduleConfig.cs" />
     <Compile Include="AccessConfigurations\TestConfig.cs" />
     <Compile Include="BaseMethods\RegionNames.cs" />

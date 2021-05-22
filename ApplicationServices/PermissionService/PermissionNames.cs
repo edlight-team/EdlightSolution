@@ -25,6 +25,21 @@ namespace ApplicationServices.PermissionService
 
     public static class PermissionNames
     {
+        #region Основные вкладки
+
+        /// <summary>
+        /// Управлять группами
+        /// </summary>
+        [PermissionDescription("Управлять группами")]
+        public const string ManageGroups = nameof(ManageGroups);
+
+        /// <summary>
+        /// Управлять справочниками
+        /// </summary>
+        [PermissionDescription("Управлять справочниками")]
+        public const string ManageDictionaries = nameof(ManageDictionaries);
+
+        #endregion
         #region Записи расписания
 
         /// <summary>
@@ -107,6 +122,7 @@ namespace ApplicationServices.PermissionService
 
         #endregion
         #region Тесты
+
         /// <summary>
         /// Создать тест
         /// </summary>
@@ -148,6 +164,7 @@ namespace ApplicationServices.PermissionService
         /// </summary>
         [PermissionDescription("Просмотреть свои результаты теста")]
         public const string ViewSelfTestResults = nameof(ViewSelfTestResults);
+
         #endregion
     }
 

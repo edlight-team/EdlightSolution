@@ -11,6 +11,6 @@
     <SolidColorBrush x:Key="DisabledBackgroundTabHeaderBrush" Color="#003B46" />
     <SolidColorBrush x:Key="ZoneBrush" Color="#6B8E23" />
     <SolidColorBrush x:Key="FalseOrErrorBrush" Color="#ED6161" />
-    <SolidColorBrush x:Key="SelectedTestCardBorderBrush" Color="AliceBlue"/>
-    <SolidColorBrush x:Key="TestCardBackgrounBrush" Color="#18a7b5"/>
+    <SolidColorBrush x:Key="SelectedTestCardBorderBrush" Color="AliceBlue" />
+    <SolidColorBrush x:Key="TestCardBackgrounBrush" Color="#18a7b5" />
 </ResourceDictionary>

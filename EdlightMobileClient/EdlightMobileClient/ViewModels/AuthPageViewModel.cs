@@ -5,7 +5,6 @@ using ApplicationXamarinService.MemoryService;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Navigation;
-using StaticCollections;
 using System;
 using System.Linq;
 using System.Net;

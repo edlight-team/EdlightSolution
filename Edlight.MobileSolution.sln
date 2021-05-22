@@ -1,0 +1,71 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31229.75
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationCore", "ApplicationCore", "{FA337506-83B9-488A-9850-42D0A4075521}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClientXamarin", "ClientXamarin", "{315097F2-F33C-4F1B-8EA9-837CF673D256}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationModels", "ApplicationModels\ApplicationModels.csproj", "{3BC9C9C3-3EE8-476B-AFEE-6C113A9D5650}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationServices", "ApplicationServices\ApplicationServices.csproj", "{E41AAC81-C245-4A3B-8AFA-33120C36B53A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationXamarinService", "ApplicationXamarinService\ApplicationXamarinService.csproj", "{621DF0AC-3956-492A-9FF7-BB6C0BD68A27}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationStyle", "ApplicationStyle", "{A929A7B1-1569-490B-A4D5-0E3A7E4CFB3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Styles", "Styles\Styles.csproj", "{85AA63C8-3100-4151-A96F-EAC74682CFE3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdlightMobileClient", "EdlightMobileClient\EdlightMobileClient\EdlightMobileClient.csproj", "{872DB979-A630-4CCE-9ECB-52084A75B354}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdlightMobileClient.Android", "EdlightMobileClient\EdlightMobileClient.Android\EdlightMobileClient.Android.csproj", "{011B19F9-412F-405A-9FC8-4EACA634039A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BC9C9C3-3EE8-476B-AFEE-6C113A9D5650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BC9C9C3-3EE8-476B-AFEE-6C113A9D5650}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BC9C9C3-3EE8-476B-AFEE-6C113A9D5650}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BC9C9C3-3EE8-476B-AFEE-6C113A9D5650}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E41AAC81-C245-4A3B-8AFA-33120C36B53A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E41AAC81-C245-4A3B-8AFA-33120C36B53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E41AAC81-C245-4A3B-8AFA-33120C36B53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E41AAC81-C245-4A3B-8AFA-33120C36B53A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{621DF0AC-3956-492A-9FF7-BB6C0BD68A27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{621DF0AC-3956-492A-9FF7-BB6C0BD68A27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{621DF0AC-3956-492A-9FF7-BB6C0BD68A27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{621DF0AC-3956-492A-9FF7-BB6C0BD68A27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85AA63C8-3100-4151-A96F-EAC74682CFE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85AA63C8-3100-4151-A96F-EAC74682CFE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85AA63C8-3100-4151-A96F-EAC74682CFE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85AA63C8-3100-4151-A96F-EAC74682CFE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{872DB979-A630-4CCE-9ECB-52084A75B354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{872DB979-A630-4CCE-9ECB-52084A75B354}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{872DB979-A630-4CCE-9ECB-52084A75B354}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{872DB979-A630-4CCE-9ECB-52084A75B354}.Release|Any CPU.Build.0 = Release|Any CPU
+		{011B19F9-412F-405A-9FC8-4EACA634039A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{011B19F9-412F-405A-9FC8-4EACA634039A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{011B19F9-412F-405A-9FC8-4EACA634039A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{011B19F9-412F-405A-9FC8-4EACA634039A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{011B19F9-412F-405A-9FC8-4EACA634039A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{011B19F9-412F-405A-9FC8-4EACA634039A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3BC9C9C3-3EE8-476B-AFEE-6C113A9D5650} = {FA337506-83B9-488A-9850-42D0A4075521}
+		{E41AAC81-C245-4A3B-8AFA-33120C36B53A} = {FA337506-83B9-488A-9850-42D0A4075521}
+		{621DF0AC-3956-492A-9FF7-BB6C0BD68A27} = {FA337506-83B9-488A-9850-42D0A4075521}
+		{85AA63C8-3100-4151-A96F-EAC74682CFE3} = {A929A7B1-1569-490B-A4D5-0E3A7E4CFB3D}
+		{872DB979-A630-4CCE-9ECB-52084A75B354} = {315097F2-F33C-4F1B-8EA9-837CF673D256}
+		{011B19F9-412F-405A-9FC8-4EACA634039A} = {315097F2-F33C-4F1B-8EA9-837CF673D256}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E1EB21CA-6957-4728-9B45-E48BAB563634}
+	EndGlobalSection
+EndGlobal

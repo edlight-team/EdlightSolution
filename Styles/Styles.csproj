@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HandyControl, Version=3.2.0.0, Culture=neutral, PublicKeyToken=45be8712787a1e5b, processorArchitecture=MSIL">
+      <HintPath>..\packages\HandyControls.3.3.5\lib\net48\HandyControl.dll</HintPath>
+    </Reference>
     <Reference Include="Prism, Version=8.0.0.1909, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Core.8.0.0.1909\lib\net47\Prism.dll</HintPath>
     </Reference>
@@ -53,7 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\ComboSelectedIndexChangedBehavior.cs" />
-    <Compile Include="Behaviors\EnterPressedBehavior.cs" />
+    <Compile Include="Behaviors\KeyBehaviors\DeletePressedBehavior.cs" />
+    <Compile Include="Behaviors\KeyBehaviors\EnterPressedBehavior.cs" />
+    <Compile Include="Behaviors\KeyBehaviors\EscapePressedBehavior.cs" />
     <Compile Include="Behaviors\MouseLeftButtonDown.cs" />
     <Compile Include="Behaviors\TabItemMouseDownBehavior.cs" />
     <Compile Include="Behaviors\UnloadedBehavior.cs" />
@@ -69,6 +74,7 @@
     <Compile Include="Converters\BooleanRevert.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\TimeZoneConverter.cs" />
+    <Compile Include="Extensions\UIElementExtension.cs" />
     <Compile Include="Extensions\VisibilityExtension.cs" />
     <Compile Include="Models\LoaderModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

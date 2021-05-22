@@ -47,15 +47,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\CardMoveOrResizeEvent.cs" />
-    <Compile Include="Events\CardSelectingEvent.cs" />
-    <Compile Include="Events\DateChangedEvent.cs" />
-    <Compile Include="Events\GridChildChangedEvent.cs" />
+    <Compile Include="Events\ScheduleEvents\CardMoveOrResizeEvent.cs" />
+    <Compile Include="Events\ScheduleEvents\CardSelectingEvent.cs" />
+    <Compile Include="Events\ScheduleEvents\CommentsChangedEvent.cs" />
+    <Compile Include="Events\ScheduleEvents\DateChangedEvent.cs" />
+    <Compile Include="Events\ScheduleEvents\GridChildChangedEvent.cs" />
     <Compile Include="Events\TestCollectionUpdatedEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ApplicationModels\ApplicationModels.csproj">
+      <Project>{3BC9C9C3-3EE8-476B-AFEE-6C113A9D5650}</Project>
+      <Name>ApplicationModels</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

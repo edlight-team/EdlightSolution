@@ -1,7 +1,7 @@
 using ApplicationServices.HashingService;
+using ApplicationServices.PermissionService;
 using ApplicationServices.WebApiService;
 using ApplicationXamarinService.MemoryService;
-using ApplicationXamarinService.PermissionService;
 using EdlightMobileClient.ViewModels;
 using EdlightMobileClient.ViewModels.EducationViewModels;
 using EdlightMobileClient.ViewModels.ScheduleViewModels;

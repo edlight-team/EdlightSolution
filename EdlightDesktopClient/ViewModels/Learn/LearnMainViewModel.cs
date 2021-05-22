@@ -108,7 +108,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
         {
             try
             {
-                TestLoader = new("Выполняется загрузка");
+                TestLoader = new();
 
                 currentUser = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
                 await permission.ConfigureService(api, currentUser);
@@ -279,7 +279,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
         {
             try
             {
-                TestLoader = new("Выполняется загрузка");
+                TestLoader = new();
                 List<TestResultsModel> testResults = await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults, $"TestID = '{SelectedCardHeader.TestID}'");
                 foreach (var item in testResults)
                     await api.DeleteModel(item.ID, WebApiTableNames.TestResults);

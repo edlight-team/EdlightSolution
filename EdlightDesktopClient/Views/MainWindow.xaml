@@ -119,7 +119,7 @@
                                 Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Расписание" />
                     </StackPanel>
                 </TabItem.Header>
@@ -133,7 +133,21 @@
                                 Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
+                                   Text="Справочники" />
+                    </StackPanel>
+                </TabItem.Header>
+                <ContentControl Name="DictionariesRegion" />
+            </TabItem>
+            <TabItem Margin="0" Template="{DynamicResource SimpleTabItem}">
+                <TabItem.Header>
+                    <StackPanel Width="100"
+                                Height="25"
+                                Cursor="Hand"
+                                Orientation="Vertical">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Профиль" />
                     </StackPanel>
                 </TabItem.Header>
@@ -147,7 +161,7 @@
                                 Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Обучение" />
                     </StackPanel>
                 </TabItem.Header>
@@ -161,7 +175,7 @@
                                 Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Настройки" />
                     </StackPanel>
                 </TabItem.Header>
@@ -177,7 +191,7 @@
                                 Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Группы" />
                     </StackPanel>
                 </TabItem.Header>

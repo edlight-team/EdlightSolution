@@ -87,7 +87,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
         {
             try
             {
-                TestLoader = new("Выполняется загрузка");
+                TestLoader = new();
 
                 TestsModel test = (await api.GetModels<TestsModel>(WebApiTableNames.Tests, $"ID = '{TestHeader.TestID}'")).FirstOrDefault();
                 Questions = new(JsonConvert.DeserializeObject<List<QuestionsModel>>(test.Questions));

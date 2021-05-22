@@ -6,6 +6,7 @@
              xmlns:converters="clr-namespace:Styles.Converters;assembly=Styles"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:keys="clr-namespace:Styles.Behaviors.KeyBehaviors;assembly=Styles"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:prism="http://www.codeplex.com/prism"
              xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels.Schedule"
@@ -14,6 +15,7 @@
              mc:Ignorable="d">
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+        <converters:BooleanRevert x:Key="BooleanRevert" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -26,9 +28,9 @@
 
         <controls:LoaderBox Grid.Row="0"
                             Grid.RowSpan="3"
-                            Panel.ZIndex="{Binding ScheduleLoader.PanelIndex, UpdateSourceTrigger=PropertyChanged}"
-                            IsActive="{Binding ScheduleLoader.IsActive, UpdateSourceTrigger=PropertyChanged}"
-                            Message="{Binding ScheduleLoader.Message, UpdateSourceTrigger=PropertyChanged}" />
+                            Panel.ZIndex="{Binding Loader.PanelIndex, UpdateSourceTrigger=PropertyChanged}"
+                            IsActive="{Binding Loader.IsActive, UpdateSourceTrigger=PropertyChanged}"
+                            Message="{Binding Loader.Message, UpdateSourceTrigger=PropertyChanged}" />
 
         <!--#endregion-->
         <!--#region Рамка-->
@@ -48,9 +50,81 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
 
+            <!--#region Семестр-->
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="10,0,10,0"
+                           Style="{DynamicResource SimpleTextBlock}"
+                           Text="Семестр" />
+                <ContentControl Width="26"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Spring}"
+                                Visibility="{Binding IsFirstHalfYearTime, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                    <ContentControl.ToolTip>
+                        <ToolTip HorizontalOffset="15"
+                                 Placement="Right"
+                                 Style="{DynamicResource SimpleToolTip}"
+                                 VerticalOffset="25">
+                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Весна" />
+                        </ToolTip>
+                    </ContentControl.ToolTip>
+                </ContentControl>
+                <ContentControl Width="30"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Autumn}"
+                                Visibility="{Binding IsFirstHalfYearTime, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                    <ContentControl.ToolTip>
+                        <ToolTip HorizontalOffset="15"
+                                 Placement="Right"
+                                 Style="{DynamicResource SimpleToolTip}"
+                                 VerticalOffset="25">
+                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Осень" />
+                        </ToolTip>
+                    </ContentControl.ToolTip>
+                </ContentControl>
+            </StackPanel>
+
+            <!--#endregion-->
+            <!--#region Неделя-->
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="10,0,10,0"
+                           Style="{DynamicResource SimpleTextBlock}"
+                           Text="Неделя" />
+                <ContentControl Width="18"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Up}"
+                                Visibility="{Binding IsUpWeek, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                    <ContentControl.ToolTip>
+                        <ToolTip HorizontalOffset="15"
+                                 Placement="Right"
+                                 Style="{DynamicResource SimpleToolTip}"
+                                 VerticalOffset="25">
+                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Верхняя" />
+                        </ToolTip>
+                    </ContentControl.ToolTip>
+                </ContentControl>
+                <ContentControl Width="18"
+                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Template="{DynamicResource Down}"
+                                Visibility="{Binding IsUpWeek, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                    <ContentControl.ToolTip>
+                        <ToolTip HorizontalOffset="15"
+                                 Placement="Right"
+                                 Style="{DynamicResource SimpleToolTip}"
+                                 VerticalOffset="25">
+                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Нижняя" />
+                        </ToolTip>
+                    </ContentControl.ToolTip>
+                </ContentControl>
+            </StackPanel>
+
+            <!--#endregion-->
             <!--#region Предыдущий-->
 
-            <Button Command="{Binding PrevDayCommand}" Style="{DynamicResource SimpleButtonWithBorder}">
+            <Button Margin="10,0,10,0"
+                    Command="{Binding PrevDayCommand}"
+                    Style="{DynamicResource SimpleButtonWithBorder}">
                 <Button.ToolTip>
                     <ToolTip HorizontalOffset="15"
                              Placement="Right"
@@ -61,7 +135,7 @@
                 </Button.ToolTip>
                 <ContentControl Width="18"
                                 Height="18"
-                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Foreground="{DynamicResource ElementFontBrush}"
                                 Template="{DynamicResource Back}" />
             </Button>
 
@@ -75,6 +149,8 @@
             <hc:DatePicker Width="125"
                            Margin="10,0,10,0"
                            Background="Transparent"
+                           BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                           BorderThickness="2"
                            CaretBrush="{DynamicResource PrimaryFontBrush}"
                            Foreground="{DynamicResource PrimaryFontBrush}"
                            SelectedDate="{Binding CurrentDate, UpdateSourceTrigger=PropertyChanged}"
@@ -94,7 +170,7 @@
                 </Button.ToolTip>
                 <ContentControl Width="18"
                                 Height="18"
-                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Foreground="{DynamicResource ElementFontBrush}"
                                 Template="{DynamicResource Today}" />
             </Button>
 
@@ -114,7 +190,7 @@
                 </Button.ToolTip>
                 <ContentControl Width="18"
                                 Height="18"
-                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Foreground="{DynamicResource ElementFontBrush}"
                                 Template="{DynamicResource Forward}" />
             </Button>
 
@@ -134,7 +210,7 @@
                 </Button.ToolTip>
                 <ContentControl Width="18"
                                 Height="18"
-                                Foreground="{DynamicResource PrimaryFontBrush}"
+                                Foreground="{DynamicResource ElementFontBrush}"
                                 Template="{DynamicResource Refresh}" />
             </Button>
 
@@ -146,9 +222,33 @@
                        Text="Группа:" />
             <hc:ComboBox Width="150"
                          behaviors:ComboSelectedIndexChangedBehavior.Command="{Binding GroupsChangedCommand, UpdateSourceTrigger=PropertyChanged}"
+                         BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                         BorderThickness="2"
                          DisplayMemberPath="Group"
                          ItemsSource="{Binding Groups, UpdateSourceTrigger=PropertyChanged}"
                          SelectedItem="{Binding SelectedGroup, UpdateSourceTrigger=PropertyChanged}" />
+            <!--#endregion-->
+            <!--#region Создание записей-->
+
+            <Button Width="125"
+                    Margin="20,0,0,0"
+                    Command="{Binding AddCardCommand}"
+                    Style="{DynamicResource SimpleButtonWithBorder}"
+                    Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock HorizontalAlignment="Center"
+                           Style="{DynamicResource ElementTextBlock}"
+                           Text="Новая запись" />
+            </Button>
+            <Button Width="125"
+                    Margin="20,0,0,0"
+                    Command="{Binding ImportCardsCommand}"
+                    Style="{DynamicResource SimpleButtonWithBorder}"
+                    Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock HorizontalAlignment="Center"
+                           Style="{DynamicResource ElementTextBlock}"
+                           Text="Импорт" />
+            </Button>
+
             <!--#endregion-->
 
         </StackPanel>
@@ -172,7 +272,7 @@
                 <ColumnDefinition Width="1" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="1" />
-                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="300" />
             </Grid.ColumnDefinitions>
 
             <!--#endregion-->
@@ -189,71 +289,203 @@
             <StackPanel Grid.Row="0"
                         Grid.Column="4"
                         Orientation="Vertical">
-                <!--#region Кнопки управления-->
-                <Expander Margin="5"
-                          Header="Управление"
-                          IsExpanded="True"
-                          Visibility="{Binding Config.CanManageSchedule, UpdateSourceTrigger=PropertyChanged}">
-                    <StackPanel Margin="0,10,0,0" Orientation="Vertical">
-                        <Button Width="175"
-                                Margin="0,0,0,10"
-                                Command="{Binding AddCardCommand}"
-                                Style="{DynamicResource SimpleButtonWithBorder}"
-                                Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
-                            <TextBlock HorizontalAlignment="Center"
-                                       Style="{DynamicResource SimpleTextBlock}"
-                                       Text="Новая запись" />
-                        </Button>
-                        <Button Width="175"
-                                Margin="0,0,0,10"
-                                Command="{Binding CancelCardCommand}"
-                                IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
-                                Style="{DynamicResource SimpleButtonWithBorder}"
-                                Visibility="{Binding Config.CanSetScheduleStatus, UpdateSourceTrigger=PropertyChanged}">
-                            <TextBlock HorizontalAlignment="Center"
-                                       Style="{DynamicResource SimpleTextBlock}"
-                                       Text="Отменить занятие" />
-                        </Button>
-                        <Button Width="175"
-                                Margin="0,0,0,10"
-                                Command="{Binding DeleteCardCommand}"
-                                IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
-                                Style="{DynamicResource SimpleButtonWithBorder}"
-                                Visibility="{Binding Config.CanDeleteScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
-                            <TextBlock HorizontalAlignment="Center"
-                                       Style="{DynamicResource SimpleTextBlock}"
-                                       Text="Удалить запись" />
-                        </Button>
-                    </StackPanel>
-                </Expander>
-                <!--#endregion-->
                 <StackPanel Orientation="Vertical" Visibility="{Binding IsCardActionsEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
-                    <!--#region Материалы выбранного в расписании-->
+                    <!--#region Кнопки управления-->
                     <Expander Margin="5"
-                              Header="Материалы"
-                              IsExpanded="False"
-                              Visibility="{Binding Config.CanGetMaterial, UpdateSourceTrigger=PropertyChanged}">
+                              BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                              BorderThickness="2"
+                              Header="Управление"
+                              IsExpanded="True"
+                              Visibility="{Binding Config.CanManageSchedule, UpdateSourceTrigger=PropertyChanged}">
                         <StackPanel Margin="0,10,0,0" Orientation="Vertical">
                             <Button Width="175"
                                     Margin="0,0,0,10"
-                                    Command="{Binding AddMaterialCommand}"
+                                    Command="{Binding EditCardCommand}"
+                                    IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
                                     Style="{DynamicResource SimpleButtonWithBorder}"
-                                    Visibility="{Binding Config.CanCreateMaterial, UpdateSourceTrigger=PropertyChanged}">
+                                    Visibility="{Binding Config.CanEditScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBlock HorizontalAlignment="Center"
-                                           Style="{DynamicResource SimpleTextBlock}"
-                                           Text="Добавить материал" />
+                                           Style="{DynamicResource ElementTextBlock}"
+                                           Text="Редактировать запись" />
+                            </Button>
+                            <Button Width="175"
+                                    Margin="0,0,0,10"
+                                    Command="{Binding CancelCardCommand}"
+                                    IsEnabled="{Binding IsCardCancelingEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource SimpleButtonWithBorder}"
+                                    Visibility="{Binding Config.CanSetScheduleStatus, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBlock HorizontalAlignment="Center"
+                                           Style="{DynamicResource ElementTextBlock}"
+                                           Text="Отменить занятие" />
+                            </Button>
+                            <Button Width="175"
+                                    Margin="0,0,0,10"
+                                    Command="{Binding DeleteCardCommand}"
+                                    IsEnabled="{Binding IsCardActionsEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource SimpleButtonWithBorder}"
+                                    Visibility="{Binding Config.CanDeleteScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBlock HorizontalAlignment="Center"
+                                           Style="{DynamicResource ElementTextBlock}"
+                                           Text="Удалить запись" />
                             </Button>
                         </StackPanel>
                     </Expander>
                     <!--#endregion-->
+                    <!--#region Материалы выбранного в расписании-->
+                    <Expander Margin="5"
+                              BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                              BorderThickness="2"
+                              Header="Материалы"
+                              IsExpanded="True"
+                              Visibility="{Binding Config.CanGetMaterial, UpdateSourceTrigger=PropertyChanged}">
+                        <ScrollViewer MaxHeight="200"
+                                      Margin="0,10,0,0"
+                                      VerticalScrollBarVisibility="Visible">
+                            <StackPanel Margin="5" Orientation="Vertical">
+                                <Button Width="175"
+                                        Margin="0,0,0,10"
+                                        Command="{Binding AddMaterialCommand}"
+                                        Style="{DynamicResource SimpleButtonWithBorder}"
+                                        Visibility="{Binding Config.CanCreateMaterial, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBlock HorizontalAlignment="Center"
+                                               Style="{DynamicResource ElementTextBlock}"
+                                               Text="Добавить материал" />
+                                </Button>
+                                <ItemsControl Focusable="False" ItemsSource="{Binding FilteredMaterials.View, UpdateSourceTrigger=PropertyChanged}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <hc:Card MinHeight="35"
+                                                     Margin="2"
+                                                     BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                                     BorderThickness="2">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition MaxWidth="70" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Margin="10"
+                                                               Style="{DynamicResource SimpleTextBlock}"
+                                                               Text="{Binding Title}"
+                                                               TextWrapping="Wrap" />
+                                                    <StackPanel Grid.Column="1"
+                                                                HorizontalAlignment="Center"
+                                                                Orientation="Horizontal">
+                                                        <Button Name="LoadButton"
+                                                                Command="{Binding LoadMaterialCommand}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{DynamicResource SimpleButton}"
+                                                                Visibility="{Binding ElementName=LoadButton, Path=IsEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                                                            <ContentControl Foreground="{DynamicResource InnerElementBackgroundBrush}" Template="{DynamicResource Load}" />
+                                                        </Button>
+                                                        <Button Name="DeleteButton"
+                                                                Command="{Binding DeleteMaterialCommand}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{DynamicResource SimpleButton}"
+                                                                Visibility="{Binding ElementName=DeleteButton, Path=IsEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                                                            <ContentControl Height="25"
+                                                                            Foreground="{DynamicResource InnerElementBackgroundBrush}"
+                                                                            Template="{DynamicResource Delete}" />
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </hc:Card>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Expander>
+                    <!--#endregion-->
                     <!--#region Комментарии выбранного в расписании-->
                     <Expander Margin="5"
+                              BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                              BorderThickness="2"
                               Header="Комментарии"
-                              IsExpanded="False"
-                              Visibility="{Binding Config.CanGetScheduleComments, UpdateSourceTrigger=PropertyChanged}" />
+                              IsExpanded="True"
+                              Visibility="{Binding Config.CanGetScheduleComments, UpdateSourceTrigger=PropertyChanged}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0"
+                                        Margin="5"
+                                        Orientation="Horizontal">
+                                <TextBox Width="235"
+                                         VerticalAlignment="Top"
+                                         keys:EnterPressedBehavior.Command="{Binding AddCommentCommand, UpdateSourceTrigger=PropertyChanged}"
+                                         BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                         BorderThickness="2"
+                                         Text="{Binding CommentText, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button Margin="10,0,0,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Top"
+                                        Command="{Binding AddCommentCommand, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{DynamicResource SimpleButton}">
+                                    <ContentControl Height="30"
+                                                    Foreground="{DynamicResource PrimaryFontBrush}"
+                                                    Template="{DynamicResource Send}" />
+                                </Button>
+                            </StackPanel>
+                            <ScrollViewer Grid.Row="1"
+                                          MinHeight="200"
+                                          MaxHeight="200"
+                                          Margin="5"
+                                          VerticalScrollBarVisibility="Visible">
+                                <ItemsControl ItemsSource="{Binding FilteredComments.View, UpdateSourceTrigger=PropertyChanged}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <hc:Card MinHeight="80"
+                                                     Margin="2"
+                                                     BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                                     BorderThickness="2">
+                                                <hc:Card.ContextMenu>
+                                                    <ContextMenu Visibility="{Binding ContextMenuVisibility, UpdateSourceTrigger=PropertyChanged}">
+                                                        <MenuItem Command="{Binding DeleteCommentCommand, UpdateSourceTrigger=PropertyChanged}"
+                                                                  CommandParameter="{Binding}"
+                                                                  Header="Удалить комментарий" />
+                                                    </ContextMenu>
+                                                </hc:Card.ContextMenu>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="25" />
+                                                        <RowDefinition />
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Margin="5"
+                                                               HorizontalAlignment="Left"
+                                                               VerticalAlignment="Top"
+                                                               Text="{Binding User.Initials}" />
+                                                    <TextBlock Margin="5"
+                                                               HorizontalAlignment="Right"
+                                                               VerticalAlignment="Top"
+                                                               Text="{Binding Date, StringFormat=d.MM.yy HH:mm}" />
+                                                    <TextBlock Grid.Row="1"
+                                                               Margin="5"
+                                                               HorizontalAlignment="Left"
+                                                               VerticalAlignment="Top"
+                                                               Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"
+                                                               TextWrapping="Wrap" />
+                                                </Grid>
+                                            </hc:Card>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </Expander>
                     <!--#endregion-->
                 </StackPanel>
             </StackPanel>
+            <TextBlock Grid.Row="0"
+                       Grid.Column="4"
+                       Margin="15,0,15,0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="13"
+                       Style="{DynamicResource SimpleTextBlock}"
+                       Text="{Binding HelpTipText, UpdateSourceTrigger=PropertyChanged}"
+                       TextWrapping="WrapWithOverflow"
+                       Visibility="{Binding HelpTextVisibility, UpdateSourceTrigger=PropertyChanged}" />
 
             <!--#endregion-->
             <!--#region Просмотр расписания-->

@@ -121,7 +121,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
         {
             try
             {
-                TestLoader = new("Выполняется загрузка");
+                TestLoader = new();
 
                 Groups = await api.GetModels<GroupsModel>(WebApiTableNames.Groups);
                 if (!isCreateTest)
@@ -254,7 +254,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
             }
             try
             {
-                TestLoader = new("Сохранение теста");
+                TestLoader = new();
 
                 TestHeadersModel testHeader = new();
                 TestsModel test = new();

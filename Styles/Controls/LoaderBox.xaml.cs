@@ -45,7 +45,7 @@ namespace Styles.Controls
         {
             if (obj is LoaderBox lb)
             {
-                DoubleAnimation opacityAnimation = new() { Duration = TimeSpan.FromMilliseconds(300) };
+                DoubleAnimation opacityAnimation = new() { Duration = TimeSpan.FromMilliseconds(200) };
                 if (lb.IsActive)
                 {
                     lb.Visibility = Visibility.Visible;

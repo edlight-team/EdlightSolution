@@ -35,7 +35,7 @@
                     <TranslateTransform X="0" Y="0" />
                 </Canvas.RenderTransform>
                 <Canvas>
-                    <Path Fill="{DynamicResource InnerElementBackgroundBrush}" RenderTransformOrigin="0.5,0.5">
+                    <Path Fill="{DynamicResource ActiveBackgroundTabHeaderBtush}" RenderTransformOrigin="0.5,0.5">
                         <Path.RenderTransform>
                             <RotateTransform Angle="0" />
                         </Path.RenderTransform>
@@ -47,7 +47,7 @@
                                             <Storyboard TargetProperty="RenderTransform.Angle">
                                                 <DoubleAnimation RepeatBehavior="Forever"
                                                                  To="360"
-                                                                 Duration="0:0:1" />
+                                                                 Duration="0:0:2" />
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </EventTrigger>
@@ -66,7 +66,7 @@
                    Grid.ColumnSpan="3"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
-                   FontSize="14"
+                   FontSize="15"
                    FontWeight="Bold"
                    Style="{DynamicResource SimpleTextBlock}"
                    Text="{Binding ElementName=Loader, Path=Message, UpdateSourceTrigger=PropertyChanged}"

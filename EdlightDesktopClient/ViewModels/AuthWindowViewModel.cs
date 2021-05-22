@@ -12,7 +12,6 @@ using Styles.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using Unity;
 
@@ -90,24 +89,18 @@ namespace EdlightDesktopClient.ViewModels
         }
         private async void OnAuth()
         {
+            bool isSignIn = false;
+            UserModel target_user = null;
             try
             {
-                Loader = new("Выполняется загрузка");
-#if !DEBUG
-                await Task.Delay(500);
-#endif
+                Loader.SetDefaultLoadingInfo();
                 List<UserModel> users = await api.GetModels<UserModel>(WebApiTableNames.Users, $"Login = '{Login}'");
-                UserModel target_user = users.FirstOrDefault();
+                target_user = users.FirstOrDefault();
                 if (target_user == null)
                     throw new NotFoundException("Пользователь не найден в системе. \r\nПовторите попытку или обратитесь в тех.поддержку edlight@list.ru");
                 if (target_user.Password != hashing.EncodeString(Password))
                     throw new AuthorizationException("Введенная пара логин/пароль не верные, проверьте ввод и повторите попытку.");
-
-                memory.StoreItem(MemoryAlliases.CurrentUser, target_user);
-                Loader = new();
-                AuthVisibility = Visibility.Collapsed;
-                MainWindow shell = container.Resolve<MainWindow>();
-                shell.Show();
+                isSignIn = true;
             }
             catch (NotFoundException nfe) { notification.ShowError(nfe.Message); }
             catch (AuthorizationException ae) { notification.ShowError(ae.Message); }
@@ -117,7 +110,14 @@ namespace EdlightDesktopClient.ViewModels
             }
             finally
             {
-                Loader = new();
+                await Loader.Clear();
+                if (isSignIn)
+                {
+                    memory.StoreItem(MemoryAlliases.CurrentUser, target_user);
+                    AuthVisibility = Visibility.Collapsed;
+                    MainWindow shell = container.Resolve<MainWindow>();
+                    shell.Show();
+                }
             }
         }
         #endregion

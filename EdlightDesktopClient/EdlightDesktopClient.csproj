@@ -63,6 +63,7 @@
     <Compile Include="AccessConfigurations\ScheduleConfig.cs" />
     <Compile Include="AccessConfigurations\TestConfig.cs" />
     <Compile Include="BaseMethods\RegionNames.cs" />
+    <Compile Include="ViewModels\Dictionaries\DictionariesMainViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupsMainViewModel.cs" />
     <Compile Include="ViewModels\Learn\AddTestViewModel.cs" />
     <Compile Include="ViewModels\Learn\LearnMainViewModel.cs" />
@@ -70,9 +71,13 @@
     <Compile Include="ViewModels\Learn\ResultsTestViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileMainViewModel.cs" />
     <Compile Include="ViewModels\Schedule\AddScheduleViewModel.cs" />
+    <Compile Include="ViewModels\Schedule\CancelScheduleRecordViewModel.cs" />
     <Compile Include="ViewModels\Schedule\ScheduleDateViewerViewModel.cs" />
     <Compile Include="ViewModels\Schedule\ScheduleMainViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsMainViewModel.cs" />
+    <Compile Include="Views\Dictionaries\DictionariesMainView.xaml.cs">
+      <DependentUpon>DictionariesMainView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Groups\GroupsMainView.xaml.cs">
       <DependentUpon>GroupsMainView.xaml</DependentUpon>
     </Compile>
@@ -94,6 +99,9 @@
     <Compile Include="Views\Schedule\AddScheduleView.xaml.cs">
       <DependentUpon>AddScheduleView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Schedule\CancelScheduleRecordView.xaml.cs">
+      <DependentUpon>CancelScheduleRecordView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Schedule\ScheduleDateViewer.xaml.cs">
       <DependentUpon>ScheduleDateViewer.xaml</DependentUpon>
     </Compile>
@@ -104,6 +112,10 @@
       <DependentUpon>SettingsMainView.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\AuthWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dictionaries\DictionariesMainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -150,6 +162,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Schedule\AddScheduleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Schedule\CancelScheduleRecordView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -201,6 +217,9 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Prism.Core">
+      <Version>8.0.0.1909</Version>
     </PackageReference>
     <PackageReference Include="Prism.Unity" Version="8.0.0.1909" />
   </ItemGroup>

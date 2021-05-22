@@ -57,7 +57,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
         {
             try
             {
-                ResultLoader = new("Выполняется загрузка");
+                ResultLoader = new();
 
                 TestResults = new(await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults, $"TestID = '{testHeader.TestID}'"));
             }

@@ -17,6 +17,7 @@ namespace EdlightDesktopClient.Views
             if (manager != null)
             {
                 SetRegionManager(manager, ScheduleRegion, BaseMethods.RegionNames.ScheduleRegion);
+                SetRegionManager(manager, DictionariesRegion, BaseMethods.RegionNames.DictionariesRegion);
                 SetRegionManager(manager, ProfileRegion, BaseMethods.RegionNames.ProfileRegion);
                 SetRegionManager(manager, LearnRegion, BaseMethods.RegionNames.LearnRegion);
                 SetRegionManager(manager, SettingsRegion, BaseMethods.RegionNames.SettingsRegion);
@@ -24,7 +25,8 @@ namespace EdlightDesktopClient.Views
                 SetRegionManager(manager, ModalRegion, BaseMethods.RegionNames.ModalRegion);
             }
         }
-        void SetRegionManager(IRegionManager regionManager, DependencyObject regionTarget, string regionName)
+
+        private void SetRegionManager(IRegionManager regionManager, DependencyObject regionTarget, string regionName)
         {
             RegionManager.SetRegionName(regionTarget, regionName);
             RegionManager.SetRegionManager(regionTarget, regionManager);

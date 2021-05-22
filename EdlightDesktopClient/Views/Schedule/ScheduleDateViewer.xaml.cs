@@ -1,10 +1,14 @@
-﻿using ApplicationEventsWPF.Events;
+﻿using ApplicationEventsWPF.Events.ScheduleEvents;
 using ApplicationModels.Models;
+using ApplicationWPFServices.MemoryService;
+using EdlightDesktopClient.AccessConfigurations;
 using HandyControl.Controls;
 using Prism.Events;
+using Styles.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -25,9 +29,11 @@ namespace EdlightDesktopClient.Views.Schedule
         private readonly ResourceDictionary brushes = null;
         private readonly ResourceDictionary svg = null;
 
+        private readonly Style elementTextBlockStyle = null;
         private readonly Style simpleTextBlockStyle = null;
         private readonly Style toolTipTextBlockStyle = null;
 
+        private readonly ControlTemplate cancelTemplate = null;
         private readonly ControlTemplate classTypeTemplate = null;
         private readonly ControlTemplate teacherTemplate = null;
         private readonly ControlTemplate doorTemplate = null;
@@ -35,13 +41,16 @@ namespace EdlightDesktopClient.Views.Schedule
         private readonly ControlTemplate groupTemplate = null;
         private readonly ControlTemplate commentTemplate = null;
 
+        private readonly SolidColorBrush falseOrErrorBrush = null;
         private readonly SolidColorBrush primaryBrush = null;
+        private readonly SolidColorBrush elementFontBrush = null;
         private readonly SolidColorBrush innerBrush = null;
 
         #endregion
         #region fields and services
 
         private readonly IEventAggregator aggregator;
+        private readonly IMemoryService memory;
         private bool isMoving = false;
         private bool isResizeUp = false;
         private bool isResizeDown = false;
@@ -57,12 +66,15 @@ namespace EdlightDesktopClient.Views.Schedule
         #endregion
         #region Конструктор и выгрузка
 
-        public ScheduleDateViewer(IEventAggregator aggregator)
+        public ScheduleDateViewer(IEventAggregator aggregator, IMemoryService memory)
         {
             this.aggregator = aggregator;
+            this.memory = memory;
             InitializeComponent();
+            Loaded += ScheduleDateViewerLoaded;
             Unloaded += ScheduleDateViewerUnloaded;
             aggregator.GetEvent<GridChildChangedEvent>().Subscribe(OnGridChildEvent);
+            aggregator.GetEvent<CommentsChangedEvent>().Subscribe(OnCardCommentsChanged);
 
             zoneShowAnimation = new(0.0, 0.5, TimeSpan.FromMilliseconds(500));
             zoneHideAnimation = new(0.5, 0.0, TimeSpan.FromMilliseconds(500));
@@ -82,19 +94,23 @@ namespace EdlightDesktopClient.Views.Schedule
                 else if (rd.Source.OriginalString.Contains("SolidBrushes")) brushes = rd;
                 else if (rd.Source.OriginalString.Contains("SVGCollection")) svg = rd;
             }
-            foreach (var key in textBlocks.Keys)
+            foreach (object key in textBlocks.Keys)
             {
-                if (key.ToString() == "SimpleTextBlock") simpleTextBlockStyle = (Style)textBlocks[key];
+                if (key.ToString() == "ElementTextBlock") elementTextBlockStyle = (Style)textBlocks[key];
                 else if (key.ToString() == "ToolTipTextBlock") toolTipTextBlockStyle = (Style)textBlocks[key];
+                else if (key.ToString() == "SimpleTextBlock") simpleTextBlockStyle = (Style)textBlocks[key];
             }
-            foreach (var key in brushes.Keys)
+            foreach (object key in brushes.Keys)
             {
-                if (key.ToString() == "InactiveBackgroundTabHeaderBtush") innerBrush = (SolidColorBrush)brushes[key];
+                if (key.ToString() == "FalseOrErrorBrush") falseOrErrorBrush = (SolidColorBrush)brushes[key];
+                else if (key.ToString() == "InactiveBackgroundTabHeaderBtush") innerBrush = (SolidColorBrush)brushes[key];
                 else if (key.ToString() == "PrimaryFontBrush") primaryBrush = (SolidColorBrush)brushes[key];
+                else if (key.ToString() == "ElementFontBrush") elementFontBrush = (SolidColorBrush)brushes[key];
             }
-            foreach (var key in svg.Keys)
+            foreach (object key in svg.Keys)
             {
-                if (key.ToString() == "ClassType") classTypeTemplate = (ControlTemplate)svg[key];
+                if (key.ToString() == "Cancel") cancelTemplate = (ControlTemplate)svg[key];
+                else if (key.ToString() == "ClassType") classTypeTemplate = (ControlTemplate)svg[key];
                 else if (key.ToString() == "Teacher") teacherTemplate = (ControlTemplate)svg[key];
                 else if (key.ToString() == "Door") doorTemplate = (ControlTemplate)svg[key];
                 else if (key.ToString() == "Book") bookTemplate = (ControlTemplate)svg[key];
@@ -104,9 +120,11 @@ namespace EdlightDesktopClient.Views.Schedule
 
             #endregion
         }
+        private void ScheduleDateViewerLoaded(object sender, RoutedEventArgs e) => OnClearEffects();
         private void ScheduleDateViewerUnloaded(object sender, RoutedEventArgs e)
         {
             aggregator.GetEvent<GridChildChangedEvent>().Unsubscribe(OnGridChildEvent);
+            aggregator.GetEvent<CommentsChangedEvent>().Unsubscribe(OnCardCommentsChanged);
         }
 
         #endregion
@@ -122,14 +140,13 @@ namespace EdlightDesktopClient.Views.Schedule
             {
                 ItemsGrid.Children.Clear();
             }
-            //ToDo: Добавить передачу комментариев
-            else if (childAndModel[0] is Card card && childAndModel[1] is LessonsModel lm)
+            else if (childAndModel[0] is Card card && childAndModel[1] is LessonsModel lm && childAndModel[2] is IEnumerable<CommentModel> comments)
             {
                 //Указываем обратный порядок чтобы сетка с dnd была сверху
                 Grid content = new();
-                content.Children.Add(CreateCardBigInfoGrid(card, lm, null));
-                content.Children.Add(CreateCardLargeInfoGrid(card, lm, null));
-                content.Children.Add(CreateCardSmallInfoGrid(card, lm, null));
+                content.Children.Add(CreateCardBigInfoGrid(card, lm, comments.ToList()));
+                content.Children.Add(CreateCardLargeInfoGrid(card, lm, comments.ToList()));
+                content.Children.Add(CreateCardSmallInfoGrid(card, lm, comments.ToList()));
                 content.Children.Add(CreateDragAndDropGrid());
                 //Сбрасываем фоновый цвет т.к. используется в сетках
                 card.Background = new SolidColorBrush(Colors.Transparent);
@@ -205,17 +222,17 @@ namespace EdlightDesktopClient.Views.Schedule
             Border border = new();
             border.CornerRadius = new CornerRadius(5);
             border.Background = card.Background;
-            SetRowColumns(border, 0, 0, 8, 5);
+            border.SetGridPosition(0, 0, 8, 5);
 
             Border innerBorder = new();
             innerBorder.CornerRadius = new CornerRadius(5);
             innerBorder.Background = innerBrush;
-            SetRowColumns(innerBorder, 1, 1, columnSpan: 2);
+            innerBorder.SetGridPosition(1, 1, columnSpan: 2);
 
             Border innerBorderOther = new();
             innerBorderOther.CornerRadius = new CornerRadius(5);
             innerBorderOther.Background = innerBrush;
-            SetRowColumns(innerBorderOther, 3, 1, 4, 3);
+            innerBorderOther.SetGridPosition(3, 1, 4, 3);
 
             infoGrid.Children.Add(border);
             infoGrid.Children.Add(innerBorder);
@@ -224,22 +241,39 @@ namespace EdlightDesktopClient.Views.Schedule
             #endregion
             #region Название дисциплины
 
-            ContentControl classType = CreateControl(classTypeTemplate, null, 25);
-            classType.Margin = new Thickness(15, 0, 0, 0);
-            SetRowColumns(classType, 1, 1);
-            infoGrid.Children.Add(classType);
+            ContentControl classType;
+            if (string.IsNullOrEmpty(lm.CanceledReason))
+            {
+                classType = CreateControl(classTypeTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                classType.SetGridPosition(1, 1);
+                infoGrid.Children.Add(classType);
+            }
+            else
+            {
+                classType = CreateControl(cancelTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                classType.Foreground = falseOrErrorBrush;
+                classType.SetGridPosition(1, 1);
+
+                ToolTip cancelTip = CreateToolTip("Занятие было отменено по причине:\r\n" + lm.CanceledReason);
+                classType.ToolTip = cancelTip;
+
+                infoGrid.Children.Add(classType);
+            }
 
             TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
             disciplineTextBlock.Margin = new Thickness(50, 0, 0, 0);
-            SetRowColumns(disciplineTextBlock, 1, 2);
+            disciplineTextBlock.SetGridPosition(1, 2);
             infoGrid.Children.Add(disciplineTextBlock);
 
             #endregion
             #region Комментарии
 
             ContentControl comments = CreateControl(commentTemplate, CreateCommentsToolTip(commentsList), 40);
+            comments.Name = "GridComments";
             comments.HorizontalAlignment = HorizontalAlignment.Center;
-            SetRowColumns(comments, 1, 3);
+            comments.SetGridPosition(1, 3);
             infoGrid.Children.Add(comments);
 
             #endregion
@@ -255,10 +289,10 @@ namespace EdlightDesktopClient.Views.Schedule
             disciplineControl.Margin = new Thickness(15, 0, 0, 0);
             groupControl.Margin = new Thickness(15, 0, 0, 0);
 
-            SetRowColumns(teacherControl, 3, 1);
-            SetRowColumns(audienceControl, 4, 1);
-            SetRowColumns(disciplineControl, 5, 1);
-            SetRowColumns(groupControl, 6, 1);
+            teacherControl.SetGridPosition(3, 1);
+            audienceControl.SetGridPosition(4, 1);
+            disciplineControl.SetGridPosition(5, 1);
+            groupControl.SetGridPosition(6, 1);
 
             infoGrid.Children.Add(teacherControl);
             infoGrid.Children.Add(audienceControl);
@@ -270,10 +304,10 @@ namespace EdlightDesktopClient.Views.Schedule
             TextBlock disciplineText = CreateTextBlock(lm.AcademicDiscipline?.Title);
             TextBlock groupText = CreateTextBlock(lm.Group?.Group);
 
-            SetRowColumns(teacherText, 3, 2);
-            SetRowColumns(audienceText, 4, 2);
-            SetRowColumns(disciplineText, 5, 2);
-            SetRowColumns(groupText, 6, 2);
+            teacherText.SetGridPosition(3, 2);
+            audienceText.SetGridPosition(4, 2);
+            disciplineText.SetGridPosition(5, 2);
+            groupText.SetGridPosition(6, 2);
 
             infoGrid.Children.Add(teacherText);
             infoGrid.Children.Add(audienceText);
@@ -328,12 +362,12 @@ namespace EdlightDesktopClient.Views.Schedule
             Border border = new();
             border.CornerRadius = new CornerRadius(5);
             border.Background = card.Background;
-            SetRowColumns(border, 0, 0, 4, 4);
+            border.SetGridPosition(0, 0, 4, 4);
 
             Border innerBorder = new();
             innerBorder.CornerRadius = new CornerRadius(5);
             innerBorder.Background = innerBrush;
-            SetRowColumns(innerBorder, 1, 1);
+            innerBorder.SetGridPosition(1, 1);
 
             infoGrid.Children.Add(border);
             infoGrid.Children.Add(innerBorder);
@@ -341,22 +375,39 @@ namespace EdlightDesktopClient.Views.Schedule
             #endregion
             #region Название дисциплины
 
-            ContentControl classType = CreateControl(classTypeTemplate, null, 25);
-            classType.Margin = new Thickness(15, 0, 0, 0);
-            SetRowColumns(classType, 1, 1);
-            infoGrid.Children.Add(classType);
+            ContentControl classType;
+            if (string.IsNullOrEmpty(lm.CanceledReason))
+            {
+                classType = CreateControl(classTypeTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                classType.SetGridPosition(1, 1);
+                infoGrid.Children.Add(classType);
+            }
+            else
+            {
+                classType = CreateControl(cancelTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                classType.Foreground = falseOrErrorBrush;
+                classType.SetGridPosition(1, 1);
+
+                ToolTip cancelTip = CreateToolTip("Занятие было отменено по причине:\r\n" + lm.CanceledReason);
+                classType.ToolTip = cancelTip;
+
+                infoGrid.Children.Add(classType);
+            }
 
             TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
             disciplineTextBlock.Margin = new Thickness(50, 0, 0, 0);
-            SetRowColumns(disciplineTextBlock, 1, 1);
+            disciplineTextBlock.SetGridPosition(1, 1);
             infoGrid.Children.Add(disciplineTextBlock);
 
             #endregion
             #region Комментарии
 
             ContentControl comments = CreateControl(commentTemplate, CreateCommentsToolTip(commentsList), 40);
+            comments.Name = "GridComments";
             comments.HorizontalAlignment = HorizontalAlignment.Center;
-            SetRowColumns(comments, 1, 2);
+            comments.SetGridPosition(1, 2);
             infoGrid.Children.Add(comments);
 
             #endregion
@@ -383,17 +434,17 @@ namespace EdlightDesktopClient.Views.Schedule
             others.ColumnDefinitions.Add(col4);
             others.ColumnDefinitions.Add(new ColumnDefinition());
 
-            SetRowColumns(others, 2, 1, columnSpan: 2);
+            others.SetGridPosition(2, 1, columnSpan: 2);
 
             ContentControl teacherControl = CreateControl(teacherTemplate, CreateToolTip(lm.Teacher?.FullName), 30);
             ContentControl audienceControl = CreateControl(doorTemplate, CreateToolTip(lm.Audience?.NumberAudience), 30);
             ContentControl disciplineControl = CreateControl(bookTemplate, CreateToolTip(lm.AcademicDiscipline?.Title), 45);
             ContentControl groupControl = CreateControl(groupTemplate, CreateToolTip(lm.Group?.Group), 40);
 
-            SetRowColumns(teacherControl, 0, 1);
-            SetRowColumns(audienceControl, 0, 2);
-            SetRowColumns(disciplineControl, 0, 3);
-            SetRowColumns(groupControl, 0, 4);
+            teacherControl.SetGridPosition(0, 1);
+            audienceControl.SetGridPosition(0, 2);
+            disciplineControl.SetGridPosition(0, 3);
+            groupControl.SetGridPosition(0, 4);
 
             others.Children.Add(teacherControl);
             others.Children.Add(audienceControl);
@@ -449,12 +500,12 @@ namespace EdlightDesktopClient.Views.Schedule
             border.Name = "SmallGridBorder";
             border.CornerRadius = new CornerRadius(5);
             border.Background = card.Background;
-            SetRowColumns(border, 0, 0, 3, 5);
+            border.SetGridPosition(0, 0, 3, 5);
 
             Border innerBorder = new();
             innerBorder.CornerRadius = new CornerRadius(5);
             innerBorder.Background = innerBrush;
-            SetRowColumns(innerBorder, 1, 1, columnSpan: 2);
+            innerBorder.SetGridPosition(1, 1, columnSpan: 2);
 
             infoGrid.Children.Add(border);
             infoGrid.Children.Add(innerBorder);
@@ -462,24 +513,41 @@ namespace EdlightDesktopClient.Views.Schedule
             #endregion
             #region Название дисциплины
 
-            ContentControl classType = CreateControl(classTypeTemplate, null, 25);
-            classType.Margin = new Thickness(15, 0, 0, 0);
-            SetRowColumns(classType, 1, 1);
-            infoGrid.Children.Add(classType);
+            ContentControl classType;
+            if (string.IsNullOrEmpty(lm.CanceledReason))
+            {
+                classType = CreateControl(classTypeTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                classType.SetGridPosition(1, 1);
+                infoGrid.Children.Add(classType);
+            }
+            else
+            {
+                classType = CreateControl(cancelTemplate, null, 25);
+                classType.Margin = new Thickness(15, 0, 0, 0);
+                classType.Foreground = falseOrErrorBrush;
+                classType.SetGridPosition(1, 1);
+
+                ToolTip cancelTip = CreateToolTip("Занятие было отменено по причине:\r\n" + lm.CanceledReason);
+                classType.ToolTip = cancelTip;
+
+                infoGrid.Children.Add(classType);
+            }
 
             TextBlock disciplineTextBlock = CreateTextBlock(lm.TypeClass?.Title);
-            SetRowColumns(disciplineTextBlock, 1, 2);
-            infoGrid.Children.Add(disciplineTextBlock); 
+            disciplineTextBlock.SetGridPosition(1, 2);
+            infoGrid.Children.Add(disciplineTextBlock);
 
             #endregion
             #region Иконки с тултипами
 
             StackPanel controlsStack = new();
+            controlsStack.Name = "IconsStack";
             controlsStack.Orientation = Orientation.Horizontal;
             controlsStack.HorizontalAlignment = HorizontalAlignment.Center;
             controlsStack.VerticalAlignment = VerticalAlignment.Center;
             controlsStack.Margin = new Thickness(10, 0, 0, 0);
-            SetRowColumns(controlsStack, 1, 3);
+            controlsStack.SetGridPosition(1, 3);
 
             #region Преподаватель
             controlsStack.Children.Add(CreateControl(teacherTemplate, CreateToolTip(lm.Teacher?.FullName), 30));
@@ -494,7 +562,9 @@ namespace EdlightDesktopClient.Views.Schedule
             controlsStack.Children.Add(CreateControl(groupTemplate, CreateToolTip(lm.Group?.Group), 40));
             #endregion
             #region Комменты
-            controlsStack.Children.Add(CreateControl(commentTemplate, CreateCommentsToolTip(commentsList), 40));
+            ContentControl commentsControl = CreateControl(commentTemplate, CreateCommentsToolTip(commentsList), 40);
+            commentsControl.Name = "GridComments";
+            controlsStack.Children.Add(commentsControl);
             #endregion
 
             infoGrid.Children.Add(controlsStack);
@@ -510,100 +580,106 @@ namespace EdlightDesktopClient.Views.Schedule
         {
             Grid subGrid = new();
             subGrid.Name = "TopGrid";
-            #region Разметка
-
-            ColumnDefinition smallColumn1 = new();
-            smallColumn1.Width = new GridLength(15);
-            ColumnDefinition smallColumn2 = new();
-            smallColumn2.Width = new GridLength(15);
-
-            subGrid.ColumnDefinitions.Add(smallColumn1);
-            subGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            subGrid.ColumnDefinitions.Add(smallColumn2);
-
-            RowDefinition smallRow = new();
-            smallRow.Height = new GridLength(15);
-            RowDefinition endRow = new();
-            endRow.Height = new GridLength(15);
-
-            subGrid.RowDefinitions.Add(smallRow);
-            subGrid.RowDefinitions.Add(new RowDefinition());
-            subGrid.RowDefinitions.Add(endRow);
-
-            #endregion
-            #region Прозрачная рамка
-
-            Border transparent_border_up = new();
-            transparent_border_up.Background = new SolidColorBrush(Colors.Transparent);
-            SetRowColumns(transparent_border_up, 0, 0, columnSpan: 3);
-
-            Border transparent_border_down = new();
-            transparent_border_down.Background = new SolidColorBrush(Colors.Transparent);
-            SetRowColumns(transparent_border_down, 2, 0, columnSpan: 3);
-
-            subGrid.Children.Add(transparent_border_up);
-            subGrid.Children.Add(transparent_border_down);
-
-            #endregion
-            #region Контрол передвигающий карту
-
-            ContentControl move_control = new();
-            move_control.Height = 12;
-            move_control.Margin = new Thickness(3);
-            move_control.HorizontalAlignment = HorizontalAlignment.Left;
-            move_control.VerticalAlignment = VerticalAlignment.Top;
-            move_control.Cursor = Cursors.SizeAll;
-            foreach (var key in svg.Keys)
+            if (memory.GetItem<ScheduleConfig>(nameof(ScheduleConfig)).CanMoveOrResizeScheduleCards)
             {
-                if (key.ToString() == "Move")
+                #region Разметка
+
+                ColumnDefinition smallColumn1 = new();
+                smallColumn1.Width = new GridLength(15);
+                ColumnDefinition smallColumn2 = new();
+                smallColumn2.Width = new GridLength(15);
+
+                subGrid.ColumnDefinitions.Add(smallColumn1);
+                subGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                subGrid.ColumnDefinitions.Add(smallColumn2);
+
+                RowDefinition smallRow = new();
+                smallRow.Height = new GridLength(15);
+                RowDefinition endRow = new();
+                endRow.Height = new GridLength(15);
+
+                subGrid.RowDefinitions.Add(smallRow);
+                subGrid.RowDefinitions.Add(new RowDefinition());
+                subGrid.RowDefinitions.Add(endRow);
+
+                #endregion
+                #region Прозрачная рамка
+
+                Border transparent_border_up = new();
+                transparent_border_up.Background = new SolidColorBrush(Colors.Transparent);
+                transparent_border_up.SetGridPosition(0, 0, columnSpan: 3);
+
+                Border transparent_border_down = new();
+                transparent_border_down.Background = new SolidColorBrush(Colors.Transparent);
+                transparent_border_down.SetGridPosition(2, 0, columnSpan: 3);
+
+                subGrid.Children.Add(transparent_border_up);
+                subGrid.Children.Add(transparent_border_down);
+
+                #endregion
+                #region Контрол передвигающий карту
+
+                ContentControl move_control = new();
+                move_control.Height = 12;
+                move_control.Margin = new Thickness(3);
+                move_control.HorizontalAlignment = HorizontalAlignment.Left;
+                move_control.VerticalAlignment = VerticalAlignment.Top;
+                move_control.Cursor = Cursors.SizeAll;
+                foreach (object key in svg.Keys)
                 {
-                    move_control.Template = (ControlTemplate)svg[key];
+                    if (key.ToString() == "Move")
+                    {
+                        move_control.Template = (ControlTemplate)svg[key];
+                    }
                 }
-            }
-            move_control.MouseDown += CardMouseDown;
-            subGrid.Children.Add(move_control);
+                move_control.Foreground = elementFontBrush;
+                move_control.MouseDown += CardMouseDown;
+                subGrid.Children.Add(move_control);
 
-            #endregion
-            #region Контрол увеличивающий вверх
+                #endregion
+                #region Контрол увеличивающий вверх
 
-            ContentControl up_arrow = new();
-            up_arrow.Height = 12;
-            up_arrow.Margin = new Thickness(3);
-            up_arrow.HorizontalAlignment = HorizontalAlignment.Right;
-            up_arrow.VerticalAlignment = VerticalAlignment.Top;
-            up_arrow.Cursor = Cursors.SizeNS;
-            foreach (var key in svg.Keys)
-            {
-                if (key.ToString() == "Up")
+                ContentControl up_arrow = new();
+                up_arrow.Height = 12;
+                up_arrow.Margin = new Thickness(3);
+                up_arrow.HorizontalAlignment = HorizontalAlignment.Right;
+                up_arrow.VerticalAlignment = VerticalAlignment.Top;
+                up_arrow.Cursor = Cursors.SizeNS;
+                foreach (object key in svg.Keys)
                 {
-                    up_arrow.Template = (ControlTemplate)svg[key];
+                    if (key.ToString() == "Up")
+                    {
+                        up_arrow.Template = (ControlTemplate)svg[key];
+                    }
                 }
-            }
-            up_arrow.MouseDown += UpArrowMouseDown;
-            SetRowColumns(up_arrow, 0, 3);
-            subGrid.Children.Add(up_arrow);
+                up_arrow.Foreground = elementFontBrush;
+                up_arrow.MouseDown += UpArrowMouseDown;
+                up_arrow.SetGridPosition(0, 3);
+                subGrid.Children.Add(up_arrow);
 
-            #endregion
-            #region Контрол увеличивающий вниз
+                #endregion
+                #region Контрол увеличивающий вниз
 
-            ContentControl down_arrow = new();
-            down_arrow.Height = 12;
-            down_arrow.Margin = new Thickness(3);
-            down_arrow.HorizontalAlignment = HorizontalAlignment.Right;
-            down_arrow.VerticalAlignment = VerticalAlignment.Bottom;
-            down_arrow.Cursor = Cursors.SizeNS;
-            foreach (var key in svg.Keys)
-            {
-                if (key.ToString() == "Down")
+                ContentControl down_arrow = new();
+                down_arrow.Height = 12;
+                down_arrow.Margin = new Thickness(3);
+                down_arrow.HorizontalAlignment = HorizontalAlignment.Right;
+                down_arrow.VerticalAlignment = VerticalAlignment.Bottom;
+                down_arrow.Cursor = Cursors.SizeNS;
+                foreach (object key in svg.Keys)
                 {
-                    down_arrow.Template = (ControlTemplate)svg[key];
+                    if (key.ToString() == "Down")
+                    {
+                        down_arrow.Template = (ControlTemplate)svg[key];
+                    }
                 }
-            }
-            down_arrow.MouseDown += DownArrowMouseDown;
-            SetRowColumns(down_arrow, 3, 3);
-            subGrid.Children.Add(down_arrow);
+                down_arrow.Foreground = elementFontBrush;
+                down_arrow.MouseDown += DownArrowMouseDown;
+                down_arrow.SetGridPosition(3, 3);
+                subGrid.Children.Add(down_arrow);
 
-            #endregion
+                #endregion
+            }
             return subGrid;
         }
 
@@ -614,7 +690,7 @@ namespace EdlightDesktopClient.Views.Schedule
             ContentControl control = new();
             control.Width = size;
             control.Margin = new Thickness(0, 0, 5, 0);
-            control.Foreground = primaryBrush;
+            control.Foreground = elementFontBrush;
             control.Template = template;
             control.HorizontalAlignment = HorizontalAlignment.Left;
             control.VerticalAlignment = VerticalAlignment.Center;
@@ -625,7 +701,7 @@ namespace EdlightDesktopClient.Views.Schedule
         {
             TextBlock txt = new();
             txt.Text = message;
-            txt.Style = simpleTextBlockStyle;
+            txt.Style = elementTextBlockStyle;
             txt.HorizontalAlignment = HorizontalAlignment.Left;
             txt.VerticalAlignment = VerticalAlignment.Center;
             return txt;
@@ -649,9 +725,8 @@ namespace EdlightDesktopClient.Views.Schedule
             controlsStack.HorizontalAlignment = HorizontalAlignment.Center;
             controlsStack.VerticalAlignment = VerticalAlignment.Top;
 
-            if (comments != null)
+            if (comments != null && comments.Count != 0)
             {
-                comments.Reverse();
                 int rangeLimit = 1;
                 foreach (CommentModel com in comments)
                 {
@@ -669,7 +744,7 @@ namespace EdlightDesktopClient.Views.Schedule
                     split.Background = new SolidColorBrush(Colors.White);
 
                     TextBlock from = new();
-                    from.Style = simpleTextBlockStyle;
+                    from.Style = elementTextBlockStyle;
                     from.Margin = new Thickness(6);
                     from.Text = com.User.Surname + " " + com.User.Name;
                     from.HorizontalAlignment = HorizontalAlignment.Left;
@@ -677,7 +752,7 @@ namespace EdlightDesktopClient.Views.Schedule
                     from.FontSize = 11;
 
                     TextBlock time = new();
-                    time.Style = simpleTextBlockStyle;
+                    time.Style = elementTextBlockStyle;
                     time.Margin = new Thickness(6);
                     time.Text = com.Date.ToString();
                     time.HorizontalAlignment = HorizontalAlignment.Right;
@@ -685,7 +760,7 @@ namespace EdlightDesktopClient.Views.Schedule
                     time.FontSize = 11;
 
                     TextBlock msg = new();
-                    msg.Style = simpleTextBlockStyle;
+                    msg.Style = elementTextBlockStyle;
                     msg.Margin = new Thickness(6);
                     msg.Text = com.Message;
                     msg.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -694,6 +769,7 @@ namespace EdlightDesktopClient.Views.Schedule
                     msg.TextWrapping = TextWrapping.Wrap;
 
                     Grid gr = new();
+                    gr.Uid = com.Id.ToString().ToUpper();
                     gr.Height = 70;
                     gr.Width = 330;
 
@@ -717,6 +793,18 @@ namespace EdlightDesktopClient.Views.Schedule
                     rangeLimit++;
                 }
             }
+            else
+            {
+                TextBlock empty = new();
+                empty.Style = simpleTextBlockStyle;
+                empty.Margin = new Thickness(6);
+                empty.Text = "Нет комментариев.";
+                empty.HorizontalAlignment = HorizontalAlignment.Center;
+                empty.VerticalAlignment = VerticalAlignment.Center;
+                empty.FontSize = 11;
+
+                controlsStack.Children.Add(empty);
+            }
 
             ToolTip toolTip = new();
             toolTip.Width = 400;
@@ -726,24 +814,47 @@ namespace EdlightDesktopClient.Views.Schedule
 
             return toolTip;
         }
-        /// <summary>
-        /// Установить для элемента Row и Column
-        /// </summary>
-        /// <param name="element">Элемент</param>
-        /// <param name="row">Строка</param>
-        /// <param name="collumn">Столбец</param>
-        /// <param name="rowSpan">Объединение строк</param>
-        /// <param name="columnSpan">Объединение столбцов</param>
-        private void SetRowColumns(UIElement element, int row, int collumn, int rowSpan = 0, int columnSpan = 0)
-        {
-            Grid.SetRow(element, row);
-            Grid.SetColumn(element, collumn);
-            if (rowSpan != 0) Grid.SetRowSpan(element, rowSpan);
-            if (columnSpan != 0) Grid.SetColumnSpan(element, columnSpan);
-        } 
 
         #endregion
+        #region Обновление комментов ивентом
 
+        private void OnCardCommentsChanged(KeyValuePair<string, IEnumerable<CommentModel>> pair)
+        {
+            foreach (var ch in ItemsGrid.Children)
+            {
+                if (ch is Card card && card.Uid.ToUpper() == pair.Key.ToUpper())
+                {
+                    Grid content = card.Content as Grid;
+                    foreach (var sub_ch in content.Children)
+                    {
+                        if (sub_ch is Grid sub_grid)
+                        {
+                            foreach (var infoGrid in sub_grid.Children)
+                            {
+                                if (infoGrid is ContentControl cc && cc.Name == "GridComments")
+                                {
+                                    var tip = CreateCommentsToolTip(pair.Value.ToList());
+                                    cc.ToolTip = tip;
+                                }
+                                if (infoGrid is StackPanel sp && sp.Name == "IconsStack")
+                                {
+                                    foreach (var sp_ch in sp.Children)
+                                    {
+                                        if (sp_ch is ContentControl sp_cc && sp_cc.Name == "GridComments")
+                                        {
+                                            var tip = CreateCommentsToolTip(pair.Value.ToList());
+                                            sp_cc.ToolTip = tip;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
         #endregion
         #region Метод выбора карточки
 
@@ -753,10 +864,10 @@ namespace EdlightDesktopClient.Views.Schedule
             {
                 if (card.Effect == null)
                 {
-                    SetEffect(card, true);
-                    foreach (var ch in ItemsGrid.Children)
+                    SetEffect(card, true, true);
+                    foreach (object ch in ItemsGrid.Children)
                     {
-                        if(ch is Card other && other.Uid != card.Uid)
+                        if (ch is Card other && other.Uid != card.Uid)
                         {
                             SetEffect(other, false);
                         }
@@ -764,15 +875,28 @@ namespace EdlightDesktopClient.Views.Schedule
                 }
                 else
                 {
-                    SetEffect(card, false);
+                    SetEffect(card, false, true);
                 }
             }
         }
-        private void SetEffect(Card card, bool selected)
+        private void SetEffect(Card card, bool selected, bool sendEventMessage = false)
         {
             if (!selected) card.Effect = null;
-            else card.Effect = new DropShadowEffect() { Color = Colors.SpringGreen, Opacity = 0.5, ShadowDepth = 0, BlurRadius = 20, Direction = 0 };
-            aggregator.GetEvent<CardSelectingEvent>().Publish(new KeyValuePair<string, bool>(card.Uid, selected));
+            else card.Effect = new DropShadowEffect() { Color = Colors.Red, Opacity = 0.85, ShadowDepth = 0, BlurRadius = 20, Direction = 0 };
+            if (sendEventMessage)
+            {
+                aggregator.GetEvent<CardSelectingEvent>().Publish(new KeyValuePair<string, bool>(card.Uid, selected));
+            }
+        }
+        private void OnClearEffects()
+        {
+            foreach (object ch in ItemsGrid.Children)
+            {
+                if (ch is Card card)
+                {
+                    SetEffect(card, false, true);
+                }
+            }
         }
 
         #endregion
@@ -786,7 +910,7 @@ namespace EdlightDesktopClient.Views.Schedule
 
             if (card.Content is Grid mgr)
             {
-                foreach (var child in mgr.Children)
+                foreach (object child in mgr.Children)
                 {
                     if (child is Grid ch_gr)
                     {
@@ -816,11 +940,11 @@ namespace EdlightDesktopClient.Views.Schedule
 
         private Brush FindBorderBackgroundBrush(Grid source)
         {
-            foreach (var ch in source.Children)
+            foreach (object ch in source.Children)
             {
                 if (ch is Grid ch_gr && ch_gr.Name == "SmallInfo")
                 {
-                    foreach (var sub_ch in ch_gr.Children)
+                    foreach (object sub_ch in ch_gr.Children)
                     {
                         if (sub_ch is Border brd && brd.Name == "SmallGridBorder")
                         {
@@ -937,8 +1061,8 @@ namespace EdlightDesktopClient.Views.Schedule
         }
         private void ScheduleMarkupDragEnter(object sender, DragEventArgs e)
         {
-            var position = e.GetPosition(ScheduleMarkup);
-            var data = e.Data.GetData("HandyControl.Controls.Card");
+            Point position = e.GetPosition(ScheduleMarkup);
+            object data = e.Data.GetData("HandyControl.Controls.Card");
             if (data == null) return;
             if (data is Card card)
             {
@@ -974,8 +1098,8 @@ namespace EdlightDesktopClient.Views.Schedule
         }
         private void CardsListScrollDrop(object sender, DragEventArgs e)
         {
-            var position = e.GetPosition(ScheduleMarkup);
-            var data = e.Data.GetData("HandyControl.Controls.Card");
+            Point position = e.GetPosition(ScheduleMarkup);
+            object data = e.Data.GetData("HandyControl.Controls.Card");
             if (data == null) return;
             if (data is Card card)
             {

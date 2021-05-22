@@ -1,4 +1,6 @@
 ﻿using Prism.Mvvm;
+using System;
+using System.Threading.Tasks;
 
 namespace Styles.Models
 {
@@ -27,10 +29,25 @@ namespace Styles.Models
         {
             IsActive = false;
         }
+        [Obsolete("Use .SetDefaultLoadingInfo() and .Clear()")]
         public LoaderModel(string message)
         {
             IsActive = true;
             Message = message;
+        }
+    }
+    public static class LoaderExtension
+    {
+        public static void SetDefaultLoadingInfo(this LoaderModel loader)
+        {
+            loader.IsActive = true;
+            loader.Message = "Выполняется загрузка";
+        }
+        public static async Task Clear(this LoaderModel loader)
+        {
+            await Task.Delay(1000);
+            loader.IsActive = false;
+            loader.Message = null;
         }
     }
 }

@@ -6,14 +6,15 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <hc:IntellisenseResources Source="/HandyControl;Component/DesignTime/DesignTimeResources.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Styles;component/FrameworkElements/Borders.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Styles;component/FrameworkElements/Buttons.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Styles;component/FrameworkElements/ScrollBars.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Styles;component/FrameworkElements/TabControl.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Styles;component/FrameworkElements/TextBlock.xaml" />
-                <hc:ThemeResources RequestedTheme="Dark">
+                <hc:ThemeResources RequestedTheme="Light">
                     <hc:ThemeResources.ThemeDictionaries>
-                        <ResourceDictionary x:Key="Dark" hc:ThemeDictionary.Key="Dark">
+                        <ResourceDictionary x:Key="Light" hc:ThemeDictionary.Key="Light">
                             <SolidColorBrush x:Key="PrimaryBrush" Color="#07575B" />
                         </ResourceDictionary>
                     </hc:ThemeResources.ThemeDictionaries>

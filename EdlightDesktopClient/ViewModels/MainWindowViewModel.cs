@@ -3,6 +3,7 @@ using ApplicationServices.PermissionService;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
 using EdlightDesktopClient.BaseMethods;
+using EdlightDesktopClient.Views.Dictionaries;
 using EdlightDesktopClient.Views.Groups;
 using EdlightDesktopClient.Views.Learn;
 using EdlightDesktopClient.Views.Profile;
@@ -12,7 +13,6 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Styles.Models;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace EdlightDesktopClient.ViewModels
@@ -79,6 +79,7 @@ namespace EdlightDesktopClient.ViewModels
             manager.RequestNavigate(BaseMethods.RegionNames.GroupsRegion, nameof(GroupsMainView));
             manager.RequestNavigate(BaseMethods.RegionNames.ScheduleRegion, nameof(ScheduleMainView));
             manager.RequestNavigate(BaseMethods.RegionNames.ScheduleDateViewRegion, nameof(ScheduleDateViewer));
+            manager.RequestNavigate(BaseMethods.RegionNames.DictionariesRegion, nameof(DictionariesMainView));
         }
         #endregion
     }

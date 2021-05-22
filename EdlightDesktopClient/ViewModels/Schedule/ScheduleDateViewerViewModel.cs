@@ -1,4 +1,4 @@
-﻿using ApplicationEventsWPF.Events;
+﻿using ApplicationEventsWPF.Events.ScheduleEvents;
 using ApplicationModels.Config;
 using ApplicationModels.Models;
 using ApplicationServices.WebApiService;
@@ -28,12 +28,14 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         private List<string> _timeZones;
         private ObservableCollection<LessonsModel> _models;
+        private ObservableCollection<CommentModel> _comments;
 
         #endregion
         #region props
 
         public List<string> TimeZones { get => _timeZones; set => SetProperty(ref _timeZones, value); }
         public ObservableCollection<LessonsModel> Models { get => _models; set => SetProperty(ref _models, value); }
+        public ObservableCollection<CommentModel> Comments { get => _comments; set => SetProperty(ref _comments, value); }
 
         #endregion
         #region commands
@@ -50,6 +52,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             this.aggregator = aggregator;
             this.api = api;
             Models = memory.GetItem<ObservableCollection<LessonsModel>>("TimeLessons");
+            Comments = memory.GetItem<ObservableCollection<CommentModel>>(nameof(Comments));
             FillTimes();
 
             LoadedCommand = new DelegateCommand(OnLoaded);
@@ -82,7 +85,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             for (int i = 8; i < 20; i++)
             {
                 TimeZones.Add(i.ToString() + ":" + 0.ToString("D2"));
-                foreach (var interval in intervals)
+                foreach (int interval in intervals)
                 {
                     TimeZones.Add(i.ToString() + ":" + interval.ToString("D2"));
                 }
@@ -109,16 +112,18 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 };
                 card.Margin = CalculateTopMarginByStartTime(model.TimeLessons.StartTime);
 
-                aggregator.GetEvent<GridChildChangedEvent>().Publish(new object[] { card, model });
+                IEnumerable<CommentModel> cardComments = Comments.Where(c => c.IdLesson.ToString().ToUpper() == card.Uid.ToString().ToUpper());
+
+                aggregator.GetEvent<GridChildChangedEvent>().Publish(new object[] { card, model, cardComments });
             }
-        } 
+        }
 
         #endregion
         #region Вычисления размеров сетки
 
         private string CalculateStartTimeByTopMargin(double topMargin)
         {
-            var index = (int)topMargin / 17;
+            int index = (int)topMargin / 17;
             if (index > 0) return TimeZones[index];
             else return TimeZones.FirstOrDefault();
         }
@@ -146,14 +151,14 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         private async void UpdateCard(Card card)
         {
-            var target = Models.FirstOrDefault(m => m.Id.ToString().ToUpper() == card.Uid);
+            LessonsModel target = Models.FirstOrDefault(m => m.Id.ToString().ToUpper() == card.Uid);
             if (target == null) return;
             target.TimeLessons.StartTime = CalculateStartTimeByTopMargin(card.Margin.Top);
             target.TimeLessons.EndTime = CalculateEndTimeByStartTimeAndHeight(target.TimeLessons.StartTime, card.Height);
 
             await api.PutModel(target.TimeLessons, WebApiTableNames.TimeLessons);
             //ToDo: Добавть здесь метод Signal R
-        } 
+        }
 
         #endregion
 

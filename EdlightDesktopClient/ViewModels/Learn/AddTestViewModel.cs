@@ -21,11 +21,11 @@ namespace EdlightDesktopClient.ViewModels.Learn
     public class AddTestViewModel : BindableBase, INavigationAware
     {
         #region services
-        INotificationService notification;
-        IRegionManager manager;
-        IWebApiService api;
-        IMemoryService memory;
-        IEventAggregator aggregator;
+        private INotificationService notification;
+        private IRegionManager manager;
+        private IWebApiService api;
+        private IMemoryService memory;
+        private IEventAggregator aggregator;
         #endregion
         #region filed
         private LoaderModel testLoader;
@@ -39,6 +39,8 @@ namespace EdlightDesktopClient.ViewModels.Learn
         private string testType;
         private GroupsModel testGroupName;
         private int testTime;
+        private DateTime startDateTime;
+        private DateTime endDateTime;
 
         private bool isCreateTest;
         private ObservableCollection<QuestionsModel> questions;
@@ -65,6 +67,8 @@ namespace EdlightDesktopClient.ViewModels.Learn
                     RaisePropertyChanged(nameof(TestTime));
             }
         }
+        public DateTime StartDateTime { get => startDateTime; set => SetProperty(ref startDateTime, value); }
+        public DateTime EndDateTime { get => endDateTime; set => SetProperty(ref endDateTime, value); }
 
         public LoaderModel TestLoader { get => testLoader; set => SetProperty(ref testLoader, value); }
         public ObservableCollection<QuestionsModel> Questions { get => questions ??= new(); set => SetProperty(ref questions, value); }
@@ -82,6 +86,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
         public DelegateCommand AddAnswerCommand { get; private set; }
         public DelegateCommand<object> DeleteAnswerCommand { get; private set; }
         public DelegateCommand SaveTestCommand { get; private set; }
+        public DelegateCommand CancelEditQuestionCommand { get; private set; }
         #endregion
         #region constructor
         public AddTestViewModel(INotificationService notification, IRegionManager manager, IWebApiService api, IMemoryService memory, IEventAggregator aggregator)
@@ -103,6 +108,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
             UpdateQuestionCommand = new(OnUpdateQuestion);
             DeleteQuestionCommand = new(OnDeleteQuestion);
             SaveQuestionCommand = new(OnSaveQuestion);
+            CancelEditQuestionCommand = new(OnCancelEditQuestion);
 
             AddAnswerCommand = new(OnAddAnswer);
             DeleteAnswerCommand = new(OnDeleteAnswer);
@@ -127,6 +133,8 @@ namespace EdlightDesktopClient.ViewModels.Learn
                     TestType = testHeader.TestType;
                     TestGroupName = Groups.Where(g => g.Id == testHeader.GroupID).FirstOrDefault();
                     TestTime = (int)Convert.ToDateTime(testHeader.TestTime).TimeOfDay.TotalMinutes;
+                    StartDateTime = Convert.ToDateTime(testHeader.TestStartDate);
+                    EndDateTime = Convert.ToDateTime(testHeader.TestEndDate);
                     Questions = new(JsonConvert.DeserializeObject<List<QuestionsModel>>(test.Questions));
                 }
             }
@@ -157,6 +165,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
                 NewQuestion = new();
                 NewQuestion.Question = string.Copy(question.Question);
                 NewQuestion.AnswerOptions = new();
+                NewQuestion.NumberPoints = question.NumberPoints;
                 if (question.AnswerOptions != null)
                     foreach (var item in question.AnswerOptions)
                         NewQuestion.AnswerOptions.Add((TestAnswer)item.Clone());
@@ -170,9 +179,30 @@ namespace EdlightDesktopClient.ViewModels.Learn
 
         private void OnSaveQuestion()
         {
+            bool correctAnswerSelect = false;
+            foreach (var item in newQuestion.AnswerOptions)
+            {
+                if (item.CorrectAnswer)
+                {
+                    correctAnswerSelect = true;
+                    break;
+                }
+            }
+            if (!correctAnswerSelect)
+            {
+                notification.ShowInformation("Выберите правильный ответ");
+                return;
+            }
+            if (newQuestion.NumberPoints <= 0)
+            {
+                notification.ShowInformation("Введите количество баллов за ответ");
+                return;
+            }
             Questions[updatedQuestionIndex] = (QuestionsModel)newQuestion.Clone();
             QuestionEdited = false;
         }
+
+        private void OnCancelEditQuestion() => QuestionEdited = false;
 
         private void OnAddAnswer()
         {
@@ -192,38 +222,46 @@ namespace EdlightDesktopClient.ViewModels.Learn
 
         private async void OnSaveTest()
         {
+            if (string.IsNullOrEmpty(TestName))
+            {
+                notification.ShowInformation("Введите имя теста");
+                return;
+            }
+            if (string.IsNullOrEmpty(TestType))
+            {
+                notification.ShowInformation("Выберите тип теста");
+                return;
+            }
+            if (TestGroupName == null)
+            {
+                notification.ShowInformation("Выберите группу");
+                return;
+            }
+            if (TestTime == 0)
+            {
+                notification.ShowInformation("Выберите время прохождения");
+                return;
+            }
+            if (Questions.Count == 0)
+            {
+                notification.ShowInformation("Добавьте вопросы");
+                return;
+            }
+            if (EndDateTime < StartDateTime)
+            {
+                notification.ShowInformation("Конец теста не может быть раньше чем его начало");
+                return;
+            }
             try
             {
-                if (string.IsNullOrEmpty(TestName))
-                {
-                    notification.ShowInformation("Введите имя теста");
-                    return;
-                }
-                if (string.IsNullOrEmpty(TestType))
-                {
-                    notification.ShowInformation("Выберите тип теста");
-                    return;
-                }
-                if (TestGroupName == null)
-                {
-                    notification.ShowInformation("Выберите группу");
-                    return;
-                }
-                if (TestTime == 0)
-                {
-                    notification.ShowInformation("Выберите время прохождения");
-                    return;
-                }
-                if (Questions.Count == 0)
-                {
-                    notification.ShowInformation("Добавьте вопросы");
-                    return;
-                }
-
                 TestLoader = new("Сохранение теста");
 
                 TestHeadersModel testHeader = new();
                 TestsModel test = new();
+
+                int countPoints = 0;
+                foreach (var item in Questions)
+                    countPoints += item.NumberPoints;
 
                 testHeader.TestName = TestName;
                 testHeader.TestType = TestType;
@@ -232,6 +270,10 @@ namespace EdlightDesktopClient.ViewModels.Learn
                 testHeader.TestTime = Convert.ToDateTime(new DateTime(2020, 3, 1) + new TimeSpan(hours, minutes, 0)).ToShortTimeString();
                 testHeader.TeacherID = currentUser.ID;
                 testHeader.GroupID = TestGroupName.Id;
+                testHeader.CountQuestions = Questions.Count;
+                testHeader.TestStartDate = StartDateTime.ToString("G");
+                testHeader.TestEndDate = EndDateTime.ToString("G");
+                testHeader.CountPoints = countPoints;
 
                 test.Questions = JsonConvert.SerializeObject(Questions.ToList());
                 if (isCreateTest)

@@ -3,10 +3,186 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:EdlightDesktopClient.Views.Learn"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             xmlns:controls="clr-namespace:Styles.Controls;assembly=Styles"
+             xmlns:behaviors="clr-namespace:Styles.Behaviors;assembly=Styles"
+             xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels.Learn"
+             xmlns:prism="http://www.codeplex.com/prism"
+             d:DataContext="{d:DesignInstance vm:ResultsTestViewModel}"
+             behaviors:LoadedBehavior.Command="{Binding LoadedCommand}"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d">
     <Grid>
-            
+        <Border Background="Black"
+                Opacity="0.35"
+                Style="{DynamicResource RoundedBackgroundBorder}" />
+
+        <Border Width="800"
+                Height="600"
+                Style="{DynamicResource RoundedBackgroundBorder}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="25" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="15" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="1" />
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="15" />
+                </Grid.RowDefinitions>
+
+                <controls:LoaderBox Grid.Row="0"
+                                    Grid.RowSpan="6"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="3"
+                                    Panel.ZIndex="{Binding ResultLoader.PanelIndex, UpdateSourceTrigger=PropertyChanged}"
+                                    IsActive="{Binding ResultLoader.IsActive, UpdateSourceTrigger=PropertyChanged}"
+                                    Message="{Binding ResultLoader.Message, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Grid.Row="1"
+                           Grid.Column="1"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Style="{DynamicResource SimpleTextBlock}"
+                           Text="Результаты теста"/>
+
+                <Button Grid.Row="1"
+                        Grid.Column="1"
+                        Width="20"
+                        Margin="0,0,5,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Command="{Binding CloseModalCommand}"
+                        Foreground="{DynamicResource PrimaryFontBrush}"
+                        Style="{DynamicResource SimpleButton}">
+                    <ContentControl Template="{DynamicResource Close}"/>
+                </Button>
+                <StackPanel Grid.Row="2"
+                            Grid.Column="1"
+                            Orientation="Horizontal"
+                            Margin="20, 0, 0, 0">
+                    <TextBlock Style="{DynamicResource SimpleTextBlock}"
+                               Text="Название:"/>
+                    <TextBlock Margin="10, 0, 0, 0"
+                               Style="{DynamicResource SimpleTextBlock}"
+                               Text="{Binding TestName}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3"
+                            Grid.Column="1"
+                            Orientation="Horizontal"
+                            Margin="20, 0, 0, 0">
+                    <TextBlock Style="{DynamicResource SimpleTextBlock}"
+                               Text="Группа:"/>
+                    <TextBlock Margin="10, 0, 0, 0"
+                               Style="{DynamicResource SimpleTextBlock}"
+                               Text="{Binding GroupName}"/>
+                </StackPanel>
+                
+                <Grid Grid.Row="4"
+                      Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               HorizontalAlignment="Center"
+                               Style="{DynamicResource SimpleTextBlock}"
+                               Text="Имя Фамилия"/>
+                    <TextBlock Grid.Column="1"
+                               HorizontalAlignment="Center"
+                               Style="{DynamicResource SimpleTextBlock}"
+                               Text="Статус"/>
+                    <TextBlock Grid.Column="2"
+                               HorizontalAlignment="Center"
+                               Style="{DynamicResource SimpleTextBlock}"
+                               Text="Баллы"/>
+                </Grid>
+
+                <Border Grid.Row="5"
+                        Grid.Column="1"
+                        Panel.ZIndex="1"
+                        BorderBrush="{DynamicResource ActiveBackgroundTabHeaderBtush}"
+                        BorderThickness="1"/>
+
+                <ScrollViewer Grid.Row="6"
+                              Grid.Column="1">
+                    <ItemsControl ItemsSource="{Binding TestResults, UpdateSourceTrigger=PropertyChanged}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Height="40">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="1"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="4*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Row="0"
+                                                Grid.Column="0"
+                                                Margin="20, 0, 0, 0"
+                                                Orientation="Horizontal">
+                                        <TextBlock HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding StudentName, UpdateSourceTrigger=PropertyChanged}"
+                                                   Style="{DynamicResource SimpleTextBlock}"/>
+                                        <TextBlock Margin="10, 0, 0, 0"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding StudentSurname, UpdateSourceTrigger=PropertyChanged}"
+                                                   Style="{DynamicResource SimpleTextBlock}"/>
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Row="0"
+                                               Grid.Column="1"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource SimpleTextBlock}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding TestCompleted}" Value="true">
+                                                        <Setter Property="Text" Value="Пройден"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding TestCompleted}" Value="false">
+                                                        <Setter Property="Text" Value="Не пройден"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+                                    <StackPanel Grid.Row="0"
+                                                Grid.Column="2"
+                                                Orientation="Horizontal"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Style="{DynamicResource SimpleTextBlock}"
+                                                   Text="{Binding CorrectAnswers}"/>
+                                        <TextBlock Style="{DynamicResource SimpleTextBlock}"
+                                                   Text="/"/>
+                                        <TextBlock Style="{DynamicResource SimpleTextBlock}"
+                                                   Text="{Binding DataContext.CountPoints, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}}"/>
+                                    </StackPanel>
+
+                                    <Border Grid.Row="1"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="3"
+                                            Panel.ZIndex="1"
+                                            BorderBrush="{DynamicResource ActiveBackgroundTabHeaderBtush}"
+                                            BorderThickness="1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

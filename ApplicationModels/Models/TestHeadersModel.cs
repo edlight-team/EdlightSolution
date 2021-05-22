@@ -15,6 +15,9 @@ namespace ApplicationModels.Models
         private string testType;
         private string testTime;
         private int countQuestions;
+        private string testStartDate;
+        private string testEndDate;
+        private int countPoints;
 
         private bool isSelectedCard;
         #endregion
@@ -42,6 +45,15 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(CountQuestions))]
         public int CountQuestions { get => countQuestions; set => SetProperty(ref countQuestions, value); }
+
+        [JsonProperty(nameof(TestStartDate))]
+        public string TestStartDate { get => testStartDate; set => SetProperty(ref testStartDate, value); }
+
+        [JsonProperty(nameof(TestEndDate))]
+        public string TestEndDate { get => testEndDate; set => SetProperty(ref testEndDate, value); }
+
+        [JsonProperty(nameof(CountPoints))]
+        public int CountPoints { get => countPoints; set => SetProperty(ref countPoints, value); }
 
         public bool IsSelectedCard { get => isSelectedCard; set => SetProperty(ref isSelectedCard, value); }
         #endregion

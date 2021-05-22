@@ -11,12 +11,24 @@ namespace ApplicationModels.Models
         private string question;
         private ObservableCollection<TestAnswer> answerOptions;
         private int correctAnswerIndex;
+        private int numberPoints;
         #endregion
         #region props
         public int NumberQuestion { get => numberQuestion; set => SetProperty(ref numberQuestion, value); }
         public string Question { get => question; set => SetProperty(ref question, value); }
         public ObservableCollection<TestAnswer> AnswerOptions { get => answerOptions; set => SetProperty(ref answerOptions, value); }
         public int CorrectAnswerIndex { get => correctAnswerIndex; set => SetProperty(ref correctAnswerIndex, value); }
+        public int NumberPoints
+        {
+            get => numberPoints;
+            set
+            {
+                if (value >= 0)
+                    SetProperty(ref numberPoints, value);
+                else
+                    RaisePropertyChanged(nameof(NumberPoints));
+            }
+        }
 
         public object Clone()
         {
@@ -29,7 +41,8 @@ namespace ApplicationModels.Models
                 NumberQuestion = this.NumberQuestion,
                 Question = string.Copy(this.Question),
                 AnswerOptions = new(answers),
-                CorrectAnswerIndex = this.CorrectAnswerIndex
+                CorrectAnswerIndex = this.CorrectAnswerIndex,
+                NumberPoints = this.NumberPoints
             };
         }
         #endregion

@@ -184,6 +184,10 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="10"/>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="15"/>
@@ -243,6 +247,22 @@
                                Grid.Column="2"
                                TextWrapping="Wrap"
                                Text="{Binding SelectedCardHeader.CountQuestions}"/>
+
+                    <TextBlock Grid.Row="10"
+                               Grid.Column="1"
+                               Text="Начало:"/>
+                    <TextBlock Grid.Row="10"
+                               Grid.Column="2"
+                               TextWrapping="Wrap"
+                               Text="{Binding SelectedCardHeader.TestStartDate}"/>
+
+                    <TextBlock Grid.Row="12"
+                               Grid.Column="1"
+                               Text="Окончание:"/>
+                    <TextBlock Grid.Row="12"
+                               Grid.Column="2"
+                               TextWrapping="Wrap"
+                               Text="{Binding SelectedCardHeader.TestEndDate}"/>
                 </Grid>
 
                 <Grid Grid.Row="3">

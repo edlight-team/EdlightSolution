@@ -11,6 +11,9 @@ namespace ApplicationModels.Models
         private Guid storageID;
         private Guid studentID;
         private string fileName;
+
+        private string studentFullName;
+        private bool fileAdded;
         #endregion
         #region props
         [JsonProperty(nameof(ID))]
@@ -24,6 +27,9 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(FileName))]
         public string FileName { get => fileName; set => SetProperty(ref fileName, value); }
+
+        public string StudentFullName { get => studentFullName; set => SetProperty(ref studentFullName, value); }
+        public bool FileAdded { get => !string.IsNullOrEmpty(FileName); private set { } }
         #endregion
     }
 }

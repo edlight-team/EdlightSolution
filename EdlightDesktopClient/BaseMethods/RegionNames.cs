@@ -34,5 +34,17 @@
         /// Регион модальных окон
         /// </summary>
         internal static string ModalRegion = nameof(ModalRegion);
+        /// <summary>
+        /// Регион тестов
+        /// </summary>
+        internal static string TestRegion = nameof(TestRegion);
+        /// <summary>
+        /// Регион хранилищ
+        /// </summary>
+        internal static string StorageRegion = nameof(StorageRegion);
+        /// <summary>
+        /// Регион файлов
+        /// </summary>
+        internal static string FileRegion = nameof(FileRegion);
     }
 }

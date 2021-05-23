@@ -24,6 +24,7 @@ namespace DbConsoleFiller
         private static List<GroupsModel> groups;
         private static TestsModel test;
         private static readonly Dictionary<string, PermissionsModel> permissionNamesDictionary = new();
+        private static StoragesHeadersModel storage;
         private static IWebApiService api;
         private static IHashingService hashing;
 
@@ -50,6 +51,8 @@ namespace DbConsoleFiller
             await FillTestsModel();
             await FillTestHeaderModel();
             await FillTestResult();
+            await FillStorageHeader();
+            await FillStorageFile();
 
             Console.Write("Fill Complete, time ellapsed: ");
             all_watch.Stop();
@@ -570,6 +573,43 @@ namespace DbConsoleFiller
             await api.PostModel(model, WebApiTableNames.TestResults);
 
             int count = (await api.GetModels<TestResultsModel>(WebApiTableNames.TestResults)).Count;
+            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
+        }
+
+        private static async Task FillStorageHeader()
+        {
+            Stopwatch watch = new();
+            watch.Start();
+            await api.DeleteAll(WebApiTableNames.StoragesHeaders);
+
+            StoragesHeadersModel model = new();
+            model.CreatorID = teacher.ID;
+            model.GroupID = groups[0].Id;
+            model.StorageName = "Хранилище";
+            model.DateCloseStorage = "00";
+            storage = await api.PostModel(model, WebApiTableNames.StoragesHeaders);
+
+            int count = (await api.GetModels<TestResultsModel>(WebApiTableNames.StoragesHeaders)).Count;
+            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            watch.Stop();
+            Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
+        }
+
+        private static async Task FillStorageFile()
+        {
+            Stopwatch watch = new();
+            watch.Start();
+            await api.DeleteAll(WebApiTableNames.StorageFiles);
+
+            StorageFilesModel model = new();
+            model.StorageID = storage.ID;
+            model.StudentID = student.ID;
+            model.FileName = "file";
+            await api.PostModel(model, WebApiTableNames.StorageFiles);
+
+            int count = (await api.GetModels<TestResultsModel>(WebApiTableNames.StorageFiles)).Count;
             Console.Write("type " + model.GetType().Name + " in db count = " + count);
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");

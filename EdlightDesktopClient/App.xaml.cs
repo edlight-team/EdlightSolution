@@ -56,9 +56,15 @@ namespace EdlightDesktopClient
             ViewModelLocationProvider.Register<DictionariesMainView, DictionariesMainViewModel>();
             ViewModelLocationProvider.Register<EditDisciplinesView, EditDisciplinesViewModel>();
             ViewModelLocationProvider.Register<EditAudienceView, EditAudienceViewModel>();
+            ViewModelLocationProvider.Register<TestListView, TestListViewModel>();
             ViewModelLocationProvider.Register<AddTestView, AddTestViewModel>();
             ViewModelLocationProvider.Register<PassingTestView, PassingTestViewModel>();
             ViewModelLocationProvider.Register<ResultsTestView, ResultsTestViewModel>();
+            ViewModelLocationProvider.Register<StorageListView, StorageListViewModel>();
+            ViewModelLocationProvider.Register<StorageFileListView, StorageFileListViewModel>();
+            ViewModelLocationProvider.Register<AddStorageView, AddStorageViewModel>();
+            ViewModelLocationProvider.Register<FileListFiew, FileListViewModel>();
+            ViewModelLocationProvider.Register<AddManualFIleView, AddManualFIleViewModel>();
         }
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
@@ -73,9 +79,15 @@ namespace EdlightDesktopClient
             containerRegistry.RegisterForNavigation<DictionariesMainView>();
             containerRegistry.RegisterForNavigation<EditDisciplinesView>();
             containerRegistry.RegisterForNavigation<EditAudienceView>();
+            containerRegistry.RegisterForNavigation<TestListView>();
             containerRegistry.RegisterForNavigation<AddTestView>();
             containerRegistry.RegisterForNavigation<PassingTestView>();
             containerRegistry.RegisterForNavigation<ResultsTestView>();
+            containerRegistry.RegisterForNavigation<StorageListView>();
+            containerRegistry.RegisterForNavigation<StorageFileListView>();
+            containerRegistry.RegisterForNavigation<AddStorageView>();
+            containerRegistry.RegisterForNavigation<FileListFiew>();
+            containerRegistry.RegisterForNavigation<AddManualFIleView>();
 
             containerRegistry.RegisterSingleton<IHashingService, HashingImplementation>();
             containerRegistry.RegisterSingleton<IMemoryService, MemoryImplementation>();

@@ -12,6 +12,8 @@ namespace ApplicationModels.Models
         private Guid groupID;
         private string storageName;
         private string dateCloseStorage;
+
+        private bool isSelectedCard;
         #endregion
         #region props
         [JsonProperty(nameof(ID))]
@@ -28,6 +30,8 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(DateCloseStorage))]
         public string DateCloseStorage { get => dateCloseStorage; set => SetProperty(ref dateCloseStorage, value); }
+
+        public bool IsSelectedCard { get => isSelectedCard; set => SetProperty(ref isSelectedCard, value); }
         #endregion
     }
 }

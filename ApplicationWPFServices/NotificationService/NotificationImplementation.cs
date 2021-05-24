@@ -12,5 +12,6 @@ namespace ApplicationWPFServices.NotificationService
             return result == System.Windows.MessageBoxResult.Yes;
         }
         public void ShowInformation(string message) => MessageBox.Show(message, "Сообщение", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        public void ShowGlobalInformation(string message) => Growl.Info(message, "Global");
     }
 }

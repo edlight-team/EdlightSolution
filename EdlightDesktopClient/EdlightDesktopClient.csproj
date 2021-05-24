@@ -42,6 +42,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -68,8 +69,14 @@
     <Compile Include="ViewModels\Dictionaries\EditAudienceViewModel.cs" />
     <Compile Include="ViewModels\Dictionaries\EditDisciplinesViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupsMainViewModel.cs" />
+    <Compile Include="ViewModels\Learn\AddManualFIleViewModel.cs" />
+    <Compile Include="ViewModels\Learn\AddStorageViewModel.cs" />
     <Compile Include="ViewModels\Learn\AddTestViewModel.cs" />
+    <Compile Include="ViewModels\Learn\FileListViewModel.cs" />
     <Compile Include="ViewModels\Learn\LearnMainViewModel.cs" />
+    <Compile Include="ViewModels\Learn\StorageFileListViewModel.cs" />
+    <Compile Include="ViewModels\Learn\StorageListViewModel.cs" />
+    <Compile Include="ViewModels\Learn\TestListViewModel.cs" />
     <Compile Include="ViewModels\Learn\PassingTestViewModel.cs" />
     <Compile Include="ViewModels\Learn\ResultsTestViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileMainViewModel.cs" />
@@ -90,11 +97,29 @@
     <Compile Include="Views\Groups\GroupsMainView.xaml.cs">
       <DependentUpon>GroupsMainView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Learn\AddManualFIleView.xaml.cs">
+      <DependentUpon>AddManualFIleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Learn\AddStorageView.xaml.cs">
+      <DependentUpon>AddStorageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Learn\AddTestView.xaml.cs">
       <DependentUpon>AddTestView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Learn\FileListFiew.xaml.cs">
+      <DependentUpon>FileListFiew.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Learn\LearnMainView.xaml.cs">
       <DependentUpon>LearnMainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Learn\StorageFileListView.xaml.cs">
+      <DependentUpon>StorageFileListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Learn\StorageListView.xaml.cs">
+      <DependentUpon>StorageListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Learn\TestListView.xaml.cs">
+      <DependentUpon>TestListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Learn\PassingTestView.xaml.cs">
       <DependentUpon>PassingTestView.xaml</DependentUpon>
@@ -140,11 +165,35 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Learn\AddManualFIleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Learn\AddStorageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Learn\AddTestView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Learn\FileListFiew.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Learn\LearnMainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Learn\StorageFileListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Learn\StorageListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Learn\TestListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

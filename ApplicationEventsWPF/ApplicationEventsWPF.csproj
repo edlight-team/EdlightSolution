@@ -48,11 +48,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\DictionaryModelChangedEvent.cs" />
+    <Compile Include="Events\ManualsFileAddedEvent.cs" />
     <Compile Include="Events\ScheduleEvents\CardMoveOrResizeEvent.cs" />
     <Compile Include="Events\ScheduleEvents\CardSelectingEvent.cs" />
     <Compile Include="Events\ScheduleEvents\CommentsChangedEvent.cs" />
     <Compile Include="Events\ScheduleEvents\DateChangedEvent.cs" />
     <Compile Include="Events\ScheduleEvents\GridChildChangedEvent.cs" />
+    <Compile Include="Events\StorageCollectionUpdatedEvent.cs" />
     <Compile Include="Events\TestCollectionUpdatedEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

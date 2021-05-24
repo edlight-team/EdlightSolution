@@ -151,7 +151,7 @@
                         Style="{DynamicResource SimpleButtonWithBorder}">
                     <TextBlock HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               Style="{DynamicResource SimpleTextBlock}"
+                               Style="{DynamicResource ElementTextBlock}"
                                Text="Завершить тест"/>
                 </Button>
             </Grid>

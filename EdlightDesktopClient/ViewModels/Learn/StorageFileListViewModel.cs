@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace EdlightDesktopClient.ViewModels.Learn
 {
@@ -25,11 +26,9 @@ namespace EdlightDesktopClient.ViewModels.Learn
         private IWebApiService api;
         private INotificationService notification;
         private IEventAggregator aggregator;
-        private IMemoryService memory;
         #endregion
         #region fields
         private LoaderModel loader;
-        private UserModel currentUser;
 
         private List<StorageFilesModel> storageFiles;
         private List<UserModel> studens;
@@ -44,19 +43,20 @@ namespace EdlightDesktopClient.ViewModels.Learn
         #endregion
         #region commands
         public DelegateCommand LoadedCommand { get; private set; }
+        public DelegateCommand CloseModalCommand { get; private set; }
         public DelegateCommand<object> DownloadFileCommand { get; private set; }
         #endregion
         #region constructor
-        public StorageFileListViewModel(IRegionManager manager, IWebApiService api, INotificationService notification, IEventAggregator aggregator, IMemoryService memory)
+        public StorageFileListViewModel(IRegionManager manager, IWebApiService api, INotificationService notification, IEventAggregator aggregator)
         {
             this.manager = manager;
             this.api = api;
             this.notification = notification;
             this.aggregator = aggregator;
-            this.memory = memory;
 
             LoadedCommand = new(OnLoaded);
             DownloadFileCommand = new(OnDownloadFile);
+            CloseModalCommand = new(OnCloseModal);
         }
         #endregion
         #region methods
@@ -65,8 +65,6 @@ namespace EdlightDesktopClient.ViewModels.Learn
             try
             {
                 Loader = new();
-
-                currentUser = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
 
                 StorageFiles = await api.GetModels<StorageFilesModel>(WebApiTableNames.StorageFiles, $"StorageID = '{CurrentStorage.ID}'");
 
@@ -87,18 +85,23 @@ namespace EdlightDesktopClient.ViewModels.Learn
             }
         }
 
+        private void OnCloseModal()
+        {
+            manager.Regions[BaseMethods.RegionNames.ModalRegion].RemoveAll();
+        }
+
         private async void OnDownloadFile(object parameter)
         {
             if (parameter is StorageFilesModel storageFile)
             {
                 try
                 {
-                    OpenFileDialog openFileDialog = new();
-                    if (openFileDialog.ShowDialog() == true)
+                    FolderBrowserDialog folderFileDialog = new();
+                    if (folderFileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        string pathFile = openFileDialog.InitialDirectory;
+                        string pathFile = folderFileDialog.SelectedPath;
 
-                        JsonFileModel file = (JsonFileModel)await api.GetFile($"Storage\\{CurrentStorage.ID}\\{currentUser.ID}\\{storageFile.FileName}");
+                        JsonFileModel file = (JsonFileModel)await api.GetFile($"Storage\\{CurrentStorage.ID}\\{storageFile.StudentID}\\{storageFile.FileName}");
 
                         File.WriteAllBytes(pathFile + $"\\{storageFile.FileName}", file.Data);
                     }
@@ -110,7 +113,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
                 }
                 finally
                 {
-                    Loader = new();
+                    notification.ShowGlobalInformation("Файл успешно загружен");
                 }
             }
         }

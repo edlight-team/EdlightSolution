@@ -64,6 +64,7 @@ namespace EdlightDesktopClient
             ViewModelLocationProvider.Register<StorageFileListView, StorageFileListViewModel>();
             ViewModelLocationProvider.Register<AddStorageView, AddStorageViewModel>();
             ViewModelLocationProvider.Register<FileListFiew, FileListViewModel>();
+            ViewModelLocationProvider.Register<AddManualFIleView, AddManualFIleViewModel>();
         }
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
@@ -86,6 +87,7 @@ namespace EdlightDesktopClient
             containerRegistry.RegisterForNavigation<StorageFileListView>();
             containerRegistry.RegisterForNavigation<AddStorageView>();
             containerRegistry.RegisterForNavigation<FileListFiew>();
+            containerRegistry.RegisterForNavigation<AddManualFIleView>();
 
             containerRegistry.RegisterSingleton<IHashingService, HashingImplementation>();
             containerRegistry.RegisterSingleton<IMemoryService, MemoryImplementation>();

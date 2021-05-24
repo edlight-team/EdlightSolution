@@ -473,7 +473,7 @@
                             </Button.Style>
                             <TextBlock HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
-                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Style="{DynamicResource ElementTextBlock}"
                                        Text="Сохранить тест" />
                         </Button>
                     </Grid>

@@ -127,7 +127,7 @@
                             Command="{Binding CreateStorageCommand}"
                             Style="{DynamicResource SimpleButtonWithBorder}">
                         <TextBlock HorizontalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Добавить хранилище" />
                     </Button>
                     <Button Width="160"
@@ -137,7 +137,7 @@
                             Command="{Binding DeleteStorageCommand}"
                             Style="{DynamicResource SimpleButtonWithBorder}">
                         <TextBlock HorizontalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Удалить хранилище" />
                     </Button>
                     <Button Width="160"
@@ -147,7 +147,7 @@
                             Command="{Binding ViewStorageFilesCommand}"
                             Style="{DynamicResource SimpleButtonWithBorder}">
                         <TextBlock HorizontalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Файлы хранилища"/>
                     </Button>
                     <Button Width="160"
@@ -157,7 +157,7 @@
                             Command="{Binding FileAddCommand}"
                             Style="{DynamicResource SimpleButtonWithBorder}">
                         <TextBlock HorizontalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Добавить/поменять файл"/>
                     </Button>
                 </StackPanel>

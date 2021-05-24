@@ -137,7 +137,7 @@
                             Command="{Binding AddTestCommand}"
                             Style="{DynamicResource SimpleButtonWithBorder}">
                         <TextBlock HorizontalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Добавить тест" />
                     </Button>
                     <Button Width="160"
@@ -147,7 +147,7 @@
                             Command="{Binding UpdateTestCommand}"
                             Style="{DynamicResource SimpleButtonWithBorder}">
                         <TextBlock HorizontalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Изменить тест"/>
                     </Button>
                     <Button Width="160"
@@ -157,7 +157,7 @@
                             Command="{Binding DeleteTestCommand}"
                             Style="{DynamicResource SimpleButtonWithBorder}">
                         <TextBlock HorizontalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Удалить тест" />
                     </Button>
                     <Button Width="160"
@@ -167,7 +167,7 @@
                             Command="{Binding ViewTestResultsCommand}"
                             Style="{DynamicResource SimpleButtonWithBorder}">
                         <TextBlock HorizontalAlignment="Center"
-                                   Style="{DynamicResource SimpleTextBlock}"
+                                   Style="{DynamicResource ElementTextBlock}"
                                    Text="Результаты теста"/>
                     </Button>
                 </StackPanel>

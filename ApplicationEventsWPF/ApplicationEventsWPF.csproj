@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\DictionaryModelChangedEvent.cs" />
+    <Compile Include="Events\ManualsFileAddedEvent.cs" />
     <Compile Include="Events\ScheduleEvents\CardMoveOrResizeEvent.cs" />
     <Compile Include="Events\ScheduleEvents\CardSelectingEvent.cs" />
     <Compile Include="Events\ScheduleEvents\CommentsChangedEvent.cs" />

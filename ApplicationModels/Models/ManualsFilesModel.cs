@@ -11,6 +11,8 @@ namespace ApplicationModels.Models
         private Guid creatorID;
         private Guid groupID;
         private string fileName;
+
+        private string groupName;
         #endregion
         #region props
         [JsonProperty(nameof(ID))]
@@ -24,6 +26,8 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(FileName))]
         public string FileName { get => fileName; set => SetProperty(ref fileName, value); }
+
+        public string GroupName { get => groupName; set => SetProperty(ref groupName, value); }
         #endregion
     }
 }

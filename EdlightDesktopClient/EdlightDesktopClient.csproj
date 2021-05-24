@@ -42,6 +42,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -68,6 +69,7 @@
     <Compile Include="ViewModels\Dictionaries\EditAudienceViewModel.cs" />
     <Compile Include="ViewModels\Dictionaries\EditDisciplinesViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupsMainViewModel.cs" />
+    <Compile Include="ViewModels\Learn\AddManualFIleViewModel.cs" />
     <Compile Include="ViewModels\Learn\AddStorageViewModel.cs" />
     <Compile Include="ViewModels\Learn\AddTestViewModel.cs" />
     <Compile Include="ViewModels\Learn\FileListViewModel.cs" />
@@ -94,6 +96,9 @@
     </Compile>
     <Compile Include="Views\Groups\GroupsMainView.xaml.cs">
       <DependentUpon>GroupsMainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Learn\AddManualFIleView.xaml.cs">
+      <DependentUpon>AddManualFIleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Learn\AddStorageView.xaml.cs">
       <DependentUpon>AddStorageView.xaml</DependentUpon>
@@ -157,6 +162,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Groups\GroupsMainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Learn\AddManualFIleView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

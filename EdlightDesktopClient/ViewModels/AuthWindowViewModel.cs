@@ -67,8 +67,8 @@ namespace EdlightDesktopClient.ViewModels
 #if DEBUG
             Login = "admin";
             Password = "admin";
-            Login = "student";
-            Password = "student";
+            //Login = "student";
+            //Password = "student";
             //Login = "teacher";
             //Password = "teacher";
             //Login = "umoadmin";

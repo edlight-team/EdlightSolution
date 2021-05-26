@@ -43,6 +43,11 @@ namespace Styles.Models
             loader.IsActive = true;
             loader.Message = "Выполняется загрузка";
         }
+        public static void SetCountLoadingInfo(this LoaderModel loader, int fromCount, int toCount)
+        {
+            loader.IsActive = true;
+            loader.Message = $"Обработка {fromCount} / {toCount}";
+        }
         public static async Task Clear(this LoaderModel loader)
         {
             await Task.Delay(1000);

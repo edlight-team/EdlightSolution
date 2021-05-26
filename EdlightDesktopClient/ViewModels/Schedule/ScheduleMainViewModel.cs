@@ -398,9 +398,110 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 await Loader.Clear();
             }
         }
-        private void OnImportCards()
+        private async void OnImportCards()
         {
+            OpenFileDialog ofd = new();
+            ofd.Filter = "Edlight schedule table (*.xlsx)|*.xlsx";
+            ofd.ShowDialog();
+            int rowCounter = 1;
+            int importCounter = 0;
+            try
+            {
+                using ExcelDataReader.IExcelDataReader reader = ExcelDataReader.ExcelReaderFactory.CreateReader(File.OpenRead(ofd.FileName));
+                reader.Read();
 
+                if (
+                    reader.GetString(0) != @"№ П\П" ||
+                    reader.GetString(1) != @"Преподаватель     Ф" ||
+                    reader.GetString(2) != @"И" ||
+                    reader.GetString(3) != @"О" ||
+                    reader.GetString(4) != @"Дисциплина" ||
+                    reader.GetString(5) != @"Аудитория" ||
+                    reader.GetString(6) != @"Тип занятия" ||
+                    reader.GetString(7) != @"Группа" ||
+                    reader.GetString(8) != @"Начало занятия" ||
+                    reader.GetString(9) != @"Конец занятия" ||
+                    reader.GetString(10) != @"Дата занятия" ||
+                    reader.GetString(11) != @"Перерыв(мин)"
+                   )
+                {
+                    Growl.Error("При чтении таблицы импорта произошла ошибка", "Global");
+                    return;
+                }
+
+                while (reader.Read())
+                {
+                    try
+                    {
+                        Loader.SetCountLoadingInfo(rowCounter++, reader.RowCount - 1);
+
+                        string sName = reader.GetString(1);
+                        string fName = reader.GetString(2);
+                        string patr = reader.GetString(3);
+                        UserModel teach = Teachers.FirstOrDefault(t => t.Name == fName && t.Surname == sName && t.Patrnymic == patr);
+                        if (teach == null) continue;
+
+                        string disc_name = reader.GetString(4);
+                        AcademicDisciplinesModel disc = Disciplines.FirstOrDefault(d => d.Title == disc_name);
+                        if (disc == null) continue;
+
+                        string audience_name = reader.GetString(5);
+                        AudiencesModel audience = Audiences.FirstOrDefault(a => a.NumberAudience == audience_name);
+                        if (audience == null) continue;
+
+                        string type_class_name = reader.GetString(6);
+                        TypeClassesModel type_class = TypeClasses.FirstOrDefault(a => a.Title == type_class_name);
+                        if (type_class == null) continue;
+
+                        string group_name = reader.GetString(7);
+                        GroupsModel group = Groups.FirstOrDefault(a => a.Group == group_name);
+                        if (group == null) continue;
+
+                        string start_time = reader.GetDateTime(8).ToString("hh:mm");
+                        string end_time = reader.GetDateTime(9).ToString("hh:mm");
+                        DateTime date = reader.GetDateTime(10);
+                        string break_time = reader.GetDouble(11).ToString();
+
+                        TimeLessonsModel tms = new()
+                        {
+                            StartTime = start_time,
+                            EndTime = end_time,
+                            BreakTime = break_time
+                        };
+
+                        TimeLessonsModel posted = await api.PostModel(tms, WebApiTableNames.TimeLessons);
+
+                        LessonsModel lm = new()
+                        {
+                            Day = date,
+                            IdTeacher = teach.ID,
+                            IdAcademicDiscipline = disc.Id,
+                            IdAudience = audience.Id,
+                            IdTypeClass = type_class.Id,
+                            IdGroup = group.Id,
+                            IdTimeLessons = posted.Id
+                        };
+
+                        await api.PostModel(lm, WebApiTableNames.Lessons);
+                        importCounter++;
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+                }
+                Growl.Info("Импорт успешно завершен, добавлено записей " + importCounter, "Global");
+                reader.Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                OnLoadModelsByDate(_currentDate);
+                await Loader.Clear();
+            }
         }
 
         #endregion

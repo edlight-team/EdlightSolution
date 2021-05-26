@@ -1,5 +1,6 @@
 ﻿using ApplicationServices.HashingService;
 using ApplicationServices.PermissionService;
+using ApplicationServices.SignalClientSerivce;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
 using ApplicationWPFServices.NotificationService;
@@ -92,6 +93,7 @@ namespace EdlightDesktopClient
             containerRegistry.RegisterSingleton<IHashingService, HashingImplementation>();
             containerRegistry.RegisterSingleton<IMemoryService, MemoryImplementation>();
             containerRegistry.RegisterSingleton<INotificationService, NotificationImplementation>();
+            containerRegistry.RegisterSingleton<ISignalClientService, SignalClientImplementation>();
             containerRegistry.RegisterSingleton<IWebApiService, WebApiServiceImplementation>();
             containerRegistry.RegisterSingleton<IPermissionService, PermissionImplementation>();
         }

@@ -1,8 +1,10 @@
 ﻿using ApplicationEventsWPF.Events.ScheduleEvents;
+using ApplicationEventsWPF.Events.Signal;
 using ApplicationModels.Models;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
 using HandyControl.Controls;
+using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -234,6 +236,12 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 LessonsModel postedLM = await api.PostModel(lm, WebApiTableNames.Lessons);
 
                 aggregator.GetEvent<DateChangedEvent>().Publish();
+                aggregator.GetEvent<SignalEntitySendEvent>().Publish(new EntitySignalModel()
+                {
+                    SendType = "POST",
+                    ModelType = typeof(LessonsModel),
+                    SerializedModel = JsonConvert.SerializeObject(postedLM)
+                });
                 Growl.Info("Запись успешно создана", "Global");
                 OnCloseModal();
             }
@@ -259,6 +267,12 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 LessonsModel postedLM = await api.PutModel(lm, WebApiTableNames.Lessons);
 
                 aggregator.GetEvent<DateChangedEvent>().Publish();
+                aggregator.GetEvent<SignalEntitySendEvent>().Publish(new EntitySignalModel()
+                {
+                    SendType = "PUT",
+                    ModelType = typeof(LessonsModel),
+                    SerializedModel = JsonConvert.SerializeObject(postedLM)
+                });
                 Growl.Info("Запись успешно сохранена", "Global");
                 OnCloseModal();
             }

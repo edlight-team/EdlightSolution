@@ -1,8 +1,10 @@
 ﻿using ApplicationEventsWPF.Events.ScheduleEvents;
+using ApplicationEventsWPF.Events.Signal;
 using ApplicationModels;
 using ApplicationModels.Config;
 using ApplicationModels.Models;
 using ApplicationServices.PermissionService;
+using ApplicationServices.SignalClientSerivce;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
 using ApplicationWPFServices.NotificationService;
@@ -10,6 +12,7 @@ using EdlightDesktopClient.AccessConfigurations;
 using EdlightDesktopClient.Views.Schedule;
 using HandyControl.Controls;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -36,6 +39,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private readonly INotificationService notification;
         private readonly IPermissionService permissionService;
         private readonly IEventAggregator aggregator;
+        private readonly ISignalClientService signal;
 
         #endregion
         #region fields
@@ -131,6 +135,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #region commands
 
         public DelegateCommand LoadedCommand { get; private set; }
+        public DelegateCommand UnloadedCommand { get; private set; }
 
         #region Date clicks
 
@@ -169,7 +174,8 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             IWebApiService api,
             INotificationService notification,
             IEventAggregator aggregator,
-            IPermissionService permissionService)
+            IPermissionService permissionService,
+            ISignalClientService signal)
         {
             HelpTipText = $"Для начала работы необходимо выбрать запись в расписании или создать новую.{Environment.NewLine}(двойной клик левой кнопки мыши)";
             Loader = new();
@@ -180,13 +186,16 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             this.notification = notification;
             this.permissionService = permissionService;
             this.aggregator = aggregator;
+            this.signal = signal;
+            signal.SubscribeEntityChanged(SignalEntityChanged);
             aggregator.GetEvent<DateChangedEvent>().Subscribe(() => OnLoadModelsByDate(CurrentDate));
             aggregator.GetEvent<CardSelectingEvent>().Subscribe(OnCardSelecting);
+            aggregator.GetEvent<SignalEntitySendEvent>().Subscribe(OnSignalEntitySend);
             FilteredMaterials.Filter += MaterialsFilter;
             FilteredComments.Filter += CommentsFilter;
 
             Models = new();
-            memory.StoreItem("TimeLessons", Models);
+            memory.StoreItem(nameof(Models), Models);
             CurrentUser = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
             CurrentDate = DateTime.Now;
 
@@ -219,6 +228,18 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #endregion
         #region methods
 
+        #region Signal received
+
+        private void SignalEntityChanged(string serialized)
+        {
+        }
+
+        #endregion
+        #region Signal sending
+
+        private void OnSignalEntitySend(EntitySignalModel model) => signal.SendEntityModel(JsonConvert.SerializeObject(model));
+
+        #endregion
         #region Загрузка данных
 
         private async Task LoadingData()
@@ -236,6 +257,13 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             Audiences = new ObservableCollection<AudiencesModel>(await api.GetModels<AudiencesModel>(WebApiTableNames.Audiences));
             TypeClasses = new ObservableCollection<TypeClassesModel>(await api.GetModels<TypeClassesModel>(WebApiTableNames.TypeClasses));
             TimeLessons = new ObservableCollection<TimeLessonsModel>(await api.GetModels<TimeLessonsModel>(WebApiTableNames.TimeLessons));
+
+            memory.StoreItem(nameof(Teachers), Teachers);
+            memory.StoreItem(nameof(Disciplines), Disciplines);
+            memory.StoreItem(nameof(Audiences), Audiences);
+            memory.StoreItem(nameof(TypeClasses), TypeClasses);
+            memory.StoreItem(nameof(TimeLessons), TimeLessons);
+            memory.StoreItem(nameof(Groups), Groups);
 
             Materials = new ObservableCollection<MaterialsModel>(await api.GetModels<MaterialsModel>(WebApiTableNames.Materials));
             foreach (MaterialsModel mat in Materials)
@@ -322,7 +350,11 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         {
             if (!manager.Regions.ContainsRegionWithName(BaseMethods.RegionNames.ScheduleDateViewRegion)) return;
             manager.Regions[BaseMethods.RegionNames.ScheduleDateViewRegion].RemoveAll();
-            manager.RequestNavigate(BaseMethods.RegionNames.ScheduleDateViewRegion, nameof(ScheduleDateViewer));
+            manager.RequestNavigate(BaseMethods.RegionNames.ScheduleDateViewRegion, nameof(ScheduleDateViewer), new NavigationParameters()
+            {
+                { "CurrentDate", CurrentDate },
+                { "SelectedGroup", SelectedGroup }
+            });
         }
 
         #endregion
@@ -384,9 +416,16 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 await api.DeleteModel(model.Id, WebApiTableNames.Lessons);
                 await api.DeleteModel(model.TimeLessons.Id, WebApiTableNames.TimeLessons);
                 aggregator.GetEvent<GridChildChangedEvent>().Publish(new object[] { model, true });
+                aggregator.GetEvent<SignalEntitySendEvent>().Publish(new EntitySignalModel()
+                {
+                    SendType = "DELETE",
+                    ModelType = typeof(LessonsModel),
+                    SerializedModel = JsonConvert.SerializeObject(model)
+                });
                 Models.Remove(model);
 
                 IsCardActionsEnabled = false;
+                SetHelpTipVisibility();
                 Growl.Info("Запись успешно Удалена", "Global");
             }
             catch (Exception)

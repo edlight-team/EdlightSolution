@@ -21,7 +21,7 @@ namespace ApplicationServices.WebApiService
         private WebRequest CreateRequest(string api, string method)
         {
             WebRequest request = WebRequest.CreateHttp(WebApiBaseURL + api);
-            request.Timeout = 10000;
+            request.Timeout = 5000;
             request.Method = method;
             return request;
         }

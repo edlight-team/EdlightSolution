@@ -1,7 +1,9 @@
 ﻿using ApplicationEventsWPF.Events.ScheduleEvents;
+using ApplicationEventsWPF.Events.Signal;
 using ApplicationModels.Models;
 using ApplicationServices.WebApiService;
 using HandyControl.Controls;
+using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -75,9 +77,15 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 List<LessonsModel> api_records = await api.GetModels<LessonsModel>(WebApiTableNames.Lessons, $"Id = '{RecordId}'");
                 LessonsModel target = api_records.FirstOrDefault();
                 target.CanceledReason = Reason;
-                await api.PutModel(target, WebApiTableNames.Lessons);
+                LessonsModel postedLM = await api.PutModel(target, WebApiTableNames.Lessons);
 
                 aggregator.GetEvent<DateChangedEvent>().Publish();
+                aggregator.GetEvent<SignalEntitySendEvent>().Publish(new EntitySignalModel()
+                {
+                    SendType = "PUT",
+                    ModelType = typeof(LessonsModel),
+                    SerializedModel = JsonConvert.SerializeObject(postedLM)
+                });
                 Growl.Info("Запись успешно обновлена", "Global");
                 OnCloseModal();
             }

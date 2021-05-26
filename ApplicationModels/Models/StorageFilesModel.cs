@@ -13,7 +13,6 @@ namespace ApplicationModels.Models
         private string fileName;
 
         private string studentFullName;
-        private bool fileAdded;
         #endregion
         #region props
         [JsonProperty(nameof(ID))]
@@ -29,7 +28,7 @@ namespace ApplicationModels.Models
         public string FileName { get => fileName; set => SetProperty(ref fileName, value); }
 
         public string StudentFullName { get => studentFullName; set => SetProperty(ref studentFullName, value); }
-        public bool FileAdded { get => !string.IsNullOrEmpty(FileName); private set { } }
+        public bool FileAdded { get => !string.IsNullOrEmpty(FileName); }
         #endregion
     }
 }

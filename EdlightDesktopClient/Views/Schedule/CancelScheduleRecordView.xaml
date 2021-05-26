@@ -121,7 +121,7 @@
                                 Style="{DynamicResource SimpleButtonWithBorder}">
                             <TextBlock HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
-                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Style="{DynamicResource ElementTextBlock}"
                                        Text="Подтвердить отмену" />
                         </Button>
                         <ContentControl Width="25"

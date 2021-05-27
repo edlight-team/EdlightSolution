@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CapacityModel.cs" />
     <Compile Include="Config\TypeClassColors.cs" />
     <Compile Include="JsonFileModel.cs" />
     <Compile Include="Models\AcademicDisciplinesModel.cs" />

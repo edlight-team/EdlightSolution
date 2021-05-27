@@ -241,6 +241,11 @@
                                   Foreground="{DynamicResource ElementFontBrush}"
                                   Header="Импорт"
                                   Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}" />
+                        <MenuItem Background="{DynamicResource InnerElementBackgroundBrush}"
+                                  Command="{Binding CapacityManagingCommand}"
+                                  Foreground="{DynamicResource ElementFontBrush}"
+                                  Header="Нагрузка"
+                                  Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </hc:SplitButton.DropDownContent>
             </hc:SplitButton>

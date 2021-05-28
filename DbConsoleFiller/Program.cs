@@ -442,7 +442,8 @@ namespace DbConsoleFiller
             foreach (UserModel item in otherusers)
                 otherUserRoles.Add(await api.PostModel(new UsersRolesModel()
                 {
-                    IdRole = item.Age >= 22 ? teacherRole.Id : studentRole.Id,
+                    //IdRole = item.Age >= 22 ? teacherRole.Id : studentRole.Id,
+                    IdRole = studentRole.Id,
                     IdUser = item.ID
                 }, WebApiTableNames.UsersRoles));
 

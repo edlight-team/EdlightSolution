@@ -549,9 +549,11 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private async void OnCapacityManagment()
         {
             OpenFileDialog ofd = new();
-            ofd.Filter = "Edlight capacity table (*.xls)|*.xls";
-            bool? result = ofd.ShowDialog();
-            if (!result.Value) return;
+            //ofd.Filter = "Edlight capacity table (*.xls)|*.xls";
+            //bool? result = ofd.ShowDialog();
+            //if (!result.Value) return;
+
+            ofd.FileName = Environment.CurrentDirectory + "\\Нагрузка.xls";
 
             ObservableCollection<CapacityModel> capacities = new();
             ExcelDataReader.IExcelDataReader reader = null;
@@ -626,8 +628,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                     capacity.HourAtWeek = reader[54]?.ToString().ToDouble();
 
                     capacities.Add(capacity);
-                    await Task.Delay(5);
+                    //await Task.Delay(1);
                 }
+                await Loader.Clear();
+                manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(CapacityManagmentView), new NavigationParameters() { { "Capacities", capacities } });
             }
             catch (Exception)
             {
@@ -636,7 +640,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             }
             finally
             {
-                await Loader.Clear();
+                if (Loader.IsActive)
+                {
+                    await Loader.Clear();
+                }
                 reader.Close();
             }
         }

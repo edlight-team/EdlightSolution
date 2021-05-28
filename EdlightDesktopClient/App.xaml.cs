@@ -52,11 +52,13 @@ namespace EdlightDesktopClient
             ViewModelLocationProvider.Register<GroupsMainView, GroupsMainViewModel>();
             ViewModelLocationProvider.Register<ScheduleMainView, ScheduleMainViewModel>();
             ViewModelLocationProvider.Register<ScheduleDateViewer, ScheduleDateViewerViewModel>();
+            ViewModelLocationProvider.Register<CapacityManagmentView, CapacityManagmentViewModel>();
             ViewModelLocationProvider.Register<AddScheduleView, AddScheduleViewModel>();
             ViewModelLocationProvider.Register<CancelScheduleRecordView, CancelScheduleRecordViewModel>();
             ViewModelLocationProvider.Register<DictionariesMainView, DictionariesMainViewModel>();
             ViewModelLocationProvider.Register<EditDisciplinesView, EditDisciplinesViewModel>();
             ViewModelLocationProvider.Register<EditAudienceView, EditAudienceViewModel>();
+            ViewModelLocationProvider.Register<EditTeacherView, EditTeacherViewModel>();
             ViewModelLocationProvider.Register<TestListView, TestListViewModel>();
             ViewModelLocationProvider.Register<AddTestView, AddTestViewModel>();
             ViewModelLocationProvider.Register<PassingTestView, PassingTestViewModel>();
@@ -75,11 +77,13 @@ namespace EdlightDesktopClient
             containerRegistry.RegisterForNavigation<GroupsMainView>();
             containerRegistry.RegisterForNavigation<ScheduleMainView>();
             containerRegistry.RegisterForNavigation<ScheduleDateViewer>();
+            containerRegistry.RegisterForNavigation<CapacityManagmentView>();
             containerRegistry.RegisterForNavigation<AddScheduleView>();
             containerRegistry.RegisterForNavigation<CancelScheduleRecordView>();
             containerRegistry.RegisterForNavigation<DictionariesMainView>();
             containerRegistry.RegisterForNavigation<EditDisciplinesView>();
             containerRegistry.RegisterForNavigation<EditAudienceView>();
+            containerRegistry.RegisterForNavigation<EditTeacherView>();
             containerRegistry.RegisterForNavigation<TestListView>();
             containerRegistry.RegisterForNavigation<AddTestView>();
             containerRegistry.RegisterForNavigation<PassingTestView>();

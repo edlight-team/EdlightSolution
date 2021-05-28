@@ -55,6 +55,7 @@
     <Compile Include="JsonFileModel.cs" />
     <Compile Include="Models\AcademicDisciplinesModel.cs" />
     <Compile Include="Models\AudiencesModel.cs" />
+    <Compile Include="Models\CapacityExtendedModels\ImportedTeacher.cs" />
     <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Models\DialogsModel.cs" />
     <Compile Include="Models\GroupsModel.cs" />

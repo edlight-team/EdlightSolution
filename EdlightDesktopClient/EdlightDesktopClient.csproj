@@ -68,6 +68,7 @@
     <Compile Include="ViewModels\Dictionaries\DictionariesMainViewModel.cs" />
     <Compile Include="ViewModels\Dictionaries\EditAudienceViewModel.cs" />
     <Compile Include="ViewModels\Dictionaries\EditDisciplinesViewModel.cs" />
+    <Compile Include="ViewModels\Dictionaries\EditTeacherViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupsMainViewModel.cs" />
     <Compile Include="ViewModels\Learn\AddManualFIleViewModel.cs" />
     <Compile Include="ViewModels\Learn\AddStorageViewModel.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="ViewModels\Profile\ProfileMainViewModel.cs" />
     <Compile Include="ViewModels\Schedule\AddScheduleViewModel.cs" />
     <Compile Include="ViewModels\Schedule\CancelScheduleRecordViewModel.cs" />
+    <Compile Include="ViewModels\Schedule\CapacityManagmentViewModel.cs" />
     <Compile Include="ViewModels\Schedule\ScheduleDateViewerViewModel.cs" />
     <Compile Include="ViewModels\Schedule\ScheduleMainViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsMainViewModel.cs" />
@@ -93,6 +95,9 @@
     </Compile>
     <Compile Include="Views\Dictionaries\EditDisciplinesView.xaml.cs">
       <DependentUpon>EditDisciplinesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dictionaries\EditTeacherView.xaml.cs">
+      <DependentUpon>EditTeacherView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Groups\GroupsMainView.xaml.cs">
       <DependentUpon>GroupsMainView.xaml</DependentUpon>
@@ -136,6 +141,9 @@
     <Compile Include="Views\Schedule\CancelScheduleRecordView.xaml.cs">
       <DependentUpon>CancelScheduleRecordView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Schedule\CapacityManagmentView.xaml.cs">
+      <DependentUpon>CapacityManagmentView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Schedule\ScheduleDateViewer.xaml.cs">
       <DependentUpon>ScheduleDateViewer.xaml</DependentUpon>
     </Compile>
@@ -158,6 +166,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dictionaries\EditDisciplinesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dictionaries\EditTeacherView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -232,6 +244,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Schedule\CancelScheduleRecordView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Schedule\CapacityManagmentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

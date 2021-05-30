@@ -50,6 +50,9 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private ObservableCollection<ImportedDiscipline> _importedDisciplines;
         private bool _isAllTeachersConfirmed;
         private bool _isAllDisciplinesConfirmed;
+        private bool _isManualPeriodEnabled;
+        private DateTime _manualDateFrom;
+        private DateTime _manualDateTo;
 
         #endregion
         #region props
@@ -67,6 +70,9 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         public ObservableCollection<ImportedDiscipline> ImportedDisciplines { get => _importedDisciplines ??= new(); set => SetProperty(ref _importedDisciplines, value); }
         public bool IsAllTeachersConfirmed { get => _isAllTeachersConfirmed; set => SetProperty(ref _isAllTeachersConfirmed, value); }
         public bool IsAllDisciplinesConfirmed { get => _isAllDisciplinesConfirmed; set => SetProperty(ref _isAllDisciplinesConfirmed, value); }
+        public bool IsManualPeriodEnabled { get => _isManualPeriodEnabled; set => SetProperty(ref _isManualPeriodEnabled, value); }
+        public DateTime ManualDateFrom { get => _manualDateFrom; set => SetProperty(ref _manualDateFrom, value); }
+        public DateTime ManualDateTo { get => _manualDateTo; set => SetProperty(ref _manualDateTo, value); }
 
         #endregion
         #region commands
@@ -375,29 +381,36 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         {
             Loader.SetDefaultLoadingInfo();
 
-            //Ищем первую дату От
-            DateTime? first_date_from = Capacities.GroupBy(g => g.DateFrom)
-                                                  .ToList()
-                                                  .OrderBy(d => d.Key)
-                                                  .ToList()
-                                                  .Where(d => d.Key != null && d.Key != new DateTime())
-                                                  .FirstOrDefault()
-                                                  .Key;
-
-            //Ищем последнюю дату До
-            DateTime? last_date_to = Capacities.GroupBy(g => g.DateTo)
-                                                .ToList()
-                                                .OrderBy(d => d.Key)
-                                                .ToList()
-                                                .Where(d => d.Key != null && d.Key != new DateTime())
-                                                .LastOrDefault()
-                                                .Key;
-
-            //ToDo: Возможно если нет дат нужно указать период в ручную
-
-            //Создаем общую сетку от первой и до последней даты
             ObservableCollection<CapacityCellModel> cells = new();
-            cells = CreateRangeCells(first_date_from, last_date_to);
+            if (IsManualPeriodEnabled)
+            {
+                //если нет дат нужно указать период в ручную
+                cells = CreateRangeCells(ManualDateFrom, ManualDateTo);
+            }
+            else
+            {
+                //Ищем первую дату От
+                DateTime? first_date_from = Capacities.GroupBy(g => g.DateFrom)
+                                                      .ToList()
+                                                      .OrderBy(d => d.Key)
+                                                      .ToList()
+                                                      .Where(d => d.Key != null && d.Key != new DateTime())
+                                                      .FirstOrDefault()
+                                                      .Key;
+
+                //Ищем последнюю дату До
+                DateTime? last_date_to = Capacities.GroupBy(g => g.DateTo)
+                                                    .ToList()
+                                                    .OrderBy(d => d.Key)
+                                                    .ToList()
+                                                    .Where(d => d.Key != null && d.Key != new DateTime())
+                                                    .LastOrDefault()
+                                                    .Key;
+
+
+                //Создаем общую сетку от первой и до последней даты
+                cells = CreateRangeCells(first_date_from, last_date_to);
+            }
 
             //Делим сетку на периоды (недели)
             Periods = CreatePeriodsBySplitting(cells);

@@ -377,12 +377,31 @@
                         <!--#endregion-->
                         <!--#region Генерация предварительного расписания-->
 
-                        <Button Width="180"
-                                Height="35"
-                                Command="{Binding GenerateScheduleCommand}"
-                                Style="{DynamicResource SimpleButtonWithBorder}">
-                            <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Генерация расписания" />
-                        </Button>
+                        <StackPanel HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <CheckBox BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                      BorderThickness="2"
+                                      Content="Ручной ввод периода"
+                                      IsChecked="{Binding IsManualPeriodEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                            <hc:DatePicker Margin="5,0,0,0"
+                                           BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                           BorderThickness="2"
+                                           IsEnabled="{Binding IsManualPeriodEnabled}"
+                                           SelectedDate="{Binding ManualDateFrom, UpdateSourceTrigger=PropertyChanged}" />
+                            <hc:DatePicker Margin="5,0,0,0"
+                                           BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                           BorderThickness="2"
+                                           IsEnabled="{Binding IsManualPeriodEnabled}"
+                                           SelectedDate="{Binding ManualDateTo, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button Width="180"
+                                    Height="35"
+                                    Margin="5,0,0,0"
+                                    Command="{Binding GenerateScheduleCommand}"
+                                    Style="{DynamicResource SimpleButtonWithBorder}">
+                                <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Генерация расписания" />
+                            </Button>
+                        </StackPanel>
 
                         <!--#endregion-->
                         <!--#region Предварительное расписание-->

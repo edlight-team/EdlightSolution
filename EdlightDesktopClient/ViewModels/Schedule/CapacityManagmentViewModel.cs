@@ -377,12 +377,18 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         //    await Loader.Clear();
         //}
+
+        /// <summary>
+        /// Генерация расписания
+        /// </summary>
         private async void OnScheduleGenerating()
         {
             Loader.SetDefaultLoadingInfo();
+            #region Формирование сетки расписания
 
+            //Создаем общую сетку
             ObservableCollection<CapacityCellModel> cells = new();
-            if (IsManualPeriodEnabled)
+            if (IsManualPeriodEnabled) //Ручной ввод периода
             {
                 //если нет дат нужно указать период в ручную
                 cells = CreateRangeCells(ManualDateFrom, ManualDateTo);
@@ -412,8 +418,14 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 cells = CreateRangeCells(first_date_from, last_date_to);
             }
 
+            #endregion
+            #region Деление сетки на периоды по 1 неделе
+
             //Делим сетку на периоды (недели)
             Periods = CreatePeriodsBySplitting(cells);
+
+            #endregion
+            #region Заполнение дисциплин
 
             //Группируем каждую дисциплину и добавляем по очереди все занятия
             // Правило 1 выбирается первый приоритетный день для преподавателя
@@ -421,6 +433,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             // Правило 3 если нагрузка общая больше чем недельная то занятия переносятся на нижнюю неделю
             // Правило 4 если это все не понравится в ДГТУ то расписание составляется в ручную
 
+            #endregion
             await Loader.Clear();
         }
 
@@ -511,6 +524,9 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             }
             return true;
         }
+        /// <summary>
+        /// Метод формирует Excel файл из сетки расписания
+        /// </summary>
         private void OnCreateSchedule()
         {
 

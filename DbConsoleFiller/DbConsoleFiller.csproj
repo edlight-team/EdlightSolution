@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="audiences.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="PersonGenerator" Version="1.0.0" />
     <PackageReference Include="Prism.Core" Version="8.0.0.1909" />
@@ -16,6 +20,12 @@
   <ItemGroup>
     <ProjectReference Include="..\ApplicationModels\ApplicationModels.csproj" />
     <ProjectReference Include="..\ApplicationServices\ApplicationServices.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="audiences.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

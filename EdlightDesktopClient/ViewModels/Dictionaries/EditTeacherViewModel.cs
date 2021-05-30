@@ -124,14 +124,14 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
                     UserModel postedUser = await api.PostModel(Model, WebApiTableNames.Users);
                     await api.PostModel(new UsersRolesModel() { IdRole = teach_role.Id, IdUser = postedUser.ID }, WebApiTableNames.UsersRoles);
 
-                    aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(Model);
+                    aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(postedUser);
                     Growl.Info("Запись успешно создана", "Global");
                     OnCloseModal();
                 }
                 else
                 {
-                    await api.PutModel(Model, WebApiTableNames.Users);
-                    aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(Model);
+                    UserModel putted = await api.PutModel(Model, WebApiTableNames.Users);
+                    aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(putted);
                     Growl.Info("Запись успешно сохранена", "Global");
                     OnCloseModal();
                 }

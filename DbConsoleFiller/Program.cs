@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -90,20 +91,28 @@ namespace DbConsoleFiller
             watch.Start();
             await api.DeleteAll(WebApiTableNames.Audiences);
 
-            AudiencesModel model = new();
-            model.NumberAudience = "Аудитория 208";
-            await api.PostModel(model, WebApiTableNames.Audiences);
-            model.NumberAudience = "Аудитория 306";
-            await api.PostModel(model, WebApiTableNames.Audiences);
-            model.NumberAudience = "Аудитория 214";
-            await api.PostModel(model, WebApiTableNames.Audiences);
-            model.NumberAudience = "Аудитория 410";
-            await api.PostModel(model, WebApiTableNames.Audiences);
-            model.NumberAudience = "Аудитория 415";
-            await api.PostModel(model, WebApiTableNames.Audiences);
+            string aud_path = Environment.CurrentDirectory + "\\audiences.txt";
+            string buffer = System.IO.File.ReadAllText(aud_path);
+            string[] audiences_text = buffer.Split(Environment.NewLine.ToCharArray());
+            List<string> audiences_to_DB = new();
+            foreach (var item in audiences_text)
+            {
+                if (!string.IsNullOrEmpty(item))
+                {
+                    audiences_to_DB.Add(item);
+                }
+            }
+            audiences_to_DB = audiences_to_DB.Distinct().OrderBy(a => a).ToList();
+
+            foreach (var item in audiences_to_DB)
+            {
+                AudiencesModel model = new();
+                model.NumberAudience = item;
+                await api.PostModel(model, WebApiTableNames.Audiences);
+            }
 
             int count = (await api.GetModels<AudiencesModel>(WebApiTableNames.Audiences)).Count;
-            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            Console.Write("type " + nameof(AudiencesModel) + " in db count = " + count);
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }

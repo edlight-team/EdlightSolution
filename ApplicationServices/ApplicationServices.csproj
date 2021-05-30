@@ -190,6 +190,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignalClientSerivce\ISignalClientService.cs" />
     <Compile Include="SignalClientSerivce\SignalClientImplementation.cs" />
+    <Compile Include="TranslationService\ITranslationService.cs" />
+    <Compile Include="TranslationService\TranslationImplementation.cs" />
     <Compile Include="WebApiService\IWebApiService.cs" />
     <Compile Include="WebApiService\WebApiServiceImplementation.cs" />
     <Compile Include="WebApiService\WebApiTableNames.cs" />

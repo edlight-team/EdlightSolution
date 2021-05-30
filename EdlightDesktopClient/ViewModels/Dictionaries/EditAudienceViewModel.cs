@@ -86,8 +86,8 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
                 Loader.SetDefaultLoadingInfo();
                 if (SaveButtonText == "Создать запись")
                 {
-                    await api.PostModel(Model, WebApiTableNames.Audiences);
-                    aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(Model);
+                    AudiencesModel posted = await api.PostModel(Model, WebApiTableNames.Audiences);
+                    aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(posted);
                     Growl.Info("Запись успешно создана", "Global");
                     OnCloseModal();
                 }

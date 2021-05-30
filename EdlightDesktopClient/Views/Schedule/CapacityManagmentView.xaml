@@ -15,6 +15,7 @@
              mc:Ignorable="d">
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+        <converters:BooleanRevert x:Key="RevertBoolean" />
     </UserControl.Resources>
     <Grid>
         <!--#region blur-->
@@ -80,72 +81,298 @@
                 <!--#endregion-->
 
                 <ScrollViewer Grid.Row="2" Grid.Column="1">
-                    <Expander Height="400"
-                              Margin="10"
-                              VerticalAlignment="Top"
-                              Header="Импорт преподавателей"
-                              IsExpanded="True">
-                        <ScrollViewer VerticalScrollBarVisibility="Visible">
-                            <StackPanel Orientation="Vertical">
-                                <ItemsControl VerticalAlignment="Top" ItemsSource="{Binding Teacher_FIO, UpdateSourceTrigger=PropertyChanged}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <hc:Card Height="35"
-                                                     Margin="10,3,10,3"
-                                                     Background="{DynamicResource InnerElementBackgroundBrush}">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="200" />
-                                                        <ColumnDefinition Width="100" />
-                                                        <ColumnDefinition Width="50" />
-                                                        <ColumnDefinition />
-                                                        <ColumnDefinition Width="100" />
-                                                        <ColumnDefinition Width="50" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Margin="5"
-                                                               HorizontalAlignment="Left"
-                                                               Style="{DynamicResource ElementTextBlock}"
-                                                               Text="{Binding TeacherInitials}" />
-                                                    <TextBlock Grid.Column="1"
-                                                               HorizontalAlignment="Left"
-                                                               Style="{DynamicResource ElementTextBlock}"
-                                                               Text="В базе данных : " />
-                                                    <CheckBox Grid.Column="2"
-                                                              IsChecked="{Binding IsLookUpOnDB}"
-                                                              IsEnabled="False"
-                                                              Opacity="1" />
-                                                    <Button Grid.Column="3"
-                                                            Width="150"
-                                                            Height="30"
-                                                            HorizontalAlignment="Center"
-                                                            VerticalAlignment="Center"
-                                                            Command="{Binding ConfirmCommand, UpdateSourceTrigger=PropertyChanged}"
-                                                            CommandParameter="{Binding}"
-                                                            Style="{DynamicResource SimpleButtonWithBorder}">
-                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Подтверждение" />
-                                                    </Button>
-                                                    <TextBlock Grid.Column="4"
-                                                               HorizontalAlignment="Left"
-                                                               Style="{DynamicResource ElementTextBlock}"
-                                                               Text="Подтвержден : " />
-                                                    <CheckBox Grid.Column="5"
-                                                              IsChecked="{Binding IsConfirmedOrSkipped}"
-                                                              IsEnabled="False"
-                                                              Opacity="1" />
-                                                </Grid>
-                                            </hc:Card>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                                <Button Width="250"
-                                        Height="35"
-                                        Margin="5"
-                                        Style="{DynamicResource SimpleButtonWithBorder}">
-                                    <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Выполнить импорт" />
-                                </Button>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Expander>
+                    <StackPanel Orientation="Vertical">
+                        <Expander Margin="10"
+                                  VerticalAlignment="Top"
+                                  IsExpanded="True">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center" Text="Импорт преподавателей" />
+                                    <Button Width="200"
+                                            Margin="20,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding AcceptAllEqualsTeachersCommand}"
+                                            Style="{DynamicResource SimpleButton}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Принять все совпадения" />
+                                            <CheckBox Margin="5"
+                                                      IsChecked="{Binding IsAllTeachersConfirmed, UpdateSourceTrigger=PropertyChanged}"
+                                                      IsEnabled="False"
+                                                      Opacity="1" />
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Expander.Header>
+                            <ScrollViewer Height="400" VerticalScrollBarVisibility="Visible">
+                                <StackPanel Orientation="Vertical">
+                                    <ItemsControl VerticalAlignment="Top" ItemsSource="{Binding ImportedTeachers, UpdateSourceTrigger=PropertyChanged}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <hc:Card Height="80"
+                                                         Margin="10,3,10,3"
+                                                         Background="{DynamicResource InactiveBackgroundTabHeaderBtush}">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition />
+                                                            <RowDefinition />
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition Width="100" />
+                                                            <ColumnDefinition Width="50" />
+                                                            <ColumnDefinition Width="100" />
+                                                            <ColumnDefinition Width="50" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Margin="10"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="{Binding TeacherInitials}" />
+                                                        <TextBlock Grid.Column="1"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="В базе данных : " />
+                                                        <CheckBox Grid.Column="2"
+                                                                  IsChecked="{Binding IsLookUpOnDB, UpdateSourceTrigger=PropertyChanged}"
+                                                                  IsEnabled="False"
+                                                                  Opacity="1" />
+                                                        <TextBlock Grid.Column="3"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="Подтвержден : " />
+                                                        <CheckBox Grid.Column="5"
+                                                                  IsChecked="{Binding IsConfirmedOrSkipped, UpdateSourceTrigger=PropertyChanged}"
+                                                                  IsEnabled="False"
+                                                                  Opacity="1" />
+
+                                                        <Button Grid.Row="1"
+                                                                Grid.Column="0"
+                                                                Width="150"
+                                                                Height="30"
+                                                                Margin="10,0,10,0"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Center"
+                                                                Command="{Binding StartConfirming, UpdateSourceTrigger=PropertyChanged}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                                                Visibility="{Binding IsConfirmEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                                                            <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Подтверждение" />
+                                                        </Button>
+
+                                                        <Grid Grid.Row="1"
+                                                              Grid.Column="0"
+                                                              Grid.ColumnSpan="5"
+                                                              Visibility="{Binding IsConfirmEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+
+                                                            <StackPanel Grid.Row="1"
+                                                                        Grid.Column="0"
+                                                                        Grid.ColumnSpan="5"
+                                                                        Orientation="Horizontal"
+                                                                        Visibility="{Binding IsLookUpOnDB, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                                                                <TextBlock Margin="10"
+                                                                           VerticalAlignment="Center"
+                                                                           Style="{DynamicResource ElementTextBlock}"
+                                                                           Text="Совпадение в базе :" />
+                                                                <TextBlock Margin="10"
+                                                                           VerticalAlignment="Center"
+                                                                           Style="{DynamicResource ElementTextBlock}"
+                                                                           Text="{Binding LookUpUser.FullName}" />
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding ConfirmCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Подтвердить" />
+                                                                </Button>
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding CreateTeacherCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Создать другого" />
+                                                                </Button>
+                                                            </StackPanel>
+
+                                                            <StackPanel Grid.Row="1"
+                                                                        Grid.Column="0"
+                                                                        Grid.ColumnSpan="5"
+                                                                        Orientation="Horizontal"
+                                                                        Visibility="{Binding IsLookUpOnDB, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding CreateTeacherCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Создать пользователя" />
+                                                                </Button>
+                                                            </StackPanel>
+
+                                                        </Grid>
+                                                    </Grid>
+                                                </hc:Card>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Expander>
+                        <Expander Margin="10"
+                                  VerticalAlignment="Top"
+                                  IsExpanded="True">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center" Text="Импорт дисциплин" />
+                                    <Button Width="200"
+                                            Margin="20,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding AcceptAllEqualsDisciplinesCommand}"
+                                            Style="{DynamicResource SimpleButton}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Принять все совпадения" />
+                                            <CheckBox Margin="5"
+                                                      IsChecked="{Binding IsAllDisciplinesConfirmed, UpdateSourceTrigger=PropertyChanged}"
+                                                      IsEnabled="False"
+                                                      Opacity="1" />
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Expander.Header>
+                            <ScrollViewer Height="400" VerticalScrollBarVisibility="Visible">
+                                <StackPanel Orientation="Vertical">
+                                    <ItemsControl VerticalAlignment="Top" ItemsSource="{Binding ImportedDisciplines, UpdateSourceTrigger=PropertyChanged}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <hc:Card Height="80"
+                                                         Margin="10,3,10,3"
+                                                         Background="{DynamicResource InactiveBackgroundTabHeaderBtush}">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition />
+                                                            <RowDefinition />
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition Width="100" />
+                                                            <ColumnDefinition Width="50" />
+                                                            <ColumnDefinition Width="100" />
+                                                            <ColumnDefinition Width="50" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Margin="10"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="{Binding DisciplineTitle}" />
+                                                        <TextBlock Grid.Column="1"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="В базе данных : " />
+                                                        <CheckBox Grid.Column="2"
+                                                                  IsChecked="{Binding IsLookUpOnDB, UpdateSourceTrigger=PropertyChanged}"
+                                                                  IsEnabled="False"
+                                                                  Opacity="1" />
+                                                        <TextBlock Grid.Column="3"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="Подтвержден : " />
+                                                        <CheckBox Grid.Column="5"
+                                                                  IsChecked="{Binding IsConfirmedOrSkipped, UpdateSourceTrigger=PropertyChanged}"
+                                                                  IsEnabled="False"
+                                                                  Opacity="1" />
+
+                                                        <Button Grid.Row="1"
+                                                                Grid.Column="0"
+                                                                Width="150"
+                                                                Height="30"
+                                                                Margin="10,0,10,0"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Center"
+                                                                Command="{Binding StartConfirming, UpdateSourceTrigger=PropertyChanged}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                                                Visibility="{Binding IsConfirmEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                                                            <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Подтверждение" />
+                                                        </Button>
+
+                                                        <Grid Grid.Row="1"
+                                                              Grid.Column="0"
+                                                              Grid.ColumnSpan="5"
+                                                              Visibility="{Binding IsConfirmEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+
+                                                            <StackPanel Grid.Row="1"
+                                                                        Grid.Column="0"
+                                                                        Grid.ColumnSpan="5"
+                                                                        Orientation="Horizontal"
+                                                                        Visibility="{Binding IsLookUpOnDB, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                                                                <TextBlock Margin="10"
+                                                                           VerticalAlignment="Center"
+                                                                           Style="{DynamicResource ElementTextBlock}"
+                                                                           Text="Совпадение в базе :" />
+                                                                <TextBlock Margin="10"
+                                                                           VerticalAlignment="Center"
+                                                                           Style="{DynamicResource ElementTextBlock}"
+                                                                           Text="{Binding LookUpDiscipline.Title}" />
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding ConfirmCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Подтвердить" />
+                                                                </Button>
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding CreateDisciplineCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Создать новый" />
+                                                                </Button>
+                                                            </StackPanel>
+
+                                                            <StackPanel Grid.Row="1"
+                                                                        Grid.Column="0"
+                                                                        Grid.ColumnSpan="5"
+                                                                        Orientation="Horizontal"
+                                                                        Visibility="{Binding IsLookUpOnDB, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding CreateDisciplineCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Создать новый" />
+                                                                </Button>
+                                                            </StackPanel>
+
+                                                        </Grid>
+                                                    </Grid>
+                                                </hc:Card>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Expander>
+                        <Button Width="180"
+                                Height="35"
+                                Command="{Binding GenerateScheduleCommand}"
+                                Style="{DynamicResource SimpleButtonWithBorder}">
+                            <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Генерация расписания" />
+                        </Button>
+                    </StackPanel>
                 </ScrollViewer>
             </Grid>
         </Border>

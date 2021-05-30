@@ -41,7 +41,7 @@
                 <Expander Margin="10"
                           BorderBrush="{DynamicResource InnerElementBorderBrush}"
                           BorderThickness="2"
-                          IsExpanded="True">
+                          IsExpanded="False">
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -109,7 +109,7 @@
                 <Expander Margin="10"
                           BorderBrush="{DynamicResource InnerElementBorderBrush}"
                           BorderThickness="2"
-                          IsExpanded="True">
+                          IsExpanded="False">
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -176,73 +176,78 @@
                 </Expander>
             </StackPanel>
         </ScrollViewer>
-        <Expander Grid.Column="2"
-                  Margin="10"
-                  BorderBrush="{DynamicResource InnerElementBorderBrush}"
-                  BorderThickness="2"
-                  IsExpanded="True">
-            <Expander.Header>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="30" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Button Height="18"
-                            Margin="5"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Top"
-                            Command="{Binding AddAudienceCommand}"
-                            Style="{DynamicResource SimpleButton}">
-                        <Border Background="Transparent">
-                            <ContentControl Template="{DynamicResource Add}" />
-                        </Border>
-                    </Button>
-                    <TextBlock Grid.Column="1"
-                               Style="{DynamicResource SimpleTextBlock}"
-                               Text="Аудитории" />
-                </Grid>
-            </Expander.Header>
-            <Grid>
-                <ItemsControl ItemsSource="{Binding Audiences, UpdateSourceTrigger=PropertyChanged}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <hc:Card Height="35"
-                                     Margin="5"
-                                     BorderBrush="{DynamicResource InnerElementBorderBrush}"
-                                     BorderThickness="2">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="25" />
-                                        <ColumnDefinition Width="25" />
-                                        <ColumnDefinition Width="10" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Margin="5"
-                                               Style="{DynamicResource SimpleTextBlock}"
-                                               Text="{Binding NumberAudience, UpdateSourceTrigger=PropertyChanged}" />
-                                    <Button Grid.Column="1"
-                                            Command="{Binding EditCommand}"
-                                            CommandParameter="{Binding}"
-                                            Style="{DynamicResource SimpleButton}">
-                                        <ContentControl Grid.Column="1"
-                                                        Height="18"
-                                                        Template="{DynamicResource Edit}" />
-                                    </Button>
-                                    <Button Grid.Column="2"
-                                            Command="{Binding DeleteCommand}"
-                                            CommandParameter="{Binding}"
-                                            Style="{DynamicResource SimpleButton}">
-                                        <ContentControl Grid.Column="2"
-                                                        Height="18"
-                                                        Template="{DynamicResource Delete}" />
-                                    </Button>
-                                </Grid>
-                            </hc:Card>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Grid>
-        </Expander>
+        <ScrollViewer Grid.Column="2">
+            <StackPanel Orientation="Vertical">
+                <Expander Margin="10"
+                          BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                          BorderThickness="2"
+                          IsExpanded="False">
+                    <Expander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button Height="18"
+                                    Margin="5"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top"
+                                    Command="{Binding AddAudienceCommand}"
+                                    Style="{DynamicResource SimpleButton}">
+                                <Border Background="Transparent">
+                                    <ContentControl Template="{DynamicResource Add}" />
+                                </Border>
+                            </Button>
+                            <TextBlock Grid.Column="1"
+                                       Style="{DynamicResource SimpleTextBlock}"
+                                       Text="Аудитории" />
+                        </Grid>
+                    </Expander.Header>
+                    <ScrollViewer Height="300"
+                                  VerticalAlignment="Top"
+                                  VerticalScrollBarVisibility="Visible">
+                        <ItemsControl ItemsSource="{Binding Audiences, UpdateSourceTrigger=PropertyChanged}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <hc:Card Height="35"
+                                             Margin="5"
+                                             BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                             BorderThickness="2">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="25" />
+                                                <ColumnDefinition Width="25" />
+                                                <ColumnDefinition Width="10" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Margin="5"
+                                                       Style="{DynamicResource SimpleTextBlock}"
+                                                       Text="{Binding NumberAudience, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Button Grid.Column="1"
+                                                    Command="{Binding EditCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{DynamicResource SimpleButton}">
+                                                <ContentControl Grid.Column="1"
+                                                                Height="18"
+                                                                Template="{DynamicResource Edit}" />
+                                            </Button>
+                                            <Button Grid.Column="2"
+                                                    Command="{Binding DeleteCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{DynamicResource SimpleButton}">
+                                                <ContentControl Grid.Column="2"
+                                                                Height="18"
+                                                                Template="{DynamicResource Delete}" />
+                                            </Button>
+                                        </Grid>
+                                    </hc:Card>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
 
         <!--#endregion-->
     </Grid>

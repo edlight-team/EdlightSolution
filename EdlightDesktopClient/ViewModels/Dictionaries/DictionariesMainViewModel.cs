@@ -128,12 +128,21 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
             }
         }
 
-        private void OnAddDiscipline() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(EditDisciplinesView));
+        private void OnAddDiscipline() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(EditDisciplinesView),
+                new NavigationParameters()
+                {
+                    { nameof(Audiences), Audiences }
+                });
         private void OnEditDiscipline(object disciplineModel)
         {
             if (disciplineModel is AcademicDisciplinesModel model)
             {
-                manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(EditDisciplinesView), new NavigationParameters() { { "Model", model } });
+                manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(EditDisciplinesView),
+                    new NavigationParameters()
+                    {
+                        { nameof(Audiences), Audiences },
+                        { "Model", model }
+                    });
             }
         }
         private async void OnDeleteDiscipline(object disciplineModel)

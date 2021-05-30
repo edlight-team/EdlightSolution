@@ -3,23 +3,28 @@ using Prism.Mvvm;
 
 namespace ApplicationModels.Models.CapacityExtendedModels
 {
-    public class ImportedTeacher : BindableBase
+    public class ImportedDiscipline : BindableBase
     {
-        private string _teacherInitials;
+        private string _disciplineTitle;
+        private string _inputTitle;
         private bool _isConfirmedOrSkipped;
         private bool _isConfirmEnabled;
 
         private bool _isLookUpOnDB;
-        private UserModel _lookUpUser;
+        private AcademicDisciplinesModel _lookUpDiscipline;
 
         private DelegateCommand<object> _startConfirming;
         private DelegateCommand<object> _confirmCommand;
-        private DelegateCommand<object> _createTeacherCommand;
+        private DelegateCommand<object> _createDisciplineCommand;
 
         /// <summary>
-        /// Инициалы пользователя
+        /// Название дисциплины
         /// </summary>
-        public string TeacherInitials { get => _teacherInitials; set => SetProperty(ref _teacherInitials, value); }
+        public string DisciplineTitle { get => _disciplineTitle; set => SetProperty(ref _disciplineTitle, value); }
+        /// <summary>
+        /// Вводимое название
+        /// </summary>
+        public string InputTitle { get => _inputTitle; set => SetProperty(ref _inputTitle, value); }
         /// <summary>
         /// Подтвержден или пропущен
         /// </summary>
@@ -36,7 +41,7 @@ namespace ApplicationModels.Models.CapacityExtendedModels
         /// <summary>
         /// Найдено в бд
         /// </summary>
-        public UserModel LookUpUser { get => _lookUpUser; set => SetProperty(ref _lookUpUser, value); }
+        public AcademicDisciplinesModel LookUpDiscipline { get => _lookUpDiscipline; set => SetProperty(ref _lookUpDiscipline, value); }
 
         /// <summary>
         /// Команда для входа в подтверждение
@@ -49,6 +54,6 @@ namespace ApplicationModels.Models.CapacityExtendedModels
         /// <summary>
         /// Команда для создания пользователя
         /// </summary>
-        public DelegateCommand<object> CreateTeacherCommand { get => _createTeacherCommand; set => SetProperty(ref _createTeacherCommand, value); }
+        public DelegateCommand<object> CreateDisciplineCommand { get => _createDisciplineCommand; set => SetProperty(ref _createDisciplineCommand, value); }
     }
 }

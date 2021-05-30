@@ -8,6 +8,8 @@ using Prism.Mvvm;
 using Prism.Regions;
 using Styles.Models;
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace EdlightDesktopClient.ViewModels.Dictionaries
 {
@@ -26,6 +28,8 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         private LoaderModel _loader;
         private AcademicDisciplinesModel _model;
         private string _saveButtonText;
+        private ObservableCollection<AudiencesModel> _audiences;
+        private AudiencesModel _selectedAudience;
 
         #endregion
         #region props
@@ -33,6 +37,8 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         public LoaderModel Loader { get => _loader; set => SetProperty(ref _loader, value); }
         public AcademicDisciplinesModel Model { get => _model ??= new(); set => SetProperty(ref _model, value); }
         public string SaveButtonText { get => _saveButtonText; set => SetProperty(ref _saveButtonText, value); }
+        public ObservableCollection<AudiencesModel> Audiences { get => _audiences; set => SetProperty(ref _audiences, value); }
+        public AudiencesModel SelectedAudience { get => _selectedAudience; set => SetProperty(ref _selectedAudience, value); }
 
         #endregion
         #region errors
@@ -84,16 +90,18 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
             try
             {
                 Loader.SetDefaultLoadingInfo();
+                Model.IdPriorityAudience = SelectedAudience == null ? Guid.Empty : SelectedAudience.Id;
+
                 if (SaveButtonText == "Создать запись")
                 {
-                    await api.PostModel(Model, WebApiTableNames.AcademicDisciplines);
-                    aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(Model);
+                    AcademicDisciplinesModel posted = await api.PostModel(Model, WebApiTableNames.AcademicDisciplines);
+                    aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(posted);
                     Growl.Info("Запись успешно создана", "Global");
                     OnCloseModal();
                 }
                 else
                 {
-                    await api.PutModel(Model, WebApiTableNames.AcademicDisciplines);
+                    AcademicDisciplinesModel putted = await api.PutModel(Model, WebApiTableNames.AcademicDisciplines);
                     Growl.Info("Запись успешно сохранена", "Global");
                     OnCloseModal();
                 }
@@ -114,9 +122,19 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
+            if (navigationContext.Parameters.ContainsKey(nameof(Audiences)) && navigationContext.Parameters[nameof(Audiences)] is ObservableCollection<AudiencesModel> navAudiences)
+            {
+                Audiences = navAudiences;
+            }
+            SelectedAudience = null;
             if (navigationContext.Parameters.ContainsKey(nameof(Model)) && navigationContext.Parameters[nameof(Model)] is AcademicDisciplinesModel navModel)
             {
                 Model = navModel;
+                var navSelectedAudience = Audiences.FirstOrDefault(a=>a.Id == Model.IdPriorityAudience);
+                if (navSelectedAudience != null)
+                {
+                    SelectedAudience = navSelectedAudience;
+                }
             }
         }
         public void OnNavigatedFrom(NavigationContext navigationContext) { }

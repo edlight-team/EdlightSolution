@@ -163,11 +163,13 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 List<string> disciplines_disctinct = new();
                 foreach (var item in disciplines_group.ToList())
                 {
-                    if (!disciplines_disctinct.Any(dd => dd.StartsWith(item.Key.Trim())) && !item.Key.Trim().Contains("п/г"))
-                    {
-                        disciplines_disctinct.Add(item.Key);
-                    }
+                    if (string.IsNullOrEmpty(item.Key)) continue;
+                    string discipline_name = item.Key.Trim();
+                    int pg_index = discipline_name.IndexOf(", п/г ");
+                    if (pg_index != -1) discipline_name = discipline_name.Remove(pg_index);
+                    disciplines_disctinct.Add(discipline_name);
                 }
+                disciplines_disctinct = disciplines_disctinct.Distinct().ToList();
                 foreach (var item in disciplines_disctinct)
                 {
                     //Проверяем есть ли в преподавтелях найденные из нагрузки
@@ -312,6 +314,44 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             debug.Clear();
             //Проходим по сетке и создаем временные занятия без учета времени
             List<LessonsModel> temp_lessons = new();
+            foreach (var capacity in Capacities)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(capacity.TeacherFio)) continue;
+                    string teacher_initials = capacity.TeacherFio.Remove(0, 1);
+                    UserModel target_teacher = Teachers.FirstOrDefault(t => t.Initials == teacher_initials);
+
+                    string group_name = capacity.Group;
+                    GroupsModel target_group = Groups.FirstOrDefault(g => g.Group == group_name);
+
+                    string type_class_short = capacity.ClassType;
+                    TypeClassesModel target_type_class = ClassTypes.FirstOrDefault(t => t.ShortTitle == type_class_short);
+
+                    string discipline_name = capacity.DisciplineOrWorkType.Trim();
+                    int pg_index = discipline_name.IndexOf(", п/г ");
+                    if (pg_index != -1) discipline_name = discipline_name.Remove(pg_index);
+                    AcademicDisciplinesModel target_discipline = Disciplines.FirstOrDefault(a => a.Title.Contains(discipline_name));
+
+                    AudiencesModel priority_audience = Audiences.FirstOrDefault(a => a.Id == target_discipline.IdPriorityAudience);
+
+                    LessonsModel lm = new();
+                    lm.AcademicDiscipline = target_discipline;
+                    if (priority_audience != null) lm.Audience = priority_audience;
+
+                    lm.Group = target_group;
+                    lm.Teacher = target_teacher;
+                    lm.TypeClass = target_type_class;
+                    temp_lessons.Add(lm);
+
+                    debug.Log("Группа " + target_group?.Group + ", Тип " + target_type_class?.Title + ", Название " + target_discipline?.Title);
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+
             foreach (var period in Periods)
             {
                 foreach (var cell in period.Cells)
@@ -321,20 +361,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                         if (!capacity.DateFrom.HasValue || !capacity.DateTo.HasValue) continue;
                         if (IsInRange(cell.CellDate, capacity.DateFrom.Value, capacity.DateTo.Value))
                         {
-                            if (string.IsNullOrEmpty(capacity.TeacherFio)) continue;
-                            string teacher_initials = capacity.TeacherFio.Remove(0, 1);
-                            UserModel target_teacher = Teachers.FirstOrDefault(t => t.Initials == teacher_initials);
 
-                            string group_name = capacity.Group;
-                            GroupsModel target_group = Groups.FirstOrDefault(g => g.Group == group_name);
-
-                            string type_class_short = capacity.ClassType;
-                            TypeClassesModel target_type_class = ClassTypes.FirstOrDefault(t => t.ShortTitle == type_class_short);
-
-                            string discipline_name = capacity.DisciplineOrWorkType;
-                            AcademicDisciplinesModel target_discipline = Disciplines.FirstOrDefault(a => a.Title.Contains(discipline_name));
-
-                            debug.Log("Группа " + target_group?.Group + ", Тип " + target_type_class?.Title + ", Название " + target_discipline?.Title);
                         }
                     }
                 }

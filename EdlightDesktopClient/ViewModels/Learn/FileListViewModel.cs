@@ -26,6 +26,7 @@ using System.Windows.Forms;
 
 namespace EdlightDesktopClient.ViewModels.Learn
 {
+    [RegionMemberLifetime(KeepAlive = true)]
     public class FileListViewModel : BindableBase
     {
         #region services
@@ -75,6 +76,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
         #region constructor
         public FileListViewModel(IRegionManager manager, IMemoryService memory, IWebApiService api, INotificationService notification, IPermissionService permission, IEventAggregator aggregator)
         {
+            Loader = new();
             this.manager = manager;
             this.memory = memory;
             this.api = api;
@@ -99,10 +101,10 @@ namespace EdlightDesktopClient.ViewModels.Learn
         {
             try
             {
-                Loader = new();
+                Loader.SetDefaultLoadingInfo();
 
                 currentUser = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
-                await permission.ConfigureService(api, currentUser);
+                //await permission.ConfigureService(api, currentUser);
                 RolesModel student_role = await permission.GetRoleByName("student");
                 RolesModel teacher_role = await permission.GetRoleByName("teacher");
 
@@ -125,12 +127,12 @@ namespace EdlightDesktopClient.ViewModels.Learn
             }
             catch (Exception ex)
             {
-                notification.ShowError("Во время загрузки произошла ошибка: " + ex.Message);
+                //notification.ShowError("Во время загрузки произошла ошибка: " + ex.Message);
                 throw;
             }
             finally
             {
-                Loader = new();
+                await Loader.Clear();
             }
         }
         #endregion

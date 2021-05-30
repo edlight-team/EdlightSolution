@@ -1,9 +1,5 @@
-﻿using ApplicationModels.Config;
-using ApplicationServices.PermissionService;
-using Newtonsoft.Json;
+﻿using ApplicationServices.PermissionService;
 using Prism.Mvvm;
-using System;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -49,18 +45,9 @@ namespace EdlightDesktopClient.AccessConfigurations
         public Visibility CanDeleteMaterial { get => _canDeleteMaterial; set => SetProperty(ref _canDeleteMaterial, value); }
 
         #endregion
-        #region Цвета в расписании
-
-        private TypeClassColors _typeClassColors;
-
-        public TypeClassColors TypeClassColors { get => _typeClassColors ??= new(); set => SetProperty(ref _typeClassColors, value); }
-
-        #endregion
     }
     public static class ShceduleConfigExtension
     {
-        private static readonly string TypeClassColorsPath = Environment.CurrentDirectory + "\\ScheduleTypeClassColorsConfig.json";
-
         /// <summary>
         /// Установить видимость объектов конфига
         /// </summary>
@@ -84,19 +71,6 @@ namespace EdlightDesktopClient.AccessConfigurations
             config.CanGetMaterial = await permissionService.IsInPermission(PermissionNames.GetFile) ? Visibility.Visible : Visibility.Collapsed;
             config.CanCreateMaterial = await permissionService.IsInPermission(PermissionNames.PushFile) ? Visibility.Visible : Visibility.Collapsed;
             config.CanDeleteMaterial = await permissionService.IsInPermission(PermissionNames.DeleteFile) ? Visibility.Visible : Visibility.Collapsed;
-        }
-        public static async Task ReadColors(this ScheduleConfig config)
-        {
-            using StreamReader reader = new(TypeClassColorsPath);
-            string buffer = await reader.ReadToEndAsync();
-            TypeClassColors colors = JsonConvert.DeserializeObject<TypeClassColors>(buffer);
-            config.TypeClassColors = colors;
-        }
-        public static async Task WriteColors(this ScheduleConfig config)
-        {
-            string json = JsonConvert.SerializeObject(config.TypeClassColors, Formatting.Indented);
-            using StreamWriter writer = new(TypeClassColorsPath);
-            await writer.WriteAsync(json);
         }
     }
 }

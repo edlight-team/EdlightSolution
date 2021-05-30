@@ -10,7 +10,9 @@ using Prism.Mvvm;
 using Prism.Regions;
 using Styles.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace EdlightDesktopClient.ViewModels.Dictionaries
 {
@@ -27,6 +29,7 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
 
         private LoaderModel _loader;
 
+        private ObservableCollection<UserModel> _teachers;
         private ObservableCollection<AcademicDisciplinesModel> _disciplines;
         private ObservableCollection<AudiencesModel> _audiences;
 
@@ -35,6 +38,7 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
 
         public LoaderModel Loader { get => _loader; set => SetProperty(ref _loader, value); }
 
+        public ObservableCollection<UserModel> Teachers { get => _teachers ??= new(); set => SetProperty(ref _teachers, value); }
         public ObservableCollection<AcademicDisciplinesModel> Disciplines { get => _disciplines; set => SetProperty(ref _disciplines, value); }
         public ObservableCollection<AudiencesModel> Audiences { get => _audiences; set => SetProperty(ref _audiences, value); }
 
@@ -44,6 +48,7 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         public DelegateCommand LoadedCommand { get; private set; }
         public DelegateCommand AddDisciplineCommand { get; private set; }
         public DelegateCommand AddAudienceCommand { get; private set; }
+        public DelegateCommand AddTeacherCommand { get; private set; }
 
         #endregion
         #region ctor and loading
@@ -59,13 +64,14 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
             LoadedCommand = new DelegateCommand(OnLoaded);
             AddDisciplineCommand = new DelegateCommand(OnAddDiscipline);
             AddAudienceCommand = new DelegateCommand(OnAddAudience);
+            AddTeacherCommand = new DelegateCommand(OnAddTeacher);
         }
         private async void OnLoaded()
         {
             Loader.SetDefaultLoadingInfo();
             Disciplines = new ObservableCollection<AcademicDisciplinesModel>(await api.GetModels<AcademicDisciplinesModel>(WebApiTableNames.AcademicDisciplines));
             Audiences = new ObservableCollection<AudiencesModel>(await api.GetModels<AudiencesModel>(WebApiTableNames.Audiences));
-            await Loader.Clear();
+
             foreach (AcademicDisciplinesModel discipline in Disciplines)
             {
                 discipline.EditCommand = new DelegateCommand<object>(OnEditDiscipline);
@@ -76,6 +82,20 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
                 audience.EditCommand = new DelegateCommand<object>(OnEditAudience);
                 audience.DeleteCommand = new DelegateCommand<object>(OnDeleteAudience);
             }
+
+            Teachers.Clear();
+            RolesModel teach_role = (await api.GetModels<RolesModel>(WebApiTableNames.Roles, "RoleName = 'teacher'")).FirstOrDefault();
+            List<UsersRolesModel> usersRoles = await api.GetModels<UsersRolesModel>(WebApiTableNames.UsersRoles, $"IdRole = '{teach_role.Id}'");
+            List<UserModel> users = await api.GetModels<UserModel>(WebApiTableNames.Users);
+            foreach (var item in usersRoles)
+            {
+                var user = users.FirstOrDefault(u => u.ID == item.IdUser);
+                user.EditCommand = new DelegateCommand<object>(OnEditTeacher);
+                user.DeleteCommand = new DelegateCommand<object>(OnDeleteTeacher);
+                Teachers.Add(user);
+            }
+
+            await Loader.Clear();
         }
 
         #endregion
@@ -95,14 +115,34 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
                 audience.DeleteCommand = new DelegateCommand<object>(OnDeleteAudience);
                 Audiences.Add(audience);
             }
+            else if (record is UserModel teacher)
+            {
+                UserModel current = Teachers.FirstOrDefault(t => t.ID == teacher.ID);
+                if (current != null)
+                {
+                    Teachers.Remove(current);
+                }
+                teacher.EditCommand = new DelegateCommand<object>(OnEditTeacher);
+                teacher.DeleteCommand = new DelegateCommand<object>(OnDeleteTeacher);
+                Teachers.Add(teacher);
+            }
         }
 
-        private void OnAddDiscipline() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(EditDisciplinesView));
+        private void OnAddDiscipline() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(EditDisciplinesView),
+                new NavigationParameters()
+                {
+                    { nameof(Audiences), Audiences }
+                });
         private void OnEditDiscipline(object disciplineModel)
         {
             if (disciplineModel is AcademicDisciplinesModel model)
             {
-                manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(EditDisciplinesView), new NavigationParameters() { { "Model", model } });
+                manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(EditDisciplinesView),
+                    new NavigationParameters()
+                    {
+                        { nameof(Audiences), Audiences },
+                        { "Model", model }
+                    });
             }
         }
         private async void OnDeleteDiscipline(object disciplineModel)
@@ -116,7 +156,7 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
                 {
                     await api.DeleteModel(model.Id, WebApiTableNames.AcademicDisciplines);
                     Disciplines.Remove(model);
-                    Growl.Info("Дисциплина успешно Удалена", "Global");
+                    Growl.Info("Дисциплина успешно удалена", "Global");
                 }
             }
             catch (Exception)
@@ -148,7 +188,41 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
                 {
                     await api.DeleteModel(model.Id, WebApiTableNames.Audiences);
                     Audiences.Remove(model);
-                    Growl.Info("Аудитория успешно Удалена", "Global");
+                    Growl.Info("Аудитория успешно удалена", "Global");
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                await Loader.Clear();
+            }
+        }
+
+        private void OnAddTeacher() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(EditTeacherView));
+        private void OnEditTeacher(object userModel)
+        {
+            if (userModel is UserModel model)
+            {
+                manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(EditTeacherView), new NavigationParameters() { { "Model", model } });
+            }
+        }
+        private async void OnDeleteTeacher(object userModel)
+        {
+            bool confirm = notification.ShowQuestion("Восстановить пользователя невозможно, продолжить действие?");
+            if (!confirm) return;
+            try
+            {
+                Loader.SetDefaultLoadingInfo();
+                if (userModel is UserModel model)
+                {
+                    await api.DeleteModel(model.ID, WebApiTableNames.Users);
+                    UsersRolesModel userRole = (await api.GetModels<UsersRolesModel>(WebApiTableNames.UsersRoles, $"IdUser = '{model.ID}'")).FirstOrDefault();
+                    await api.DeleteModel(userRole.Id, WebApiTableNames.UsersRoles);
+                    Teachers.Remove(model);
+                    Growl.Info("Пользователь успешно удален", "Global");
                 }
             }
             catch (Exception)

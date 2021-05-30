@@ -72,7 +72,15 @@
                         Margin="20,0,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        Template="{DynamicResource Logo}" />
+                        Template="{DynamicResource Logo}">
+            <ContentControl.ToolTip>
+                <ToolTip HorizontalOffset="15"
+                         Placement="Right"
+                         VerticalOffset="25">
+                    <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="{Binding CurrentUser.FullName}" />
+                </ToolTip>
+            </ContentControl.ToolTip>
+        </ContentControl>
         <TextBlock Grid.Row="1"
                    Grid.Column="1"
                    HorizontalAlignment="Center"

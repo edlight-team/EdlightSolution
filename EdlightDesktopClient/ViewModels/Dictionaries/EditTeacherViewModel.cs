@@ -1,5 +1,6 @@
 ﻿using ApplicationEventsWPF.Events;
 using ApplicationModels.Models;
+using ApplicationServices.HashingService;
 using ApplicationServices.WebApiService;
 using HandyControl.Controls;
 using Prism.Commands;
@@ -8,31 +9,35 @@ using Prism.Mvvm;
 using Prism.Regions;
 using Styles.Models;
 using System;
+using System.Linq;
 
 namespace EdlightDesktopClient.ViewModels.Dictionaries
 {
     [RegionMemberLifetime(KeepAlive = false)]
-    public class EditAudienceViewModel : BindableBase, INavigationAware
+    public class EditTeacherViewModel : BindableBase, INavigationAware
     {
         #region services
 
         private readonly IRegionManager manager;
         private readonly IWebApiService api;
         private readonly IEventAggregator aggregator;
+        private readonly IHashingService hashing;
 
         #endregion
         #region fields
 
         private LoaderModel _loader;
-        private AudiencesModel _model;
+        private UserModel _model;
         private string _saveButtonText;
+        private int[] _prioritetes;
 
         #endregion
         #region props
 
         public LoaderModel Loader { get => _loader; set => SetProperty(ref _loader, value); }
-        public AudiencesModel Model { get => _model ??= new(); set => SetProperty(ref _model, value); }
+        public UserModel Model { get => _model ??= new(); set => SetProperty(ref _model, value); }
         public string SaveButtonText { get => _saveButtonText; set => SetProperty(ref _saveButtonText, value); }
+        public int[] Prioritetes { get => _prioritetes; set => SetProperty(ref _prioritetes, value); }
 
         #endregion
         #region errors
@@ -53,18 +58,36 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         #endregion
         #region ctor
 
-        public EditAudienceViewModel(IRegionManager manager, IWebApiService api, IEventAggregator aggregator)
+        public EditTeacherViewModel(IRegionManager manager, IWebApiService api, IEventAggregator aggregator, IHashingService hashing)
         {
             Loader = new();
             this.manager = manager;
             this.api = api;
             this.aggregator = aggregator;
+            this.hashing = hashing;
 
             LoadedCommand = new DelegateCommand(OnLoaded);
-            ConfirmCommand = new DelegateCommand(OnConfirm, CanConfirm).ObservesProperty(() => Model.NumberAudience);
+            ConfirmCommand = new DelegateCommand(OnConfirm, CanConfirm)
+                .ObservesProperty(() => Model.Login)
+                .ObservesProperty(() => Model.Password)
+                .ObservesProperty(() => Model.Name)
+                .ObservesProperty(() => Model.Surname)
+                .ObservesProperty(() => Model.Patrnymic);
             CloseModalCommand = new DelegateCommand(OnCloseModal);
         }
-        private void OnLoaded() => SaveButtonText = string.IsNullOrEmpty(Model.NumberAudience) ? "Создать запись" : "Сохранить запись";
+        private void OnLoaded()
+        {
+            SaveButtonText = string.IsNullOrEmpty(Model.Name) ? "Создать запись" : "Сохранить запись";
+            if (SaveButtonText == "Создать запись")
+            {
+                Prioritetes = new int[6] { 0, 0, 0, 0, 0, 0 };
+            }
+            else
+            {
+                Prioritetes = Model.DaysPriority.ToArray();
+            }
+            CanConfirm();
+        }
 
         #endregion
         #region methods
@@ -72,9 +95,15 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         private bool CanConfirm()
         {
             HasErrors = false;
-            if (string.IsNullOrEmpty(Model.NumberAudience))
+            Errors = string.Empty;
+            if (string.IsNullOrEmpty(Model.Name) || string.IsNullOrEmpty(Model.Surname) || string.IsNullOrEmpty(Model.Patrnymic))
             {
-                Errors += "Название аудитории является обязательным";
+                Errors += "ФИО преподавателя является обязательным";
+                HasErrors = true;
+            }
+            if (SaveButtonText == "Создать запись" && (string.IsNullOrEmpty(Model.Login) || string.IsNullOrEmpty(Model.Password)))
+            {
+                Errors += Environment.NewLine + "Пара логин/пароль обязательны к заполнению";
                 HasErrors = true;
             }
             return !HasErrors;
@@ -84,16 +113,25 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
             try
             {
                 Loader.SetDefaultLoadingInfo();
+
+                Model.DaysPriority = new System.Collections.Generic.List<int>(Prioritetes);
+
                 if (SaveButtonText == "Создать запись")
                 {
-                    AudiencesModel posted = await api.PostModel(Model, WebApiTableNames.Audiences);
-                    aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(posted);
+                    Model.Password = hashing.EncodeString(Model.Password);
+
+                    RolesModel teach_role = (await api.GetModels<RolesModel>(WebApiTableNames.Roles, "RoleName = 'teacher'")).FirstOrDefault();
+                    UserModel postedUser = await api.PostModel(Model, WebApiTableNames.Users);
+                    await api.PostModel(new UsersRolesModel() { IdRole = teach_role.Id, IdUser = postedUser.ID }, WebApiTableNames.UsersRoles);
+
+                    aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(postedUser);
                     Growl.Info("Запись успешно создана", "Global");
                     OnCloseModal();
                 }
                 else
                 {
-                    await api.PutModel(Model, WebApiTableNames.Audiences);
+                    UserModel putted = await api.PutModel(Model, WebApiTableNames.Users);
+                    aggregator.GetEvent<DictionaryModelChangedEvent>().Publish(putted);
                     Growl.Info("Запись успешно сохранена", "Global");
                     OnCloseModal();
                 }
@@ -114,7 +152,7 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            if (navigationContext.Parameters.ContainsKey(nameof(Model)) && navigationContext.Parameters[nameof(Model)] is AudiencesModel navModel)
+            if (navigationContext.Parameters.ContainsKey(nameof(Model)) && navigationContext.Parameters[nameof(Model)] is UserModel navModel)
             {
                 Model = navModel;
             }

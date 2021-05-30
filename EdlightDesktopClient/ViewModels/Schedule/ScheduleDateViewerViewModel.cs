@@ -1,6 +1,5 @@
 ﻿using ApplicationEventsWPF.Events.ScheduleEvents;
 using ApplicationEventsWPF.Events.Signal;
-using ApplicationModels.Config;
 using ApplicationModels.Models;
 using ApplicationServices.SignalClientSerivce;
 using ApplicationServices.WebApiService;
@@ -174,7 +173,6 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private void CreateCards()
         {
             aggregator.GetEvent<GridChildChangedEvent>().Publish(null);
-            TypeClassColors t_colors = memory.GetItem<TypeClassColors>(nameof(TypeClassColors));
             foreach (LessonsModel model in Models)
             {
                 Card card = new();
@@ -182,14 +180,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 card.Width = 550;
                 card.Height = CalculateHeightByStartTimeAndEndTime(model.TimeLessons.StartTime, model.TimeLessons.EndTime);
                 card.VerticalAlignment = VerticalAlignment.Top;
-                card.Background = model.TypeClass.Title switch
-                {
-                    "Лекция" => new SolidColorBrush(t_colors.LectionColor),
-                    "Лабораторная работа" => new SolidColorBrush(t_colors.LaboratoryColor),
-                    "Практика" => new SolidColorBrush(t_colors.PracticeColor),
-                    "Экзамен" => new SolidColorBrush(t_colors.ExaminationColor),
-                    _ => new SolidColorBrush(t_colors.DefaultColor),
-                };
+                card.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(model.TypeClass.ColorHex));
                 card.Margin = CalculateTopMarginByStartTime(model.TimeLessons.StartTime);
 
                 IEnumerable<CommentModel> cardComments = Comments.Where(c => c.IdLesson.ToString().ToUpper() == card.Uid.ToString().ToUpper());
@@ -207,20 +198,12 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             ObservableCollection<TimeLessonsModel> time_lessons = new ObservableCollection<TimeLessonsModel>(await api.GetModels<TimeLessonsModel>(WebApiTableNames.TimeLessons));
             lm.TimeLessons = time_lessons.FirstOrDefault(t=>t.Id == lm.IdTimeLessons);
 
-            TypeClassColors t_colors = memory.GetItem<TypeClassColors>(nameof(TypeClassColors));
             Card card = new();
             card.Uid = lm.Id.ToString().ToUpper();
             card.Width = 550;
             card.Height = CalculateHeightByStartTimeAndEndTime(lm.TimeLessons.StartTime, lm.TimeLessons.EndTime);
             card.VerticalAlignment = VerticalAlignment.Top;
-            card.Background = lm.TypeClass.Title switch
-            {
-                "Лекция" => new SolidColorBrush(t_colors.LectionColor),
-                "Лабораторная работа" => new SolidColorBrush(t_colors.LaboratoryColor),
-                "Практика" => new SolidColorBrush(t_colors.PracticeColor),
-                "Экзамен" => new SolidColorBrush(t_colors.ExaminationColor),
-                _ => new SolidColorBrush(t_colors.DefaultColor),
-            };
+            card.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lm.TypeClass.ColorHex));
             card.Margin = CalculateTopMarginByStartTime(lm.TimeLessons.StartTime);
 
             IEnumerable<CommentModel> cardComments = Comments.Where(c => c.IdLesson.ToString().ToUpper() == card.Uid.ToString().ToUpper());

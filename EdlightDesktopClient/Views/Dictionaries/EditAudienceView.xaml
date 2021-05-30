@@ -59,7 +59,7 @@
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            Style="{DynamicResource SimpleTextBlock}"
-                           Text="Создание/Редактирование дисциплины" />
+                           Text="Создание/Редактирование аудитории" />
 
                 <!--#endregion-->
                 <!--#region close-->

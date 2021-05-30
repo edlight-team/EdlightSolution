@@ -1,0 +1,599 @@
+﻿<UserControl x:Class="EdlightDesktopClient.Views.Schedule.CapacityManagmentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:behaviors="clr-namespace:Styles.Behaviors;assembly=Styles"
+             xmlns:controls="clr-namespace:Styles.Controls;assembly=Styles"
+             xmlns:converters="clr-namespace:Styles.Converters;assembly=Styles"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://www.codeplex.com/prism"
+             xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels.Schedule"
+             behaviors:LoadedBehavior.Command="{Binding LoadedCommand}"
+             d:DataContext="{d:DesignInstance vm:CapacityManagmentViewModel}"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+        <converters:BooleanRevert x:Key="RevertBoolean" />
+        <converters:IntegerToVisibility x:Key="IntVisibility" />
+    </UserControl.Resources>
+    <Grid>
+        <!--#region blur-->
+
+        <Border Background="Black"
+                Opacity="0.35"
+                Style="{DynamicResource RoundedBackgroundBorder}" />
+
+        <!--#endregion-->
+        <!--#region modal border-->
+
+        <Border Width="800"
+                Height="800"
+                Style="{DynamicResource RoundedBackgroundBorder}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="15" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="15" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition />
+                    <RowDefinition Height="15" />
+                </Grid.RowDefinitions>
+
+                <!--#region Лоадер-->
+
+                <controls:LoaderBox Grid.Row="0"
+                                    Grid.RowSpan="4"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="3"
+                                    Panel.ZIndex="{Binding Loader.PanelIndex, UpdateSourceTrigger=PropertyChanged}"
+                                    IsActive="{Binding Loader.IsActive, UpdateSourceTrigger=PropertyChanged}"
+                                    Message="{Binding Loader.Message, UpdateSourceTrigger=PropertyChanged}" />
+
+                <!--#endregion-->
+                <!--#region header-->
+
+                <TextBlock Grid.Row="1"
+                           Grid.Column="1"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Style="{DynamicResource SimpleTextBlock}"
+                           Text="Управление нагрузкой" />
+
+                <!--#endregion-->
+                <!--#region close-->
+
+                <Button Grid.Row="1"
+                        Grid.Column="1"
+                        Width="20"
+                        Margin="0,0,5,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Command="{Binding CloseModalCommand}"
+                        Foreground="{DynamicResource PrimaryFontBrush}"
+                        Style="{DynamicResource SimpleButton}">
+                    <ContentControl Template="{DynamicResource Close}" />
+                </Button>
+
+                <!--#endregion-->
+
+                <ScrollViewer Grid.Row="2" Grid.Column="1">
+                    <StackPanel Margin="0,0,20,0" Orientation="Vertical">
+                        <!--#region Импорт преподавателей-->
+
+                        <Expander Margin="10"
+                                  VerticalAlignment="Top"
+                                  IsExpanded="{Binding IsAllTeachersConfirmed, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RevertBoolean}}">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center" Text="Импорт преподавателей" />
+                                    <Button Width="200"
+                                            Margin="20,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding AcceptAllEqualsTeachersCommand}"
+                                            Style="{DynamicResource SimpleButton}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Принять все совпадения" />
+                                            <CheckBox Margin="5"
+                                                      IsChecked="{Binding IsAllTeachersConfirmed, UpdateSourceTrigger=PropertyChanged}"
+                                                      IsEnabled="False"
+                                                      Opacity="1" />
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Expander.Header>
+                            <ScrollViewer Height="400" VerticalScrollBarVisibility="Visible">
+                                <StackPanel Orientation="Vertical">
+                                    <ItemsControl VerticalAlignment="Top" ItemsSource="{Binding ImportedTeachers, UpdateSourceTrigger=PropertyChanged}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <hc:Card Height="80"
+                                                         Margin="10,3,10,3"
+                                                         Background="{DynamicResource InactiveBackgroundTabHeaderBtush}">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition />
+                                                            <RowDefinition />
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition Width="100" />
+                                                            <ColumnDefinition Width="50" />
+                                                            <ColumnDefinition Width="100" />
+                                                            <ColumnDefinition Width="50" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Margin="10"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="{Binding TeacherInitials}" />
+                                                        <TextBlock Grid.Column="1"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="В базе данных : " />
+                                                        <CheckBox Grid.Column="2"
+                                                                  IsChecked="{Binding IsLookUpOnDB, UpdateSourceTrigger=PropertyChanged}"
+                                                                  IsEnabled="False"
+                                                                  Opacity="1" />
+                                                        <TextBlock Grid.Column="3"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="Подтвержден : " />
+                                                        <CheckBox Grid.Column="5"
+                                                                  IsChecked="{Binding IsConfirmedOrSkipped, UpdateSourceTrigger=PropertyChanged}"
+                                                                  IsEnabled="False"
+                                                                  Opacity="1" />
+
+                                                        <Button Grid.Row="1"
+                                                                Grid.Column="0"
+                                                                Width="150"
+                                                                Height="30"
+                                                                Margin="10,0,10,0"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Center"
+                                                                Command="{Binding StartConfirming, UpdateSourceTrigger=PropertyChanged}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                                                Visibility="{Binding IsConfirmEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                                                            <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Подтверждение" />
+                                                        </Button>
+
+                                                        <Grid Grid.Row="1"
+                                                              Grid.Column="0"
+                                                              Grid.ColumnSpan="5"
+                                                              Visibility="{Binding IsConfirmEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+
+                                                            <StackPanel Grid.Row="1"
+                                                                        Grid.Column="0"
+                                                                        Grid.ColumnSpan="5"
+                                                                        Orientation="Horizontal"
+                                                                        Visibility="{Binding IsLookUpOnDB, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                                                                <TextBlock Margin="10"
+                                                                           VerticalAlignment="Center"
+                                                                           Style="{DynamicResource ElementTextBlock}"
+                                                                           Text="Совпадение в базе :" />
+                                                                <TextBlock Margin="10"
+                                                                           VerticalAlignment="Center"
+                                                                           Style="{DynamicResource ElementTextBlock}"
+                                                                           Text="{Binding LookUpUser.FullName}" />
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding ConfirmCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Подтвердить" />
+                                                                </Button>
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding CreateTeacherCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Создать другого" />
+                                                                </Button>
+                                                            </StackPanel>
+
+                                                            <StackPanel Grid.Row="1"
+                                                                        Grid.Column="0"
+                                                                        Grid.ColumnSpan="5"
+                                                                        Orientation="Horizontal"
+                                                                        Visibility="{Binding IsLookUpOnDB, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding CreateTeacherCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Создать пользователя" />
+                                                                </Button>
+                                                            </StackPanel>
+
+                                                        </Grid>
+                                                    </Grid>
+                                                </hc:Card>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Expander>
+
+                        <!--#endregion-->
+                        <!--#region Импорт дисциплин-->
+
+                        <Expander Margin="10"
+                                  VerticalAlignment="Top"
+                                  IsExpanded="{Binding IsAllDisciplinesConfirmed, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RevertBoolean}}">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center" Text="Импорт дисциплин" />
+                                    <Button Width="200"
+                                            Margin="20,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding AcceptAllEqualsDisciplinesCommand}"
+                                            Style="{DynamicResource SimpleButton}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Принять все совпадения" />
+                                            <CheckBox Margin="5"
+                                                      IsChecked="{Binding IsAllDisciplinesConfirmed, UpdateSourceTrigger=PropertyChanged}"
+                                                      IsEnabled="False"
+                                                      Opacity="1" />
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Expander.Header>
+                            <ScrollViewer Height="400" VerticalScrollBarVisibility="Visible">
+                                <StackPanel Orientation="Vertical">
+                                    <ItemsControl VerticalAlignment="Top" ItemsSource="{Binding ImportedDisciplines, UpdateSourceTrigger=PropertyChanged}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <hc:Card Height="80"
+                                                         Margin="10,3,10,3"
+                                                         Background="{DynamicResource InactiveBackgroundTabHeaderBtush}">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition />
+                                                            <RowDefinition />
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition Width="100" />
+                                                            <ColumnDefinition Width="50" />
+                                                            <ColumnDefinition Width="100" />
+                                                            <ColumnDefinition Width="50" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Margin="10"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="{Binding DisciplineTitle}" />
+                                                        <TextBlock Grid.Column="1"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="В базе данных : " />
+                                                        <CheckBox Grid.Column="2"
+                                                                  IsChecked="{Binding IsLookUpOnDB, UpdateSourceTrigger=PropertyChanged}"
+                                                                  IsEnabled="False"
+                                                                  Opacity="1" />
+                                                        <TextBlock Grid.Column="3"
+                                                                   HorizontalAlignment="Left"
+                                                                   Style="{DynamicResource ElementTextBlock}"
+                                                                   Text="Подтвержден : " />
+                                                        <CheckBox Grid.Column="5"
+                                                                  IsChecked="{Binding IsConfirmedOrSkipped, UpdateSourceTrigger=PropertyChanged}"
+                                                                  IsEnabled="False"
+                                                                  Opacity="1" />
+
+                                                        <Button Grid.Row="1"
+                                                                Grid.Column="0"
+                                                                Width="150"
+                                                                Height="30"
+                                                                Margin="10,0,10,0"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Center"
+                                                                Command="{Binding StartConfirming, UpdateSourceTrigger=PropertyChanged}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{DynamicResource SimpleButtonWithBorder}"
+                                                                Visibility="{Binding IsConfirmEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                                                            <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Подтверждение" />
+                                                        </Button>
+
+                                                        <Grid Grid.Row="1"
+                                                              Grid.Column="0"
+                                                              Grid.ColumnSpan="5"
+                                                              Visibility="{Binding IsConfirmEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+
+                                                            <StackPanel Grid.Row="1"
+                                                                        Grid.Column="0"
+                                                                        Grid.ColumnSpan="5"
+                                                                        Orientation="Horizontal"
+                                                                        Visibility="{Binding IsLookUpOnDB, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                                                                <TextBlock Margin="10"
+                                                                           VerticalAlignment="Center"
+                                                                           Style="{DynamicResource ElementTextBlock}"
+                                                                           Text="Совпадение в базе :" />
+                                                                <TextBlock Margin="10"
+                                                                           VerticalAlignment="Center"
+                                                                           Style="{DynamicResource ElementTextBlock}"
+                                                                           Text="{Binding LookUpDiscipline.Title}" />
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding ConfirmCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Подтвердить" />
+                                                                </Button>
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding CreateDisciplineCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Создать новый" />
+                                                                </Button>
+                                                            </StackPanel>
+
+                                                            <StackPanel Grid.Row="1"
+                                                                        Grid.Column="0"
+                                                                        Grid.ColumnSpan="5"
+                                                                        Orientation="Horizontal"
+                                                                        Visibility="{Binding IsLookUpOnDB, Converter={StaticResource BooleanToVisibility}, ConverterParameter=false}">
+                                                                <Button Width="150"
+                                                                        Margin="10,0,10,0"
+                                                                        Command="{Binding CreateDisciplineCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsConfirmedOrSkipped, Converter={StaticResource RevertBoolean}}"
+                                                                        Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                    <TextBlock HorizontalAlignment="Center"
+                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                               Text="Создать новый" />
+                                                                </Button>
+                                                            </StackPanel>
+
+                                                        </Grid>
+                                                    </Grid>
+                                                </hc:Card>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Expander>
+
+                        <!--#endregion-->
+                        <!--#region Генерация предварительного расписания-->
+
+                        <Button Width="180"
+                                Height="35"
+                                Command="{Binding GenerateScheduleCommand}"
+                                Style="{DynamicResource SimpleButtonWithBorder}">
+                            <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Генерация расписания" />
+                        </Button>
+
+                        <!--#endregion-->
+                        <!--#region Предварительное расписание-->
+
+                        <Expander Margin="10"
+                                  VerticalAlignment="Top"
+                                  IsExpanded="True"
+                                  Visibility="{Binding Periods.Count, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntVisibility}, ConverterParameter=0}">
+                            <Expander.Header>
+                                <TextBlock VerticalAlignment="Center" Text="Предварительный просмотр" />
+                            </Expander.Header>
+                            <ScrollViewer Height="550" VerticalScrollBarVisibility="Visible">
+                                <StackPanel Orientation="Vertical">
+                                    <ItemsControl Margin="5" ItemsSource="{Binding Periods}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Expander Margin="5" IsExpanded="False">
+                                                    <Expander.Header>
+                                                        <!--#region Заголовок периода-->
+                                                        <StackPanel Grid.Row="1"
+                                                                    Grid.Column="1"
+                                                                    VerticalAlignment="Top"
+                                                                    Orientation="Horizontal">
+                                                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Период : " />
+                                                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="от " />
+                                                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="{Binding DateFrom, StringFormat=dd.MM.yyyy}" />
+                                                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text=" до " />
+                                                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="{Binding DateTo, StringFormat=dd.MM.yyyy}" />
+                                                        </StackPanel>
+                                                        <!--#endregion-->
+                                                    </Expander.Header>
+                                                    <ScrollViewer Height="300" VerticalScrollBarVisibility="Visible">
+                                                        <!--#region Коллекция для каждого дня-->
+                                                        <ItemsControl ItemsSource="{Binding Cells}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Border Margin="10"
+                                                                            Background="{DynamicResource InactiveBackgroundTabHeaderBtush}"
+                                                                            BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                                                                            BorderThickness="2">
+                                                                        <Grid Height="270" Margin="5">
+                                                                            <StackPanel Grid.Row="1"
+                                                                                        Grid.Column="1"
+                                                                                        VerticalAlignment="Top"
+                                                                                        Orientation="Vertical">
+                                                                                <!--#region Дата-->
+
+                                                                                <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
+                                                                                    <TextBlock Margin="0"
+                                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                                               Text="Дата: " />
+                                                                                    <TextBlock Margin="10,0,0,0"
+                                                                                               Style="{DynamicResource ElementTextBlock}"
+                                                                                               Text="{Binding CellDate, StringFormat=dd.MM.yyyy}" />
+                                                                                </StackPanel>
+
+                                                                                <Border Width="150"
+                                                                                        Height="1"
+                                                                                        Margin="0,2,0,2"
+                                                                                        HorizontalAlignment="Left"
+                                                                                        Background="{DynamicResource BackgroundBrush}" />
+
+                                                                                <!--#endregion-->
+                                                                                <!--#region Верхняя неделя-->
+
+                                                                                <TextBlock Margin="0"
+                                                                                           HorizontalAlignment="Left"
+                                                                                           Style="{DynamicResource ElementTextBlock}"
+                                                                                           Text="Верхняя неделя:" />
+                                                                                <Grid Height="100">
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition />
+                                                                                        <ColumnDefinition />
+                                                                                    </Grid.ColumnDefinitions>
+                                                                                    <Grid.RowDefinitions>
+                                                                                        <RowDefinition />
+                                                                                        <RowDefinition />
+                                                                                        <RowDefinition />
+                                                                                    </Grid.RowDefinitions>
+                                                                                    <StackPanel Grid.Row="0"
+                                                                                                Grid.Column="0"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="1 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding UpPair1.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                    <StackPanel Grid.Row="1"
+                                                                                                Grid.Column="0"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="2 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding UpPair2.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                    <StackPanel Grid.Row="2"
+                                                                                                Grid.Column="0"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="3 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding UpPair3.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                    <StackPanel Grid.Row="0"
+                                                                                                Grid.Column="1"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="4 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding UpPair4.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                    <StackPanel Grid.Row="1"
+                                                                                                Grid.Column="1"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="5 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding UpPair5.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                    <StackPanel Grid.Row="2"
+                                                                                                Grid.Column="1"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="6 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding UpPair6.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                </Grid>
+
+                                                                                <Border Width="150"
+                                                                                        Height="1"
+                                                                                        Margin="0,2,0,2"
+                                                                                        HorizontalAlignment="Left"
+                                                                                        Background="{DynamicResource BackgroundBrush}" />
+
+                                                                                <!--#endregion-->
+                                                                                <!--#region Нижняя неделя-->
+
+                                                                                <TextBlock Margin="0"
+                                                                                           HorizontalAlignment="Left"
+                                                                                           Style="{DynamicResource ElementTextBlock}"
+                                                                                           Text="Нижняя неделя:" />
+                                                                                <Grid Height="100">
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition />
+                                                                                        <ColumnDefinition />
+                                                                                    </Grid.ColumnDefinitions>
+                                                                                    <Grid.RowDefinitions>
+                                                                                        <RowDefinition />
+                                                                                        <RowDefinition />
+                                                                                        <RowDefinition />
+                                                                                    </Grid.RowDefinitions>
+                                                                                    <StackPanel Grid.Row="0"
+                                                                                                Grid.Column="0"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="1 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding DownPair1.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                    <StackPanel Grid.Row="1"
+                                                                                                Grid.Column="0"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="2 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding DownPair2.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                    <StackPanel Grid.Row="2"
+                                                                                                Grid.Column="0"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="3 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding DownPair3.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                    <StackPanel Grid.Row="0"
+                                                                                                Grid.Column="1"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="4 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding DownPair4.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                    <StackPanel Grid.Row="1"
+                                                                                                Grid.Column="1"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="5 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding DownPair5.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                    <StackPanel Grid.Row="2"
+                                                                                                Grid.Column="1"
+                                                                                                Orientation="Horizontal">
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="6 пара: " />
+                                                                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="{Binding DownPair6.AcademicDiscipline.Title}" />
+                                                                                    </StackPanel>
+                                                                                </Grid>
+
+                                                                                <!--#endregion-->
+                                                                            </StackPanel>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                        <!--#endregion-->
+                                                    </ScrollViewer>
+                                                </Expander>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!--#region Создание файла для импорта-->
+
+                                    <Button Width="180"
+                                            Height="35"
+                                            Command="{Binding CreateScheduleCommand}"
+                                            Style="{DynamicResource SimpleButtonWithBorder}">
+                                        <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Создать расписание" />
+                                    </Button>
+
+                                    <!--#endregion-->
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Expander>
+
+                        <!--#endregion-->
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+        <!--#endregion-->
+    </Grid>
+</UserControl>

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -90,20 +91,28 @@ namespace DbConsoleFiller
             watch.Start();
             await api.DeleteAll(WebApiTableNames.Audiences);
 
-            AudiencesModel model = new();
-            model.NumberAudience = "Аудитория 208";
-            await api.PostModel(model, WebApiTableNames.Audiences);
-            model.NumberAudience = "Аудитория 306";
-            await api.PostModel(model, WebApiTableNames.Audiences);
-            model.NumberAudience = "Аудитория 214";
-            await api.PostModel(model, WebApiTableNames.Audiences);
-            model.NumberAudience = "Аудитория 410";
-            await api.PostModel(model, WebApiTableNames.Audiences);
-            model.NumberAudience = "Аудитория 415";
-            await api.PostModel(model, WebApiTableNames.Audiences);
+            string aud_path = Environment.CurrentDirectory + "\\audiences.txt";
+            string buffer = System.IO.File.ReadAllText(aud_path);
+            string[] audiences_text = buffer.Split(Environment.NewLine.ToCharArray());
+            List<string> audiences_to_DB = new();
+            foreach (var item in audiences_text)
+            {
+                if (!string.IsNullOrEmpty(item))
+                {
+                    audiences_to_DB.Add(item);
+                }
+            }
+            audiences_to_DB = audiences_to_DB.Distinct().OrderBy(a => a).ToList();
+
+            foreach (var item in audiences_to_DB)
+            {
+                AudiencesModel model = new();
+                model.NumberAudience = item;
+                await api.PostModel(model, WebApiTableNames.Audiences);
+            }
 
             int count = (await api.GetModels<AudiencesModel>(WebApiTableNames.Audiences)).Count;
-            Console.Write("type " + model.GetType().Name + " in db count = " + count);
+            Console.Write("type " + nameof(AudiencesModel) + " in db count = " + count);
             watch.Stop();
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
@@ -116,12 +125,38 @@ namespace DbConsoleFiller
 
             TypeClassesModel model = new();
             model.Title = "Лекция";
+            model.ShortTitle = "Лек";
+            model.ColorHex = "#9966CC";
             await api.PostModel(model, WebApiTableNames.TypeClasses);
-            model.Title = "Лабораторная работа";
-            await api.PostModel(model, WebApiTableNames.TypeClasses);
+
             model.Title = "Практика";
+            model.ShortTitle = "Прак";
+            model.ColorHex = "#44944A";
             await api.PostModel(model, WebApiTableNames.TypeClasses);
-            model.Title = "Экзамен";
+
+            model.Title = "Практическая работа";
+            model.ShortTitle = "Пр";
+            model.ColorHex = "#C1876B";
+            await api.PostModel(model, WebApiTableNames.TypeClasses);
+
+            model.Title = "Лабораторная работа";
+            model.ShortTitle = "Лаб";
+            model.ColorHex = "#FFDEAD";
+            await api.PostModel(model, WebApiTableNames.TypeClasses);
+
+            model.Title = "Курсовая работа";
+            model.ShortTitle = "КР";
+            model.ColorHex = "#FFCF40";
+            await api.PostModel(model, WebApiTableNames.TypeClasses);
+
+            model.Title = "Государственная Аттестационная Комиссия";
+            model.ShortTitle = "ГАК";
+            model.ColorHex = "#755D9A";
+            await api.PostModel(model, WebApiTableNames.TypeClasses);
+
+            model.Title = "Выпускная Квалификационная Работа";
+            model.ShortTitle = "ВКР";
+            model.ColorHex = "#E32636";
             await api.PostModel(model, WebApiTableNames.TypeClasses);
 
             int count = (await api.GetModels<TypeClassesModel>(WebApiTableNames.TypeClasses)).Count;
@@ -412,9 +447,19 @@ namespace DbConsoleFiller
             umoadmin = await api.PostModel(model, WebApiTableNames.Users);
 
             otherusers = new();
-            List<UserModel> users = GenerateRandomUsers(50);
+            List<UserModel> users = GenerateRandomUsers(300);
             foreach (UserModel item in users)
-                otherusers.Add(await api.PostModel(item, WebApiTableNames.Users));
+            {
+                try
+                {
+                    otherusers.Add(await api.PostModel(item, WebApiTableNames.Users));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    continue;
+                }
+            }
             int count = (await api.GetModels<UserModel>(WebApiTableNames.Users)).Count;
             Console.Write("type " + model.GetType().Name + " in db count = " + count);
             watch.Stop();
@@ -442,7 +487,8 @@ namespace DbConsoleFiller
             foreach (UserModel item in otherusers)
                 otherUserRoles.Add(await api.PostModel(new UsersRolesModel()
                 {
-                    IdRole = item.Age >= 22 ? teacherRole.Id : studentRole.Id,
+                    //IdRole = item.Age >= 22 ? teacherRole.Id : studentRole.Id,
+                    IdRole = studentRole.Id,
                     IdUser = item.ID
                 }, WebApiTableNames.UsersRoles));
 
@@ -458,13 +504,26 @@ namespace DbConsoleFiller
             watch.Start();
             await api.DeleteAll(WebApiTableNames.Groups);
 
-            int groupNumder = 1;
+            string gr_path = Environment.CurrentDirectory + "\\groups.txt";
+            string buffer = System.IO.File.ReadAllText(gr_path);
+            string[] groups_text = buffer.Split(Environment.NewLine.ToCharArray());
+            List<string> groups_to_DB = new();
+            foreach (var item in groups_text)
+            {
+                if (!string.IsNullOrEmpty(item))
+                {
+                    groups_to_DB.Add(item);
+                }
+            }
+            groups_to_DB = groups_to_DB.Distinct().OrderBy(a => a).ToList();
 
             groups = new();
-            while (groupNumder <= 5)
+            foreach (var item in groups_to_DB)
             {
-                groups.Add(await api.PostModel(new GroupsModel() { Group = $"Группа {groupNumder++}" }, WebApiTableNames.Groups));
-            };
+                GroupsModel model = new();
+                model.Group = item;
+                groups.Add(await api.PostModel(model, WebApiTableNames.Groups));
+            }
 
             int count = (await api.GetModels<GroupsModel>(WebApiTableNames.Groups)).Count;
             Console.Write("type " + nameof(GroupsModel) + " in db count = " + count);
@@ -635,16 +694,17 @@ namespace DbConsoleFiller
 
             foreach (PersonGenerator.Person item in generated)
             {
-                users.Add(new UserModel()
+                UserModel user = new()
                 {
                     Name = item.FirstName,
                     Surname = item.MiddleName,
                     Patrnymic = item.LastName,
                     Age = item.Age,
                     Sex = item.FirstName.Length > 6 ? 2 : 1,
-                    Login = new Regex(@"@+\w*").Replace(item.FirstName, ""),
-                    Password = hashing.EncodeString(new Regex(@"@+\w*").Replace(item.FirstName, ""))
-                });
+                };
+                user.Login = new Regex(@"@+\w*").Replace(item.FirstName, "").ToLower() + $"{user.Surname[0]}{user.Patrnymic[0]}";
+                user.Password = hashing.EncodeString(user.Login);
+                users.Add(user);
             }
             return users;
         }

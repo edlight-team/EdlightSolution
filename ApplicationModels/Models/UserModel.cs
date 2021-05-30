@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace ApplicationModels.Models
@@ -17,6 +19,7 @@ namespace ApplicationModels.Models
         private string patronymic;
         private int sex;
         private int age;
+        private List<int> daysPriority;
 
         #endregion
         #region props
@@ -44,6 +47,9 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(Age))]
         public int Age { get => age; set => SetProperty(ref age, value); }
+
+        [JsonProperty(nameof(DaysPriority))]
+        public List<int> DaysPriority { get => daysPriority; set => SetProperty(ref daysPriority, value); }
 
         #endregion
         #region errors
@@ -84,6 +90,17 @@ namespace ApplicationModels.Models
 
         [JsonIgnore]
         public string Initials { get => $"{Surname} {Name[0]}.{Patrnymic[0]}."; }
+
+        #endregion
+        #region commands
+
+        private DelegateCommand<object> editCommand;
+        private DelegateCommand<object> deleteCommand;
+
+        [JsonIgnore]
+        public DelegateCommand<object> EditCommand { get => editCommand; set => SetProperty(ref editCommand, value); }
+        [JsonIgnore]
+        public DelegateCommand<object> DeleteCommand { get => deleteCommand; set => SetProperty(ref deleteCommand, value); }
 
         #endregion
     }

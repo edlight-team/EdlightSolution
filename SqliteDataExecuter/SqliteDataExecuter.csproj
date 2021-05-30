@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="EdlightTestDB.db" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="EdlightTestDB.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="5.0.5" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ServerModels\ServerModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="EdlightDB.db">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

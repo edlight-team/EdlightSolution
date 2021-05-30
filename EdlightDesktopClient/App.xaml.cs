@@ -3,6 +3,7 @@ using ApplicationServices.PermissionService;
 using ApplicationServices.SignalClientSerivce;
 using ApplicationServices.TranslationService;
 using ApplicationServices.WebApiService;
+using ApplicationWPFServices.DebugService;
 using ApplicationWPFServices.MemoryService;
 using ApplicationWPFServices.NotificationService;
 using EdlightDesktopClient.ViewModels;
@@ -112,6 +113,7 @@ namespace EdlightDesktopClient
             containerRegistry.RegisterSingleton<ITranslationService, TranslationImplementation>();
             containerRegistry.RegisterSingleton<IWebApiService, WebApiServiceImplementation>();
             containerRegistry.RegisterSingleton<IPermissionService, PermissionImplementation>();
+            containerRegistry.RegisterSingleton<IDebugService, DebugImplementation>();
         }
     }
 }

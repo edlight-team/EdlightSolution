@@ -12,6 +12,7 @@ using ApplicationServices.WebApiService;
 using Prism.Services.Dialogs;
 using EdlightDesktopClient.Views.Schedule.CapacityWindows;
 using System;
+using ApplicationWPFServices.DebugService;
 
 namespace EdlightDesktopClient.ViewModels.Schedule
 {
@@ -30,6 +31,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private readonly IRegionManager manager;
         private readonly IWebApiService api;
         private readonly IDialogService dialog;
+        private readonly IDebugService debug;
 
         #endregion
         #region fields
@@ -79,12 +81,13 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #endregion
         #region ctor
 
-        public CapacityManagmentViewModel(IRegionManager manager, IWebApiService api, IDialogService dialog)
+        public CapacityManagmentViewModel(IRegionManager manager, IWebApiService api, IDialogService dialog, IDebugService debug)
         {
             Loader = new();
             this.manager = manager;
             this.api = api;
             this.dialog = dialog;
+            this.debug = debug;
 
             LoadedCommand = new DelegateCommand(OnLoaded);
             CloseModalCommand = new DelegateCommand(OnCloseModal);
@@ -306,9 +309,9 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                     Periods.Add(new CapacityPeriodModel() { DateFrom = first.DateFrom.Value, DateTo = first.DateTo.Value, Cells = cells });
             }
 
+            debug.Clear();
             //Проходим по сетке и создаем временные занятия без учета времени
             List<LessonsModel> temp_lessons = new();
-            
             foreach (var period in Periods)
             {
                 foreach (var cell in period.Cells)
@@ -318,14 +321,20 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                         if (!capacity.DateFrom.HasValue || !capacity.DateTo.HasValue) continue;
                         if (IsInRange(cell.CellDate, capacity.DateFrom.Value, capacity.DateTo.Value))
                         {
+                            if (string.IsNullOrEmpty(capacity.TeacherFio)) continue;
                             string teacher_initials = capacity.TeacherFio.Remove(0, 1);
                             UserModel target_teacher = Teachers.FirstOrDefault(t => t.Initials == teacher_initials);
 
                             string group_name = capacity.Group;
                             GroupsModel target_group = Groups.FirstOrDefault(g => g.Group == group_name);
 
-                            
+                            string type_class_short = capacity.ClassType;
+                            TypeClassesModel target_type_class = ClassTypes.FirstOrDefault(t => t.ShortTitle == type_class_short);
 
+                            string discipline_name = capacity.DisciplineOrWorkType;
+                            AcademicDisciplinesModel target_discipline = Disciplines.FirstOrDefault(a => a.Title.Contains(discipline_name));
+
+                            debug.Log("Группа " + target_group?.Group + ", Тип " + target_type_class?.Title + ", Название " + target_discipline?.Title);
                         }
                     }
                 }

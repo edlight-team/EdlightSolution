@@ -1,6 +1,7 @@
 ﻿using ApplicationModels.Models;
 using ApplicationServices.PermissionService;
 using ApplicationServices.WebApiService;
+using ApplicationWPFServices.DebugService;
 using ApplicationWPFServices.MemoryService;
 using EdlightDesktopClient.AccessConfigurations;
 using EdlightDesktopClient.BaseMethods;
@@ -55,8 +56,13 @@ namespace EdlightDesktopClient.ViewModels
         #endregion
         #region ctor
 
-        public MainWindowViewModel(IRegionManager manager, IMemoryService memory, IWebApiService api, IPermissionService permissionService)
+        public MainWindowViewModel(IRegionManager manager, IMemoryService memory, IWebApiService api, IPermissionService permissionService, IDebugService debug)
         {
+#if DEBUG
+            debug.ConfigureDebugWindow();
+            debug.Log(System.DateTime.Now.ToString());
+            debug.Log("Окно дебага настроено");
+#endif
             Loader = new();
             this.manager = manager;
             this.memory = memory;

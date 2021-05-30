@@ -1,4 +1,4 @@
-﻿using ApplicationEventsWPF.Events;
+﻿using ApplicationEventsWPF.Events.LearnEvents;
 using ApplicationModels.Models;
 using ApplicationServices.PermissionService;
 using ApplicationServices.WebApiService;

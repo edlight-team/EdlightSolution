@@ -50,6 +50,7 @@ namespace EdlightDesktopClient
             ViewModelLocationProvider.Register<ProfileMainView, ProfileMainViewModel>();
             ViewModelLocationProvider.Register<SettingsMainView, SettingsMainViewModel>();
             ViewModelLocationProvider.Register<GroupsMainView, GroupsMainViewModel>();
+            ViewModelLocationProvider.Register<AddDeleteGroupView, AddDeleteGroupViewModel>();
             ViewModelLocationProvider.Register<ScheduleMainView, ScheduleMainViewModel>();
             ViewModelLocationProvider.Register<ScheduleDateViewer, ScheduleDateViewerViewModel>();
             ViewModelLocationProvider.Register<AddScheduleView, AddScheduleViewModel>();
@@ -73,6 +74,7 @@ namespace EdlightDesktopClient
             containerRegistry.RegisterForNavigation<ProfileMainView>();
             containerRegistry.RegisterForNavigation<SettingsMainView>();
             containerRegistry.RegisterForNavigation<GroupsMainView>();
+            containerRegistry.RegisterForNavigation<AddDeleteGroupView>();
             containerRegistry.RegisterForNavigation<ScheduleMainView>();
             containerRegistry.RegisterForNavigation<ScheduleDateViewer>();
             containerRegistry.RegisterForNavigation<AddScheduleView>();

@@ -18,7 +18,7 @@
                 CornerRadius="0,15,15,15" />
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="80"/>
+                <RowDefinition Height="100"/>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
@@ -32,22 +32,61 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
-            <ContentControl Grid.Row="0"
-                            Grid.Column="5"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            Margin="0, 30, 30, 0"
-                            Width="25"
-                            behabiors:MouseLeftButtonDown.Command="{Binding RefreshDataCommand}"
-                            Template="{DynamicResource Refresh}">
-                <ContentControl.ToolTip>
-                    <ToolTip HorizontalOffset="5"
+            <Grid Grid.Row="0"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+                <ContentControl Grid.Column="1"
+                                VerticalAlignment="Top"
+                                Margin="0, 30, 15, 0"
+                                Width="25"
+                                behabiors:MouseLeftButtonDown.Command="{Binding AddGroupCommand}"
+                                Template="{DynamicResource Add}">
+                    <ContentControl.ToolTip>
+                        <ToolTip HorizontalOffset="5"
                              Placement="Right"
                              VerticalOffset="15">
-                        <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Обновить" />
-                    </ToolTip>
-                </ContentControl.ToolTip>
-            </ContentControl>
+                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Добавить группу" />
+                        </ToolTip>
+                    </ContentControl.ToolTip>
+                </ContentControl>
+
+                <ContentControl Grid.Column="2"
+                                VerticalAlignment="Top"
+                                Margin="15, 30, 15, 0"
+                                Width="25"
+                                behabiors:MouseLeftButtonDown.Command="{Binding DeleteGroupCommand}"
+                                Template="{DynamicResource Delete}">
+                    <ContentControl.ToolTip>
+                        <ToolTip HorizontalOffset="5"
+                             Placement="Right"
+                             VerticalOffset="15">
+                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Удалить группу" />
+                        </ToolTip>
+                    </ContentControl.ToolTip>
+                </ContentControl>
+
+                <ContentControl Grid.Column="3"
+                                VerticalAlignment="Top"
+                                Margin="15, 30, 30, 0"
+                                Width="25"
+                                behabiors:MouseLeftButtonDown.Command="{Binding RefreshDataCommand}"
+                                Template="{DynamicResource Refresh}">
+                    <ContentControl.ToolTip>
+                        <ToolTip HorizontalOffset="5"
+                             Placement="Right"
+                             VerticalOffset="15">
+                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Обновить" />
+                        </ToolTip>
+                    </ContentControl.ToolTip>
+                </ContentControl>
+            </Grid>
 
             <controls:LoaderBox Grid.Row="0"
                                 Grid.RowSpan="5"

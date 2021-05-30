@@ -1,10 +1,14 @@
-﻿using ApplicationModels.Models;
+﻿using ApplicationEventsWPF.Events.GroupEvent;
+using ApplicationModels.Models;
 using ApplicationServices.PermissionService;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
 using ApplicationWPFServices.NotificationService;
+using EdlightDesktopClient.Views.Groups;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
+using Prism.Regions;
 using Styles.Models;
 using System;
 using System.Collections.Generic;
@@ -23,6 +27,8 @@ namespace EdlightDesktopClient.ViewModels.Groups
         private readonly IWebApiService api;
         private readonly INotificationService notification;
         private readonly IPermissionService permission;
+        private readonly IRegionManager manager;
+        private readonly IEventAggregator aggregator;
         #endregion
         #region fields
         private LoaderModel loader;
@@ -62,32 +68,41 @@ namespace EdlightDesktopClient.ViewModels.Groups
         #region command
         public DelegateCommand LoadedCommand { get; private set; }
         public DelegateCommand<object> SaveGroupsChangedCommand { get; private set; }
+        public DelegateCommand AddGroupCommand { get; private set; }
+        public DelegateCommand DeleteGroupCommand { get; private set; }
         public DelegateCommand RefreshDataCommand { get; private set; }
         #endregion
         #region constructor
-        public GroupsMainViewModel(IMemoryService memory, IWebApiService api, INotificationService notification, IPermissionService permission)
+        public GroupsMainViewModel(IMemoryService memory, IWebApiService api, INotificationService notification, IPermissionService permission, IRegionManager manager, IEventAggregator aggregator)
         {
             Loader = new();
             this.memory = memory;
             this.api = api;
             this.notification = notification;
             this.permission = permission;
+            this.manager = manager;
+            this.aggregator = aggregator;
 
             LoadedCommand = new(OnLoaded);
             SaveGroupsChangedCommand = new(OnSaveGroupsChanged);
+            AddGroupCommand = new(OnAddGroup);
+            DeleteGroupCommand = new(OnDeleteGroup);
             RefreshDataCommand = new(OnRefreshData);
 
             withoutGroup = new() { Group = "Без группы" };
 
             isFirstStart = true;
+
+            aggregator.GetEvent<GroupsUpdatedEvent>().Subscribe(OnRefreshData);
         }
         #endregion
         #region methods
-        private async void OnLoaded()
+        private void OnLoaded()
         {
             if (isFirstStart)
             {
-                OnRefreshData();
+                Task refresh_task = Task.Run(() => OnRefreshData());
+                refresh_task.Wait();
                 isFirstStart = false;
             }
         }
@@ -120,7 +135,7 @@ namespace EdlightDesktopClient.ViewModels.Groups
             }
         }
 
-        private async Task LoadingData(UserModel user = null)
+        private async Task LoadingData()
         {
             InputGroups = new();
             OutputGroups = new();
@@ -212,6 +227,24 @@ namespace EdlightDesktopClient.ViewModels.Groups
             {
                 await Loader.Clear();
             }
+        }
+
+        private void OnAddGroup()
+        {
+            NavigationParameters parameter = new()
+            {
+                { "isadding", true }
+            };
+            manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddDeleteGroupView), parameter);
+        }
+
+        private void OnDeleteGroup()
+        {
+            NavigationParameters parameter = new()
+            {
+                { "isadding", false }
+            };
+            manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddDeleteGroupView), parameter);
         }
         #endregion
     }

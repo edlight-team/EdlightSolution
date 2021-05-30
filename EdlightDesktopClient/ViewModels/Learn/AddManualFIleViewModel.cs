@@ -1,4 +1,4 @@
-﻿using ApplicationEventsWPF.Events;
+﻿using ApplicationEventsWPF.Events.LearnEvents;
 using ApplicationModels;
 using ApplicationModels.Models;
 using ApplicationServices.WebApiService;
@@ -13,9 +13,6 @@ using Styles.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EdlightDesktopClient.ViewModels.Learn
 {

@@ -1,0 +1,51 @@
+﻿<Window x:Class="ApplicationWPFServices.DebugService.DebugWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        AllowsTransparency="True"
+        Background="Transparent"
+        FontFamily="Courier new"
+        FontSize="16"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None">
+    <Grid Width="500" Height="300">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0"
+                Grid.RowSpan="2"
+                Background="Black"
+                Style="{DynamicResource RoundedBackgroundBorder}" />
+        <Border Grid.Row="0"
+                Panel.ZIndex="1"
+                Background="Transparent"
+                MouseDown="Border_MouseDown">
+            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                <ContentControl Width="20"
+                                Margin="25,10,0,0"
+                                VerticalAlignment="Center"
+                                Template="{DynamicResource Logo}" />
+                <TextBlock Margin="10,10,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Foreground="White"
+                           Text="Окно для отладки" />
+            </StackPanel>
+        </Border>
+        <TextBox Name="DebugTb"
+                 Grid.Row="1"
+                 Margin="10"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch"
+                 VerticalContentAlignment="Top"
+                 Background="Gray"
+                 FontSize="14"
+                 Foreground="White"
+                 IsReadOnly="True"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Visible" />
+    </Grid>
+</Window>

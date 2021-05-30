@@ -1,8 +1,9 @@
-using ApplicationModels.Models;
+﻿using ApplicationModels.Models;
 using ApplicationServices.HashingService;
 using ApplicationServices.PermissionService;
 using ApplicationServices.WebApiService;
 using Newtonsoft.Json;
+using RandomFriendlyNameGenerator;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace DbConsoleFiller
+namespace DbFiller
 {
     internal class Program
     {
@@ -447,7 +448,7 @@ namespace DbConsoleFiller
             umoadmin = await api.PostModel(model, WebApiTableNames.Users);
 
             otherusers = new();
-            List<UserModel> users = GenerateRandomUsers(300);
+            List<UserModel> users = GenerateRandomUsers();
             foreach (UserModel item in users)
             {
                 try
@@ -674,38 +675,47 @@ namespace DbConsoleFiller
             Console.WriteLine(" ellapsed time: " + watch.Elapsed.TotalSeconds + " sec., " + watch.ElapsedMilliseconds + " ms.");
         }
 
-        public static List<UserModel> GenerateRandomUsers(int countUsers)
+        public static List<UserModel> GenerateRandomUsers()
         {
-            PersonGenerator.GeneratorSettings settings = new()
-            {
-                Age = true,
-                Language = PersonGenerator.Languages.English,
-                FirstName = true,
-                MiddleName = true,
-                LastName = true,
-                MinAge = 16,
-                MaxAge = 25
-            };
-            PersonGenerator.PersonGenerator generator = new(settings);
+            int minAge = 16, maxAge = 45;
 
-            List<PersonGenerator.Person> generated = generator.Generate(countUsers);
+            Random rnd = new();
+
+            var male_names = NameGenerator.PersonNames.Get(150, NameGender.Male, NameComponents.FirstNameMiddleNameLastName, separator: ":");
+            var female_names = NameGenerator.PersonNames.Get(150, NameGender.Female, NameComponents.FirstNameMiddleNameLastName, separator: ":");
 
             List<UserModel> users = new();
-
-            foreach (PersonGenerator.Person item in generated)
+            foreach (var item in male_names)
             {
+                string[] parts = item.Split(':');
                 UserModel user = new()
                 {
-                    Name = item.FirstName,
-                    Surname = item.MiddleName,
-                    Patrnymic = item.LastName,
-                    Age = item.Age,
-                    Sex = item.FirstName.Length > 6 ? 2 : 1,
+                    Name = parts[0],
+                    Surname = parts[1],
+                    Patrnymic = parts[2],
+                    Age = rnd.Next(minAge, maxAge),
+                    Sex = 1,
                 };
-                user.Login = new Regex(@"@+\w*").Replace(item.FirstName, "").ToLower() + $"{user.Surname[0]}{user.Patrnymic[0]}";
+                user.Login = new Regex(@"@+\w*").Replace(user.Name, "").ToLower() + $"{user.Surname[0]}{user.Patrnymic[0]}";
                 user.Password = hashing.EncodeString(user.Login);
                 users.Add(user);
             }
+            foreach (var item in female_names)
+            {
+                string[] parts = item.Split(':');
+                UserModel user = new()
+                {
+                    Name = parts[0],
+                    Surname = parts[1],
+                    Patrnymic = parts[2],
+                    Age = rnd.Next(minAge, maxAge),
+                    Sex = 2,
+                };
+                user.Login = new Regex(@"@+\w*").Replace(user.Name, "").ToLower() + $"{user.Surname[0]}{user.Patrnymic[0]}";
+                user.Password = hashing.EncodeString(user.Login);
+                users.Add(user);
+            }
+
             return users;
         }
     }

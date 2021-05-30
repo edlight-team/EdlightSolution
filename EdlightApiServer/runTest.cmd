@@ -1,0 +1,1 @@
+dotnet run TestDB -c Release

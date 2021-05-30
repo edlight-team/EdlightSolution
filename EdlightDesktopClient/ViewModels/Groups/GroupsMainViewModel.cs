@@ -37,6 +37,8 @@ namespace EdlightDesktopClient.ViewModels.Groups
         private List<StudentsGroupsModel> studentsGroups;
         private List<UserModel> students;
         private ObservableCollection<UserModel> selctedGroupStudents;
+
+        private bool isFirstStart;
         #endregion
         #region props
         public LoaderModel Loader { get => loader; set => SetProperty(ref loader, value); }
@@ -60,6 +62,7 @@ namespace EdlightDesktopClient.ViewModels.Groups
         #region command
         public DelegateCommand LoadedCommand { get; private set; }
         public DelegateCommand<object> SaveGroupsChangedCommand { get; private set; }
+        public DelegateCommand RefreshDataCommand { get; private set; }
         #endregion
         #region constructor
         public GroupsMainViewModel(IMemoryService memory, IWebApiService api, INotificationService notification, IPermissionService permission)
@@ -72,28 +75,20 @@ namespace EdlightDesktopClient.ViewModels.Groups
 
             LoadedCommand = new(OnLoaded);
             SaveGroupsChangedCommand = new(OnSaveGroupsChanged);
+            RefreshDataCommand = new(OnRefreshData);
 
             withoutGroup = new() { Group = "Без группы" };
+
+            isFirstStart = true;
         }
         #endregion
         #region methods
         private async void OnLoaded()
         {
-            try
+            if (isFirstStart)
             {
-                Loader.SetDefaultLoadingInfo();
-
-                Task loading_task = Task.Run(async () => await LoadingData());
-                await Task.WhenAll(loading_task);
-                
-            }
-            catch (Exception ex)
-            {
-                notification.ShowError("Во время загрузки произошла ошибка: " + ex.Message);
-            }
-            finally
-            {
-                await Loader.Clear();
+                OnRefreshData();
+                isFirstStart = false;
             }
         }
 
@@ -128,6 +123,7 @@ namespace EdlightDesktopClient.ViewModels.Groups
         private async Task LoadingData(UserModel user = null)
         {
             InputGroups = new();
+            OutputGroups = new();
             List<GroupsModel> gr = await api.GetModels<GroupsModel>(WebApiTableNames.Groups);
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -194,6 +190,27 @@ namespace EdlightDesktopClient.ViewModels.Groups
                 {
                     RefreshSelectedGroupStudent(InputSelectedGroup);
                 }
+            }
+        }
+
+        private async void OnRefreshData()
+        {
+            try
+            {
+                Loader.SetDefaultLoadingInfo();
+
+                Task loading_task = Task.Run(async () => await LoadingData());
+                await Task.WhenAll(loading_task);
+
+                SelectedGroupStudents = new();
+            }
+            catch (Exception ex)
+            {
+                notification.ShowError("Во время загрузки произошла ошибка: " + ex.Message);
+            }
+            finally
+            {
+                await Loader.Clear();
             }
         }
         #endregion

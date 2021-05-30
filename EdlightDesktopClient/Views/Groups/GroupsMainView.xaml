@@ -32,6 +32,23 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
+            <ContentControl Grid.Row="0"
+                            Grid.Column="5"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Margin="0, 30, 30, 0"
+                            Width="25"
+                            behabiors:MouseLeftButtonDown.Command="{Binding RefreshDataCommand}"
+                            Template="{DynamicResource Refresh}">
+                <ContentControl.ToolTip>
+                    <ToolTip HorizontalOffset="5"
+                             Placement="Right"
+                             VerticalOffset="15">
+                        <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="Обновить" />
+                    </ToolTip>
+                </ContentControl.ToolTip>
+            </ContentControl>
+
             <controls:LoaderBox Grid.Row="0"
                                 Grid.RowSpan="5"
                                 Grid.Column="0"

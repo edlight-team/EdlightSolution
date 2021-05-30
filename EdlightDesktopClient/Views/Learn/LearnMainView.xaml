@@ -7,9 +7,9 @@
              xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:prism="http://www.codeplex.com/prism"
-             xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels"
+             xmlns:vm="clr-namespace:EdlightDesktopClient.ViewModels.Learn" 
              behabiors:LoadedBehavior.Command="{Binding LoadedCommand}"
-             d:DataContext="{d:DesignInstance vm:MainWindowViewModel}"
+             d:DataContext="{d:DesignInstance vm:LearnMainViewModel}"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d">
     <Grid>
@@ -25,6 +25,8 @@
                 CornerRadius="0,15,15,15" />
 
         <TabControl Grid.Row="0"
+                    behabiors:TabItemSelectionChangedBehavior.Command="{Binding TabSelectionChangedCommand}"
+                    SelectedIndex="{Binding SelectedTabIndex, UpdateSourceTrigger=PropertyChanged}"
                     Grid.Column="1"
                     Padding="0,-2,0,0"
                     Background="Transparent"

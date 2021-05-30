@@ -61,6 +61,7 @@
     <Compile Include="Behaviors\KeyBehaviors\EscapePressedBehavior.cs" />
     <Compile Include="Behaviors\MouseLeftButtonDown.cs" />
     <Compile Include="Behaviors\TabItemMouseDownBehavior.cs" />
+    <Compile Include="Behaviors\TabItemSelectionChangedBehavior.cs" />
     <Compile Include="Behaviors\UnloadedBehavior.cs" />
     <Compile Include="Controls\BindablePasswordBox.xaml.cs">
       <DependentUpon>BindablePasswordBox.xaml</DependentUpon>

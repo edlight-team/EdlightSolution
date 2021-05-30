@@ -50,7 +50,8 @@ namespace Styles.Models
         }
         public static async Task Clear(this LoaderModel loader)
         {
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
+            await Task.Delay(100);
             loader.IsActive = false;
             loader.Message = null;
         }

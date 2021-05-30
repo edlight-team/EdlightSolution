@@ -74,7 +74,9 @@
     </Compile>
     <Compile Include="Converters\BooleanRevert.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\IntegerToVisibility.cs" />
     <Compile Include="Converters\TimeZoneConverter.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Extensions\UIElementExtension.cs" />
     <Compile Include="Extensions\VisibilityExtension.cs" />
     <Compile Include="Models\LoaderModel.cs" />

@@ -138,8 +138,7 @@
             </MultiDataTrigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    <ControlTemplate x:Key="LearenTabItem"
-                     TargetType="{x:Type TabItem}">
+    <ControlTemplate x:Key="LearenTabItem" TargetType="{x:Type TabItem}">
         <Grid x:Name="templateRoot" SnapsToDevicePixels="True">
             <Border x:Name="mainBorder"
                     Margin="0"

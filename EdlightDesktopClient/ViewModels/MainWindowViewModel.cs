@@ -34,6 +34,7 @@ namespace EdlightDesktopClient.ViewModels
         private WindowState _currentState;
         private LoaderModel _loader;
         private MainConfig _config;
+        private UserModel _currentUser;
 
         #endregion
         #region props
@@ -42,6 +43,7 @@ namespace EdlightDesktopClient.ViewModels
         public WindowState CurrentState { get => _currentState; set => SetProperty(ref _currentState, value); }
         public LoaderModel Loader { get => _loader; set => SetProperty(ref _loader, value); }
         public MainConfig Config { get => _config ??= new(); set => SetProperty(ref _config, value); }
+        public UserModel CurrentUser { get => _currentUser ??= new(); set => SetProperty(ref _currentUser, value); }
 
         #endregion
         #region commands
@@ -61,13 +63,14 @@ namespace EdlightDesktopClient.ViewModels
             this.api = api;
             this.permissionService = permissionService;
 
+            CurrentUser = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
             MinimizeCommand = new DelegateCommand(() => CurrentState = StaticCommands.ChangeWindowState(CurrentState));
             CloseCommand = new DelegateCommand(StaticCommands.Shutdown);
             LoadedCommand = new DelegateCommand(OnLoaded);
         }
         private async void OnLoaded()
         {
-            await permissionService.ConfigureService(api, memory.GetItem<UserModel>(MemoryAlliases.CurrentUser));
+            await permissionService.ConfigureService(api, CurrentUser);
             await Config.SetVisibilities(permissionService);
 
             manager.RequestNavigate(BaseMethods.RegionNames.LearnRegion, nameof(LearnMainView));

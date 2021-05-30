@@ -633,13 +633,13 @@ namespace ApiTest
             file.FileName = "test.file";
             file.Data = data;
 
-            string push = api.PushFile("test/", file).Result;
+            string push = api.PushFile("test\\", file).Result;
 
             Assert.AreEqual(push, "Файл успешно сохранен");
 
             byte[] data_from_server = new byte[128 * 1024 * 10];
 
-            object response = api.GetFile("test/test.file").Result;
+            object response = api.GetFile("test\\test.file").Result;
             if (response is ApplicationModels.JsonFileModel jfm)
             {
                 data_from_server = jfm.Data;
@@ -653,9 +653,13 @@ namespace ApiTest
 
             Assert.IsTrue(isEquals);
 
-            string delete = api.DeleteFile("test/test.file").Result;
+            string delete = api.DeleteFile("test\\test.file").Result;
 
             Assert.AreEqual(delete, "Файл успешно удален");
+
+            string delete_folder = api.DeleteFile("test\\").Result;
+
+            Assert.AreEqual(delete_folder, "Папка успешно удалена");
         }
         #endregion
     }

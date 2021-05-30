@@ -1,7 +1,6 @@
 ﻿using ApplicationEventsWPF.Events.ScheduleEvents;
 using ApplicationEventsWPF.Events.Signal;
 using ApplicationModels;
-using ApplicationModels.Config;
 using ApplicationModels.Models;
 using ApplicationServices.PermissionService;
 using ApplicationServices.SignalClientSerivce;
@@ -17,6 +16,7 @@ using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
+using Styles.Extensions;
 using Styles.Models;
 using System;
 using System.Collections.Generic;
@@ -152,6 +152,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         public DelegateCommand AddCardCommand { get; private set; }
         public DelegateCommand ImportCardsCommand { get; private set; }
+        public DelegateCommand CapacityManagingCommand { get; private set; }
         public DelegateCommand EditCardCommand { get; private set; }
         public DelegateCommand CancelCardCommand { get; private set; }
         public DelegateCommand DeleteCardCommand { get; private set; }
@@ -211,6 +212,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
             AddCardCommand = new DelegateCommand(OnAddScheduleCard);
             ImportCardsCommand = new DelegateCommand(OnImportCards);
+            CapacityManagingCommand = new DelegateCommand(OnCapacityManagment);
             EditCardCommand = new DelegateCommand(OnEditScheduleCard);
             CancelCardCommand = new DelegateCommand(OnCancelCard);
             DeleteCardCommand = new DelegateCommand(OnDeleteCard);
@@ -286,11 +288,9 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             FilteredComments.Source = Comments;
 
             await Config.SetVisibilities(permissionService);
-            await Config.ReadColors();
 
             SetHelpTipVisibility();
 
-            memory.StoreItem(nameof(TypeClassColors), Config.TypeClassColors);
             memory.StoreItem(nameof(ScheduleConfig), Config);
             memory.StoreItem(nameof(Comments), Comments);
             ClearSelected();
@@ -441,7 +441,8 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         {
             OpenFileDialog ofd = new();
             ofd.Filter = "Edlight schedule table (*.xlsx)|*.xlsx";
-            ofd.ShowDialog();
+            bool? result = ofd.ShowDialog();
+            if (!result.Value) return;
             int rowCounter = 1;
             int importCounter = 0;
             try
@@ -540,6 +541,107 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             {
                 OnLoadModelsByDate(_currentDate);
                 await Loader.Clear();
+            }
+        }
+        private async void OnCapacityManagment()
+        {
+            OpenFileDialog ofd = new();
+            //ofd.Filter = "Edlight capacity table (*.xls)|*.xls";
+            //bool? result = ofd.ShowDialog();
+            //if (!result.Value) return;
+
+            ofd.FileName = Environment.CurrentDirectory + "\\Нагрузка.xls";
+
+            ObservableCollection<CapacityModel> capacities = new();
+            ExcelDataReader.IExcelDataReader reader = null;
+            int rowCounter = 1;
+            try
+            {
+                reader = ExcelDataReader.ExcelReaderFactory.CreateReader(File.OpenRead(ofd.FileName));
+                for (int i = 0; i < 5; i++)
+                {
+                    Loader.SetCountLoadingInfo(rowCounter++, reader.RowCount);
+                    reader.Read();
+                }
+                while (reader.Read())
+                {
+                    Loader.SetCountLoadingInfo(rowCounter++, reader.RowCount);
+                    CapacityModel capacity = new();
+
+                    capacity.NumberA = reader[0]?.ToString().ToDouble();
+                    capacity.NumberB = reader[1]?.ToString().ToDouble();
+                    capacity.Syllabus = reader[2]?.ToString();
+                    capacity.Faculty = reader[3]?.ToString();
+                    capacity.Block = reader[4]?.ToString();
+                    capacity.DisciplineOrWorkType = reader[5]?.ToString();
+                    capacity.AssignedDepartment = reader[6]?.ToString();
+                    capacity.CourseOrSemesterAndSession = reader[7]?.ToString();
+                    capacity.Group = reader[8]?.ToString();
+                    capacity.StudentsCount = reader[9]?.ToString().ToDouble();
+                    capacity.WeekCount = reader[10]?.ToString().ToDouble();
+                    capacity.ClassType = reader[11]?.ToString();
+                    capacity.HoursOnStreamOrGroupOrStudent = reader[12]?.ToString().ToDouble();
+                    capacity.ControlsType = reader[13]?.ToString();
+                    capacity.KSR = reader[14]?.ToString().ToDouble();
+                    capacity.IndividualCount = reader[15]?.ToString().ToDouble();
+                    capacity.ControlsCount = reader[16]?.ToString().ToDouble();
+                    capacity.RatingCount = reader[17]?.ToString().ToDouble();
+                    capacity.Referates = reader[18]?.ToString().ToDouble();
+                    capacity.Essay = reader[19]?.ToString().ToDouble();
+                    capacity.RGR = reader[20]?.ToString().ToDouble();
+                    capacity.ControlWorksForAsentia = reader[21]?.ToString().ToDouble();
+                    capacity.ConsultingSPO = reader[22]?.ToString().ToDouble();
+                    capacity.AudithoryCapacity = reader[23]?.ToString().ToDouble();
+                    capacity.OtherCapacity = reader[24]?.ToString().ToDouble();
+                    capacity.OtherCapacityWithInfo = reader[25]?.ToString();
+                    capacity.TotalCapacity = reader[26]?.ToString().ToDouble();
+                    capacity.TeacherFio = reader[27]?.ToString();
+                    capacity.TeacherPosition = reader[28]?.ToString();
+                    capacity.TeacherRange = reader[29]?.ToString();
+                    capacity.FlowNumber = reader[30]?.ToString().ToDouble();
+                    capacity.FirstGroupFlowIndicator = reader[31]?.ToString().ToDouble();
+                    capacity.AudRecommendSyllabus = reader[32]?.ToString();
+                    capacity.AdditionalHourStudent = reader[33]?.ToString().ToDouble();
+                    capacity.AdditionalHourGroup = reader[34]?.ToString().ToDouble();
+                    capacity.InFactDoneA = reader[35]?.ToString().ToDouble();
+                    capacity.InFactDoneB = reader[36]?.ToString().ToDouble();
+                    capacity.DateFrom = reader[37]?.ToString().ToDate();
+                    capacity.DateTo = reader[38]?.ToString().ToDate();
+                    capacity.Budget = reader[39]?.ToString().ToDouble();
+                    capacity.ExtraBudget = reader[40]?.ToString().ToDouble();
+                    capacity.Foreign = reader[41]?.ToString().ToDouble();
+                    capacity.ExtraBudgetDole = reader[42]?.ToString().ToDouble();
+                    capacity.ForeignDole = reader[43]?.ToString().ToDouble();
+                    capacity.TotalContractForeign = reader[44]?.ToString();
+                    capacity.EducationLevel = reader[45]?.ToString();
+                    capacity.LearnType = reader[46]?.ToString();
+                    capacity.ExaminationHour = reader[47]?.ToString().ToDouble();
+                    capacity.OwnWorkHour = reader[48]?.ToString().ToDouble();
+                    capacity.ElectronicHour = reader[49]?.ToString().ToDouble();
+                    capacity.NormCoef = reader[50]?.ToString().ToDouble();
+                    capacity.Note = reader[51]?.ToString();
+                    capacity.ZET = reader[52]?.ToString().ToDouble();
+                    capacity.QuestionCount = reader[53]?.ToString().ToDouble();
+                    capacity.HourAtWeek = reader[54]?.ToString().ToDouble();
+
+                    capacities.Add(capacity);
+                    //await Task.Delay(1);
+                }
+                await Loader.Clear();
+                manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(CapacityManagmentView), new NavigationParameters() { { "Capacities", capacities } });
+            }
+            catch (Exception)
+            {
+                Growl.Error("При чтении файла нагрузки произошла ошибка", "Global");
+                throw;
+            }
+            finally
+            {
+                if (Loader.IsActive)
+                {
+                    await Loader.Clear();
+                }
+                reader.Close();
             }
         }
 

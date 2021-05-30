@@ -11,6 +11,8 @@ namespace ApplicationModels.Models
 
         private Guid id;
         private string title;
+        private Guid idPriorityAudience;
+        private AudiencesModel priorityAudience;
 
         #endregion
         #region props
@@ -20,6 +22,12 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(Title))]
         public string Title { get => title ??= string.Empty; set => SetProperty(ref title, value); }
+
+        [JsonProperty(nameof(IdPriorityAudience))]
+        public Guid IdPriorityAudience { get => idPriorityAudience; set => SetProperty(ref idPriorityAudience, value); }
+
+        [JsonIgnore]
+        public AudiencesModel PriorityAudience { get => priorityAudience; set => SetProperty(ref priorityAudience, value); }
 
         #endregion
         #region commands

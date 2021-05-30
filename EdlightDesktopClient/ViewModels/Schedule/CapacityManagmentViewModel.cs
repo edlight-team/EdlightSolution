@@ -18,6 +18,13 @@ namespace EdlightDesktopClient.ViewModels.Schedule
     [RegionMemberLifetime(KeepAlive = false)]
     public class CapacityManagmentViewModel : BindableBase, INavigationAware
     {
+        #region pair times
+
+        private readonly Dictionary<int, string> _StartTimes = new() { { 1, "8:30" }, { 2, "10:15" }, { 3, "12:30" }, { 4, "14:30" }, { 5, "16:00" }, { 6, "17:45" }, };
+        private readonly Dictionary<int, string> _EndTimes = new() { { 1, "10:05" }, { 2, "11:50" }, { 3, "14:05" }, { 4, "15:50" }, { 5, "17:35" }, { 6, "19:20" }, };
+        private readonly Dictionary<int, string> _BreakTimes = new() { { 1, "5" }, { 2, "5" }, { 3, "5" }, { 4, "5" }, { 5, "5" }, { 6, "0" }, };
+
+        #endregion
         #region services
 
         private readonly IRegionManager manager;
@@ -30,6 +37,9 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private LoaderModel _loader;
         private ObservableCollection<CapacityModel> _capacities;
 
+        private ObservableCollection<CapacityPeriodModel> _periods;
+        private ObservableCollection<GroupsModel> _groups;
+        private ObservableCollection<TypeClassesModel> _classTypes;
         private ObservableCollection<AudiencesModel> _audiences;
         private ObservableCollection<UserModel> _teachers;
         private ObservableCollection<AcademicDisciplinesModel> _disciplines;
@@ -44,6 +54,9 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         public LoaderModel Loader { get => _loader; set => SetProperty(ref _loader, value); }
         public ObservableCollection<CapacityModel> Capacities { get => _capacities ??= new(); set => SetProperty(ref _capacities, value); }
 
+        public ObservableCollection<CapacityPeriodModel> Periods { get => _periods ??= new(); set => SetProperty(ref _periods, value); }
+        public ObservableCollection<GroupsModel> Groups { get => _groups ??= new(); set => SetProperty(ref _groups, value); }
+        public ObservableCollection<TypeClassesModel> ClassTypes { get => _classTypes ??= new(); set => SetProperty(ref _classTypes, value); }
         public ObservableCollection<AudiencesModel> Audiences { get => _audiences ??= new(); set => SetProperty(ref _audiences, value); }
         public ObservableCollection<UserModel> Teachers { get => _teachers ??= new(); set => SetProperty(ref _teachers, value); }
         public ObservableCollection<AcademicDisciplinesModel> Disciplines { get => _disciplines ??= new(); set => SetProperty(ref _disciplines, value); }
@@ -61,6 +74,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         public DelegateCommand AcceptAllEqualsTeachersCommand { get; private set; }
         public DelegateCommand AcceptAllEqualsDisciplinesCommand { get; private set; }
         public DelegateCommand GenerateScheduleCommand { get; private set; }
+        public DelegateCommand CreateScheduleCommand { get; private set; }
 
         #endregion
         #region ctor
@@ -79,6 +93,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             GenerateScheduleCommand = new DelegateCommand(OnScheduleGenerating, () => IsAllTeachersConfirmed && IsAllDisciplinesConfirmed)
                 .ObservesProperty(() => IsAllDisciplinesConfirmed)
                 .ObservesProperty(() => IsAllTeachersConfirmed);
+            CreateScheduleCommand = new DelegateCommand(OnCreateSchedule);
         }
 
         #endregion
@@ -91,6 +106,12 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 Loader.SetDefaultLoadingInfo();
                 Audiences.Clear();
                 Audiences.AddRange(await api.GetModels<AudiencesModel>(WebApiTableNames.Audiences));
+
+                Groups.Clear();
+                Groups.AddRange(await api.GetModels<GroupsModel>(WebApiTableNames.Groups));
+
+                ClassTypes.Clear();
+                ClassTypes.AddRange(await api.GetModels<TypeClassesModel>(WebApiTableNames.TypeClasses));
 
                 Teachers.Clear();
                 RolesModel teach_role = (await api.GetModels<RolesModel>(WebApiTableNames.Roles, "RoleName = 'teacher'")).FirstOrDefault();
@@ -268,10 +289,91 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #endregion
         #region Schedule
 
-        private void OnScheduleGenerating()
+        private async void OnScheduleGenerating()
         {
+            Loader.SetDefaultLoadingInfo();
             var date_froms = Capacities.GroupBy(g => g.DateFrom);
-            var date_toes = Capacities.GroupBy(g => g.DateTo);
+
+            Periods.Clear();
+            ObservableCollection<CapacityCellModel> cells = new();
+
+            //Создаем сетку для занятий
+            foreach (var item in date_froms)
+            {
+                CapacityModel first = item.FirstOrDefault();
+                cells = CreateRangeCells(first.DateFrom, first.DateTo);
+                if (cells != null && cells.Count != 0)
+                    Periods.Add(new CapacityPeriodModel() { DateFrom = first.DateFrom.Value, DateTo = first.DateTo.Value, Cells = cells });
+            }
+
+            //Проходим по сетке и создаем временные занятия без учета времени
+            List<LessonsModel> temp_lessons = new();
+            
+            foreach (var period in Periods)
+            {
+                foreach (var cell in period.Cells)
+                {
+                    foreach (var capacity in Capacities)
+                    {
+                        if (!capacity.DateFrom.HasValue || !capacity.DateTo.HasValue) continue;
+                        if (IsInRange(cell.CellDate, capacity.DateFrom.Value, capacity.DateTo.Value))
+                        {
+                            string teacher_initials = capacity.TeacherFio.Remove(0, 1);
+                            UserModel target_teacher = Teachers.FirstOrDefault(t => t.Initials == teacher_initials);
+
+                            string group_name = capacity.Group;
+                            GroupsModel target_group = Groups.FirstOrDefault(g => g.Group == group_name);
+
+                            
+
+                        }
+                    }
+                }
+            }
+
+            await Loader.Clear();
+        }
+        private ObservableCollection<CapacityCellModel> CreateRangeCells(DateTime? from, DateTime? to)
+        {
+            ObservableCollection<CapacityCellModel> result = new();
+
+            if (!to.HasValue || !from.HasValue) return null;
+
+            if ((to.Value - from.Value).TotalSeconds < 0)
+            {
+                return result;
+            }
+
+            int total_days = (int)Math.Round((to.Value - from.Value).TotalDays);
+            int days_offset = 0;
+            for (int i = 0; i < total_days; i++)
+            {
+                DateTime day = from.Value.AddDays(days_offset++);
+                if (day.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    CapacityCellModel cell = new();
+                    cell.CellDate = day;
+                    result.Add(cell);
+                }
+            }
+
+            return result;
+        }
+        private bool IsInRange(DateTime target, DateTime start, DateTime end)
+        {
+            if ((target - start).TotalDays < 0)
+            {
+                return false;
+            }
+            if ((end - target).TotalDays < 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        private void OnCreateSchedule()
+        {
+
         }
 
         #endregion

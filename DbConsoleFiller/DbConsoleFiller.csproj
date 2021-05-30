@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="audiences.txt" />
+    <None Remove="groups.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +27,13 @@
     <Content Include="audiences.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="groups.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Program.cs" />
   </ItemGroup>
 
 </Project>

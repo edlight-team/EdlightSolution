@@ -51,10 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CapacityModel.cs" />
-    <Compile Include="Config\TypeClassColors.cs" />
     <Compile Include="JsonFileModel.cs" />
     <Compile Include="Models\AcademicDisciplinesModel.cs" />
     <Compile Include="Models\AudiencesModel.cs" />
+    <Compile Include="Models\CapacityExtendedModels\CapacityCellModel.cs" />
     <Compile Include="Models\CapacityExtendedModels\ImportedDiscipline.cs" />
     <Compile Include="Models\CapacityExtendedModels\ImportedTeacher.cs" />
     <Compile Include="Models\CommentModel.cs" />

@@ -306,9 +306,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="ScheduleTypeClassColorsConfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Нагрузка.xls">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

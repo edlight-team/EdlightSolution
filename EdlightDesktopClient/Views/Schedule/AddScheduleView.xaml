@@ -160,14 +160,24 @@
                                VerticalAlignment="Center"
                                Style="{DynamicResource SimpleTextBlock}"
                                Text="Тип занятия" />
-                    <hc:ComboBox Grid.Row="3"
-                                 Grid.Column="2"
-                                 VerticalAlignment="Center"
-                                 BorderBrush="{DynamicResource InnerElementBorderBrush}"
-                                 BorderThickness="2"
-                                 DisplayMemberPath="Title"
-                                 ItemsSource="{Binding TypeClasses, UpdateSourceTrigger=PropertyChanged}"
-                                 SelectedItem="{Binding SelectedTypeClass, UpdateSourceTrigger=PropertyChanged}" />
+                    <ComboBox Grid.Row="3"
+                              Grid.Column="2"
+                              VerticalAlignment="Center"
+                              BorderBrush="{DynamicResource InnerElementBorderBrush}"
+                              BorderThickness="2"
+                              ItemsSource="{Binding TypeClasses, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedTypeClass, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <ContentControl Width="18"
+                                                    Foreground="{Binding Brush}"
+                                                    Template="{DynamicResource Bookmark}" />
+                                    <TextBlock Text="{Binding Title}" Margin="5,0,0,0"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
                     <!--#endregion-->
                     <!--#region groups-->
@@ -178,7 +188,7 @@
                                VerticalAlignment="Center"
                                Style="{DynamicResource SimpleTextBlock}"
                                Text="Группа" />
-                    <hc:ComboBox Grid.Row="4"
+                    <ComboBox Grid.Row="4"
                                  Grid.Column="2"
                                  VerticalAlignment="Center"
                                  BorderBrush="{DynamicResource InnerElementBorderBrush}"
@@ -209,7 +219,7 @@
                                    Style="{DynamicResource SimpleTextBlock}"
                                    Text="Начало занятия" />
 
-                        <hc:ComboBox Grid.Row="1"
+                        <ComboBox Grid.Row="1"
                                      Grid.Column="0"
                                      Width="200"
                                      HorizontalAlignment="Center"
@@ -226,7 +236,7 @@
                                    Style="{DynamicResource SimpleTextBlock}"
                                    Text="Конец занятия" />
 
-                        <hc:ComboBox Grid.Row="1"
+                        <ComboBox Grid.Row="1"
                                      Grid.Column="1"
                                      Width="200"
                                      HorizontalAlignment="Center"

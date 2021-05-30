@@ -1,7 +1,6 @@
 ﻿using ApplicationEventsWPF.Events.ScheduleEvents;
 using ApplicationEventsWPF.Events.Signal;
 using ApplicationModels;
-using ApplicationModels.Config;
 using ApplicationModels.Models;
 using ApplicationServices.PermissionService;
 using ApplicationServices.SignalClientSerivce;
@@ -289,11 +288,9 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             FilteredComments.Source = Comments;
 
             await Config.SetVisibilities(permissionService);
-            await Config.ReadColors();
 
             SetHelpTipVisibility();
 
-            memory.StoreItem(nameof(TypeClassColors), Config.TypeClassColors);
             memory.StoreItem(nameof(ScheduleConfig), Config);
             memory.StoreItem(nameof(Comments), Comments);
             ClearSelected();

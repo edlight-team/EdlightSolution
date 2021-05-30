@@ -47,10 +47,10 @@ namespace ApplicationModels.Models
         public int CountQuestions { get => countQuestions; set => SetProperty(ref countQuestions, value); }
 
         [JsonProperty(nameof(TestStartDate))]
-        public string TestStartDate { get => testStartDate; set => SetProperty(ref testStartDate, value); }
+        public string TestStartDate { get => testStartDate ??= string.Empty; set => SetProperty(ref testStartDate, value); }
 
         [JsonProperty(nameof(TestEndDate))]
-        public string TestEndDate { get => testEndDate; set => SetProperty(ref testEndDate, value); }
+        public string TestEndDate { get => testEndDate ??= string.Empty; set => SetProperty(ref testEndDate, value); }
 
         [JsonProperty(nameof(CountPoints))]
         public int CountPoints { get => countPoints; set => SetProperty(ref countPoints, value); }

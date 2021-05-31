@@ -25,6 +25,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private readonly Dictionary<int, string> _StartTimes = new() { { 1, "8:30" }, { 2, "10:15" }, { 3, "12:30" }, { 4, "14:30" }, { 5, "16:00" }, { 6, "17:45" }, };
         private readonly Dictionary<int, string> _EndTimes = new() { { 1, "10:05" }, { 2, "11:50" }, { 3, "14:05" }, { 4, "15:50" }, { 5, "17:35" }, { 6, "19:20" }, };
         private readonly Dictionary<int, string> _BreakTimes = new() { { 1, "5" }, { 2, "5" }, { 3, "5" }, { 4, "5" }, { 5, "5" }, { 6, "0" }, };
+        private readonly Dictionary<int, TimeLessonsModel> _TimeLessons = new();
 
         #endregion
         #region services
@@ -104,6 +105,12 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 .ObservesProperty(() => IsAllDisciplinesConfirmed)
                 .ObservesProperty(() => IsAllTeachersConfirmed);
             CreateScheduleCommand = new DelegateCommand(OnCreateSchedule);
+
+            _TimeLessons.Clear();
+            foreach (var key in _StartTimes.Keys)
+            {
+                _TimeLessons.Add(key, new TimeLessonsModel() { StartTime = _StartTimes[key], EndTime = _EndTimes[key], BreakTime = _BreakTimes[key] });
+            }
         }
 
         #endregion
@@ -432,6 +439,50 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             // Правило 2 выбирается промежуток сетки если у записи нагрузки есть даты
             // Правило 3 если нагрузка общая больше чем недельная то занятия переносятся на нижнюю неделю
             // Правило 4 если это все не понравится в ДГТУ то расписание составляется в ручную
+
+            #region Тестовые данные для просмотра
+
+            //Random rnd = new();
+            //foreach (var item in Periods)
+            //{
+            //    foreach (var cell in item.Cells)
+            //    {
+            //        foreach (var pair in cell.UpDay.Pairs)
+            //        {
+            //            for (int i = 0; i < rnd.Next(1, 4); i++)
+            //            {
+            //                LessonsModel lm = new();
+
+            //                lm.AcademicDiscipline = Disciplines[rnd.Next(0, Disciplines.Count)];
+            //                lm.Audience = Audiences[rnd.Next(0, Audiences.Count)];
+            //                lm.Group = Groups[rnd.Next(0, Groups.Count)];
+            //                lm.TypeClass = ClassTypes[rnd.Next(0, ClassTypes.Count)];
+            //                lm.Teacher = Teachers[rnd.Next(0, Teachers.Count)];
+            //                lm.TimeLessons = _TimeLessons[rnd.Next(1, 6)];
+
+            //                pair.Lessons.Add(lm);
+            //            }
+            //        }
+            //        foreach (var pair in cell.DownDay.Pairs)
+            //        {
+            //            for (int i = 0; i < rnd.Next(1, 4); i++)
+            //            {
+            //                LessonsModel lm = new();
+
+            //                lm.AcademicDiscipline = Disciplines[rnd.Next(0, Disciplines.Count)];
+            //                lm.Audience = Audiences[rnd.Next(0, Audiences.Count)];
+            //                lm.Group = Groups[rnd.Next(0, Groups.Count)];
+            //                lm.TypeClass = ClassTypes[rnd.Next(0, ClassTypes.Count)];
+            //                lm.Teacher = Teachers[rnd.Next(0, Teachers.Count)];
+            //                lm.TimeLessons = _TimeLessons[rnd.Next(1, 6)];
+
+            //                pair.Lessons.Add(lm);
+            //            }
+            //        }
+            //    }
+            //}
+
+            #endregion
 
             #endregion
             await Loader.Clear();

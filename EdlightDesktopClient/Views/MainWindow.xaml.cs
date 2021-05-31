@@ -12,6 +12,7 @@ namespace EdlightDesktopClient.Views
         public MainWindow(IRegionManager manager)
         {
             InitializeComponent();
+            Width = SystemParameters.FullPrimaryScreenWidth;
             Height = SystemParameters.FullPrimaryScreenHeight;
 
             if (manager != null)

@@ -165,7 +165,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule.CapacityWindows
                 Model.Login = translation.TranslateWord(surname + Model.Name + Model.Patrnymic);
                 Model.Password = Model.Login;
             }
-        } 
+        }
 
         #endregion
     }

@@ -7,7 +7,6 @@ using Prism.Services.Dialogs;
 using Styles.Models;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace EdlightDesktopClient.ViewModels.Schedule.CapacityWindows
 {

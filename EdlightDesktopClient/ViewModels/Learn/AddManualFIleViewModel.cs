@@ -142,7 +142,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
             }
         }
 
-        private void OnCloseCommand()=> manager.Regions[BaseMethods.RegionNames.ModalRegion].RemoveAll();
+        private void OnCloseCommand() => manager.Regions[BaseMethods.RegionNames.ModalRegion].RemoveAll();
         #endregion
     }
 }

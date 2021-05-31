@@ -6,11 +6,8 @@ using Prism.Mvvm;
 using Prism.Regions;
 using Styles.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EdlightDesktopClient.ViewModels.Learn
 {

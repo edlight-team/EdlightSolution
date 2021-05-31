@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace ApplicationWPFServices.DebugService
+﻿namespace ApplicationWPFServices.DebugService
 {
     public interface IDebugService
     {

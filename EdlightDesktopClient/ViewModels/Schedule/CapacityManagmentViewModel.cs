@@ -1,19 +1,19 @@
 ﻿using ApplicationModels;
+using ApplicationModels.Models;
+using ApplicationModels.Models.CapacityExtendedModels;
+using ApplicationServices.WebApiService;
+using ApplicationWPFServices.DebugService;
+using EdlightDesktopClient.Views.Schedule.CapacityWindows;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
-using System.Linq;
-using Styles.Models;
-using System.Collections.ObjectModel;
-using ApplicationModels.Models.CapacityExtendedModels;
-using ApplicationModels.Models;
-using System.Collections.Generic;
-using ApplicationServices.WebApiService;
 using Prism.Services.Dialogs;
-using EdlightDesktopClient.Views.Schedule.CapacityWindows;
+using Styles.Models;
 using System;
-using ApplicationWPFServices.DebugService;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 
 namespace EdlightDesktopClient.ViewModels.Schedule
 {
@@ -595,7 +595,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             }
         }
         public void OnNavigatedFrom(NavigationContext navigationContext) { }
-        public bool IsNavigationTarget(NavigationContext navigationContext) => true; 
+        public bool IsNavigationTarget(NavigationContext navigationContext) => true;
         #endregion
     }
 }

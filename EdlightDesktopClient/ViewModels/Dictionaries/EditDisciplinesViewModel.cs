@@ -130,7 +130,7 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
             if (navigationContext.Parameters.ContainsKey(nameof(Model)) && navigationContext.Parameters[nameof(Model)] is AcademicDisciplinesModel navModel)
             {
                 Model = navModel;
-                var navSelectedAudience = Audiences.FirstOrDefault(a=>a.Id == Model.IdPriorityAudience);
+                var navSelectedAudience = Audiences.FirstOrDefault(a => a.Id == Model.IdPriorityAudience);
                 if (navSelectedAudience != null)
                 {
                     SelectedAudience = navSelectedAudience;

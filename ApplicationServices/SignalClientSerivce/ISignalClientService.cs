@@ -31,8 +31,8 @@ namespace ApplicationServices.SignalClientSerivce
         /// </summary>
         /// <param name="serializedEntity">сериализованная сущность</param>
         /// <returns></returns>
-        Task SendEntityModel(string serializedEntity); 
-        
+        Task SendEntityModel(string serializedEntity);
+
         #endregion
     }
 }

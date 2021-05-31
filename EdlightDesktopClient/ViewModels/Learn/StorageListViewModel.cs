@@ -290,7 +290,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
 
                     await api.PushFile($"Storage\\{SelectedCardHeader.ID}\\{currentUser.ID}\\", fileModel);
 
-                    
+
                     storageFiles.FileName = fileName;
                     await api.PutModel(storageFiles, WebApiTableNames.StorageFiles);
 

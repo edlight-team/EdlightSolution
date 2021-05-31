@@ -1,9 +1,7 @@
 ﻿using ApplicationModels;
 using ApplicationModels.Models;
 using ApplicationServices.WebApiService;
-using ApplicationWPFServices.MemoryService;
 using ApplicationWPFServices.NotificationService;
-using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -13,13 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EdlightDesktopClient.ViewModels.Learn
 {
-    public class StorageFileListViewModel : BindableBase,INavigationAware
+    public class StorageFileListViewModel : BindableBase, INavigationAware
     {
         #region services
         private IRegionManager manager;

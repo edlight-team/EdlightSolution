@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -190,13 +189,13 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         }
         private async void CreateCard(LessonsModel lm)
         {
-            lm.Teacher = memory.GetItem<ObservableCollection<UserModel>>("Teachers").FirstOrDefault(t=>t.ID == lm.IdTeacher);
-            lm.AcademicDiscipline = memory.GetItem<ObservableCollection<AcademicDisciplinesModel>>("Disciplines").FirstOrDefault(t=>t.Id == lm.IdAcademicDiscipline);
-            lm.Audience = memory.GetItem<ObservableCollection<AudiencesModel>>("Audiences").FirstOrDefault(t=>t.Id == lm.IdAudience);
-            lm.TypeClass = memory.GetItem<ObservableCollection<TypeClassesModel>>("TypeClasses").FirstOrDefault(t=>t.Id == lm.IdTypeClass);
+            lm.Teacher = memory.GetItem<ObservableCollection<UserModel>>("Teachers").FirstOrDefault(t => t.ID == lm.IdTeacher);
+            lm.AcademicDiscipline = memory.GetItem<ObservableCollection<AcademicDisciplinesModel>>("Disciplines").FirstOrDefault(t => t.Id == lm.IdAcademicDiscipline);
+            lm.Audience = memory.GetItem<ObservableCollection<AudiencesModel>>("Audiences").FirstOrDefault(t => t.Id == lm.IdAudience);
+            lm.TypeClass = memory.GetItem<ObservableCollection<TypeClassesModel>>("TypeClasses").FirstOrDefault(t => t.Id == lm.IdTypeClass);
             lm.Group = memory.GetItem<ObservableCollection<GroupsModel>>("Groups").FirstOrDefault(t => t.Id == lm.IdGroup);
             ObservableCollection<TimeLessonsModel> time_lessons = new ObservableCollection<TimeLessonsModel>(await api.GetModels<TimeLessonsModel>(WebApiTableNames.TimeLessons));
-            lm.TimeLessons = time_lessons.FirstOrDefault(t=>t.Id == lm.IdTimeLessons);
+            lm.TimeLessons = time_lessons.FirstOrDefault(t => t.Id == lm.IdTimeLessons);
 
             Card card = new();
             card.Uid = lm.Id.ToString().ToUpper();

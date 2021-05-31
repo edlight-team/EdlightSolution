@@ -12,8 +12,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Timers;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace EdlightDesktopClient.ViewModels.Learn
@@ -105,7 +103,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
                 DateTime time = Convert.ToDateTime(TestHeader.TestTime);
                 timeTest = time.TimeOfDay;
 
-                TimeHeader="00:00";
+                TimeHeader = "00:00";
                 StartTimer();
             }
             catch (Exception ex)

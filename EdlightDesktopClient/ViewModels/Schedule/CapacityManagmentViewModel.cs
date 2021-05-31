@@ -4,6 +4,8 @@ using ApplicationModels.Models.CapacityExtendedModels;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.DebugService;
 using EdlightDesktopClient.Views.Schedule.CapacityWindows;
+using HandyControl.Controls;
+using OfficeOpenXml;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
@@ -13,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 
 namespace EdlightDesktopClient.ViewModels.Schedule
@@ -434,11 +437,11 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             #endregion
             #region Заполнение дисциплин
 
-            //Группируем каждую дисциплину и добавляем по очереди все занятия
-            // Правило 1 выбирается первый приоритетный день для преподавателя
-            // Правило 2 выбирается промежуток сетки если у записи нагрузки есть даты
-            // Правило 3 если нагрузка общая больше чем недельная то занятия переносятся на нижнюю неделю
-            // Правило 4 если это все не понравится в ДГТУ то расписание составляется в ручную
+            // 1. Группируем каждую дисциплину и добавляем по очереди все занятия
+            // 2. выбирается первый приоритетный день для преподавателя
+            // 3. выбирается промежуток сетки если у записи нагрузки есть даты
+            // 4. если нагрузка общая больше чем недельная то занятия переносятся на нижнюю неделю
+            // 5. если это все не понравится в ДГТУ то расписание составляется в ручную
 
             #region Тестовые данные для просмотра
 
@@ -483,6 +486,69 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             //}
 
             #endregion
+
+            // 1.
+            foreach (var discipline_group in Capacities.GroupBy(c => c.DisciplineOrWorkType))
+            {
+                //Ищем преподавателя
+                string initials = discipline_group.FirstOrDefault().TeacherFio;
+                if (string.IsNullOrEmpty(initials)) continue;
+                initials = initials.Remove(0, 1);
+                UserModel teacher = Teachers.FirstOrDefault(t => t.Initials == initials);
+
+                //Ищем день с максимальным приоритетом
+                Dictionary<DayOfWeek, int> ordered_priorities = GetDayPriorities(teacher);
+
+                foreach (CapacityModel record in discipline_group)
+                {
+                    string group_name = record.Group;
+                    GroupsModel target_group = Groups.FirstOrDefault(g => g.Group == group_name);
+
+                    string type_class_short = record.ClassType;
+                    TypeClassesModel target_type_class = ClassTypes.FirstOrDefault(t => t.ShortTitle == type_class_short);
+
+                    string discipline_name = record.DisciplineOrWorkType.Trim();
+                    int pg_index = discipline_name.IndexOf(", п/г ");
+                    if (pg_index != -1) discipline_name = discipline_name.Remove(pg_index);
+                    AcademicDisciplinesModel target_discipline = Disciplines.FirstOrDefault(a => a.Title.Contains(discipline_name));
+
+                    AudiencesModel priority_audience = Audiences.FirstOrDefault(a => a.Id == target_discipline.IdPriorityAudience);
+
+
+                    //считаем сколько нужно занятий на неделю
+                    int lesson_in_week_count = (int)Math.Round(record.HoursOnStreamOrGroupOrStudent.Value / record.HourAtWeek.Value);
+                    //Создаем запись 
+                    for (int i = 0; i < lesson_in_week_count; i++)
+                    {
+                        LessonsModel lm = new();
+                        lm.Group = target_group;
+                        lm.TypeClass = target_type_class;
+                        lm.AcademicDiscipline = target_discipline;
+                        lm.Audience = priority_audience;
+                        lm.Teacher = teacher;
+
+                        if (record.DateFrom.HasValue && record.DateFrom.Value.Day != 1)
+                        {
+                            if (target_type_class.ShortTitle == "Лек")
+                            {
+                                DateTime day = GetPriorityDate(record.DateFrom, record.DateTo, ordered_priorities.FirstOrDefault().Key);
+                                lm.Day = day;
+                                var period = GetPeriodByDate(day);
+                                var cell = GetCellByDate(period, day);
+
+                                ObservableCollection<CapacityPairModel> pairs = cell.UpDay.Pairs;
+
+                                lm.TimeLessons = _TimeLessons[1];
+                                pairs.FirstOrDefault().Lessons.Add(lm);
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                    }
+                }
+            }
 
             #endregion
             await Loader.Clear();
@@ -562,6 +628,59 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
             return result;
         }
+        private Dictionary<DayOfWeek, int> GetDayPriorities(UserModel user)
+        {
+            Dictionary<DayOfWeek, int> priorities = new();
+
+            priorities.Add(DayOfWeek.Monday, user.DaysPriority[0]);
+            priorities.Add(DayOfWeek.Tuesday, user.DaysPriority[1]);
+            priorities.Add(DayOfWeek.Wednesday, user.DaysPriority[2]);
+            priorities.Add(DayOfWeek.Thursday, user.DaysPriority[3]);
+            priorities.Add(DayOfWeek.Friday, user.DaysPriority[4]);
+            priorities.Add(DayOfWeek.Saturday, user.DaysPriority[5]);
+
+            IOrderedEnumerable<KeyValuePair<DayOfWeek, int>> ordered = priorities.OrderByDescending(p => p.Value);
+
+            Dictionary<DayOfWeek, int> result = new();
+            foreach (var item in ordered)
+            {
+                result.Add(item.Key, item.Value);
+            }
+
+            return result;
+        }
+        private DateTime GetPriorityDate(DateTime? from, DateTime? to, DayOfWeek priority)
+        {
+            int total_days = (int)Math.Round((to.Value - from.Value).TotalDays);
+            int days_offset = 0;
+
+            for (int i = 0; i < total_days; i++)
+            {
+                DateTime day = from.Value.AddDays(days_offset++);
+                if (day.DayOfWeek == priority) return day;
+            }
+            return to.Value;
+        }
+        private CapacityPeriodModel GetPeriodByDate(DateTime day)
+        {
+            foreach (var period in Periods)
+            {
+                var cell = period.Cells.FirstOrDefault(c => c.CellDate == day);
+                if (cell != null) return period;
+            }
+            return null;
+        }
+        public CapacityCellModel GetCellByDate(CapacityPeriodModel period, DateTime day)
+        {
+            foreach (var cell in period.Cells)
+            {
+                if (cell.CellDate == day)
+                {
+                    return cell;
+                }
+            }
+            return null;
+        }
 
         private bool IsInRange(DateTime target, DateTime start, DateTime end)
         {
@@ -580,8 +699,83 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         /// </summary>
         private void OnCreateSchedule()
         {
-
+            List<List<string>> rows = new();
+            foreach (var period in Periods)
+            {
+                foreach (var cell in period.Cells)
+                {
+                    foreach (var pair in cell.UpDay.Pairs)
+                    {
+                        foreach (LessonsModel lesson in pair.Lessons)
+                        {
+                             rows.Add(ConvertToListString(lesson));
+                        }
+                    }
+                    foreach (var pair in cell.DownDay.Pairs)
+                    {
+                        foreach (LessonsModel lesson in pair.Lessons)
+                        {
+                             rows.Add(ConvertToListString(lesson));
+                        }
+                    }
+                }
+            }
+            ExportToExcelImportDocument(rows, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\tmp.xlsx");
         }
+        private List<string> ConvertToListString(LessonsModel lesson)
+        {
+            List<string> result = new();
+
+            result.Add(lesson.Teacher.Surname);
+            result.Add(lesson.Teacher.Name);
+            result.Add(lesson.Teacher.Patrnymic);
+            result.Add(lesson.AcademicDiscipline.Title);
+            result.Add(lesson.Audience.NumberAudience);
+            result.Add(lesson.TypeClass.Title);
+            result.Add(lesson.Group.Group);
+            result.Add(lesson.TimeLessons.StartTime);
+            result.Add(lesson.TimeLessons.EndTime);
+            result.Add(lesson.Day.ToShortDateString());
+            result.Add(lesson.TimeLessons.BreakTime);
+
+            return result;
+        }
+        private void ExportToExcelImportDocument(List<List<string>> rows, string excel_output_path)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using ExcelPackage package = new(new FileInfo(excel_output_path));
+            ExcelWorksheet sheet = package.Workbook.Worksheets.Add("Sheet1");
+
+            sheet.Cells[1, 1].Value = @"№ П\П";
+            sheet.Cells[1, 2].Value = @"Преподаватель     Ф";
+            sheet.Cells[1, 3].Value = @"И";
+            sheet.Cells[1, 4].Value = @"О";
+            sheet.Cells[1, 5].Value = @"Дисциплина";
+            sheet.Cells[1, 6].Value = @"Аудитория";
+            sheet.Cells[1, 7].Value = @"Тип занятия";
+            sheet.Cells[1, 8].Value = @"Группа";
+            sheet.Cells[1, 9].Value = @"Начало занятия";
+            sheet.Cells[1, 10].Value = @"Конец занятия";
+            sheet.Cells[1, 11].Value = @"Дата занятия";
+            sheet.Cells[1, 12].Value = @"Перерыв(мин)";
+
+            int pp = 2;
+            foreach (var list in rows)
+            {
+                sheet.Cells[pp, 1].Value = pp - 1;
+                int column = 2;
+                foreach (var item in list)
+                {
+                    sheet.Cells[pp, column].Value = item;
+                    column++;
+                }
+                pp++;
+            }
+
+            package.Save();
+            Growl.Info("Экспорт успешно завершен", "Global");
+        }
+
 
         #endregion
 

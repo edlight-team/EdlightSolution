@@ -168,7 +168,7 @@
                                   Margin="5,0,5,0"
                                   BorderBrush="{DynamicResource InnerElementBorderBrush}"
                                   BorderThickness="2"
-                                  Maximum="5"
+                                  Maximum="2"
                                   Minimum="0"
                                   Value="{Binding Prioritetes[0], UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Width="85"
@@ -190,7 +190,7 @@
                                   Margin="5,0,5,0"
                                   BorderBrush="{DynamicResource InnerElementBorderBrush}"
                                   BorderThickness="2"
-                                  Maximum="5"
+                                  Maximum="2"
                                   Minimum="0"
                                   Value="{Binding Prioritetes[2], UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
@@ -206,7 +206,7 @@
                                   Margin="5,0,5,0"
                                   BorderBrush="{DynamicResource InnerElementBorderBrush}"
                                   BorderThickness="2"
-                                  Maximum="5"
+                                  Maximum="2"
                                   Minimum="0"
                                   Value="{Binding Prioritetes[3], UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Width="85"
@@ -217,7 +217,7 @@
                                   Margin="5,0,5,0"
                                   BorderBrush="{DynamicResource InnerElementBorderBrush}"
                                   BorderThickness="2"
-                                  Maximum="5"
+                                  Maximum="2"
                                   Minimum="0"
                                   Value="{Binding Prioritetes[4], UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Width="85"
@@ -228,7 +228,7 @@
                                   Margin="5,0,5,0"
                                   BorderBrush="{DynamicResource InnerElementBorderBrush}"
                                   BorderThickness="2"
-                                  Maximum="5"
+                                  Maximum="2"
                                   Minimum="0"
                                   Value="{Binding Prioritetes[5], UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>

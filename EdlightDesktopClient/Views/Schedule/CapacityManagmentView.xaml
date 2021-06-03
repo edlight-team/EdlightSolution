@@ -12,6 +12,7 @@
              behaviors:LoadedBehavior.Command="{Binding LoadedCommand}"
              d:DataContext="{d:DesignInstance vm:CapacityManagmentViewModel}"
              prism:ViewModelLocator.AutoWireViewModel="True"
+             xml:lang="ru-RU"
              mc:Ignorable="d">
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
@@ -443,7 +444,7 @@
                                                                             <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
                                                                                 <TextBlock Margin="0"
                                                                                            Style="{DynamicResource SimpleTextBlock}"
-                                                                                           Text="{Binding CellDate, StringFormat=Дата : dd.MM.yyyy}" />
+                                                                                           Text="{Binding CellDate, StringFormat=ddd : Дата : dd.MM.yyyy}" />
                                                                             </StackPanel>
                                                                         </Expander.Header>
                                                                         <StackPanel Orientation="Vertical">
@@ -461,22 +462,27 @@
                                                                                                            HorizontalAlignment="Center"
                                                                                                            Style="{DynamicResource SimpleTextBlock}"
                                                                                                            Text="{Binding PairName}" />
-                                                                                                <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Lessons}">
-                                                                                                    <DataGrid.Columns>
-                                                                                                        <DataGridTextColumn Width="100"
-                                                                                                                            Binding="{Binding TypeClass.ShortTitle}"
+                                                                                                <ListView ItemsSource="{Binding Lessons}">
+                                                                                                    <ListView.View>
+                                                                                                        <GridView AllowsColumnReorder="False">
+                                                                                                            <GridViewColumn Width="100"
+                                                                                                                            DisplayMemberBinding="{Binding TypeClass.ShortTitle}"
                                                                                                                             Header="Тип занятия" />
-                                                                                                        <DataGridTextColumn Width="250"
-                                                                                                                            Binding="{Binding Teacher.FullName}"
+                                                                                                            <GridViewColumn Width="250"
+                                                                                                                            DisplayMemberBinding="{Binding Teacher.FullName}"
                                                                                                                             Header="Преподаватель" />
-                                                                                                        <DataGridTextColumn Width="100"
-                                                                                                                            Binding="{Binding Group.Group}"
+                                                                                                            <GridViewColumn Width="100"
+                                                                                                                            DisplayMemberBinding="{Binding Group.Group}"
                                                                                                                             Header="Группа" />
-                                                                                                        <DataGridTextColumn Width="auto"
-                                                                                                                            Binding="{Binding AcademicDiscipline.Title}"
+                                                                                                            <GridViewColumn Width="200"
+                                                                                                                            DisplayMemberBinding="{Binding TimeLessons.FullTimeString}"
+                                                                                                                            Header="Время" />
+                                                                                                            <GridViewColumn Width="auto"
+                                                                                                                            DisplayMemberBinding="{Binding AcademicDiscipline.Title}"
                                                                                                                             Header="Дисциплина" />
-                                                                                                    </DataGrid.Columns>
-                                                                                                </DataGrid>
+                                                                                                        </GridView>
+                                                                                                    </ListView.View>
+                                                                                                </ListView>
                                                                                             </StackPanel>
                                                                                         </DataTemplate>
                                                                                     </ItemsControl.ItemTemplate>
@@ -496,22 +502,27 @@
                                                                                                            HorizontalAlignment="Center"
                                                                                                            Style="{DynamicResource SimpleTextBlock}"
                                                                                                            Text="{Binding PairName}" />
-                                                                                                <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Lessons}">
-                                                                                                    <DataGrid.Columns>
-                                                                                                        <DataGridTextColumn Width="100"
-                                                                                                                            Binding="{Binding TypeClass.ShortTitle}"
+                                                                                                <ListView ItemsSource="{Binding Lessons}">
+                                                                                                    <ListView.View>
+                                                                                                        <GridView AllowsColumnReorder="False">
+                                                                                                            <GridViewColumn Width="100"
+                                                                                                                            DisplayMemberBinding="{Binding TypeClass.ShortTitle}"
                                                                                                                             Header="Тип занятия" />
-                                                                                                        <DataGridTextColumn Width="250"
-                                                                                                                            Binding="{Binding Teacher.FullName}"
+                                                                                                            <GridViewColumn Width="250"
+                                                                                                                            DisplayMemberBinding="{Binding Teacher.FullName}"
                                                                                                                             Header="Преподаватель" />
-                                                                                                        <DataGridTextColumn Width="100"
-                                                                                                                            Binding="{Binding Group.Group}"
+                                                                                                            <GridViewColumn Width="100"
+                                                                                                                            DisplayMemberBinding="{Binding Group.Group}"
                                                                                                                             Header="Группа" />
-                                                                                                        <DataGridTextColumn Width="auto"
-                                                                                                                            Binding="{Binding AcademicDiscipline.Title}"
+                                                                                                            <GridViewColumn Width="200"
+                                                                                                                            DisplayMemberBinding="{Binding TimeLessons.FullTimeString}"
+                                                                                                                            Header="Время" />
+                                                                                                            <GridViewColumn Width="auto"
+                                                                                                                            DisplayMemberBinding="{Binding AcademicDiscipline.Title}"
                                                                                                                             Header="Дисциплина" />
-                                                                                                    </DataGrid.Columns>
-                                                                                                </DataGrid>
+                                                                                                        </GridView>
+                                                                                                    </ListView.View>
+                                                                                                </ListView>
                                                                                             </StackPanel>
                                                                                         </DataTemplate>
                                                                                     </ItemsControl.ItemTemplate>

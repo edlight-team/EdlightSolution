@@ -4,6 +4,30 @@ using System.Collections.ObjectModel;
 
 namespace ApplicationModels.Models.CapacityExtendedModels
 {
+    public class CapacityPeriodModel : BindableBase
+    {
+        private DateTime _dateFrom;
+        private DateTime _dateTo;
+        private ObservableCollection<CapacityCellModel> _cells;
+
+        public DateTime DateFrom
+        {
+            get => _dateFrom;
+            set => SetProperty(ref _dateFrom, value);
+        }
+        public DateTime DateTo
+        {
+            get => _dateTo;
+            set => SetProperty(ref _dateTo, value);
+        }
+        public ObservableCollection<CapacityCellModel> Cells
+        {
+            get => _cells;
+            set => SetProperty(ref _cells, value);
+        }
+
+        public string FullPeriod { get => $"Период : от {DateFrom:dd.MM.yyyy} до {DateTo:dd.MM.yyyy}"; }
+    }
     public class CapacityCellModel : BindableBase
     {
         #region Дата
@@ -123,29 +147,5 @@ namespace ApplicationModels.Models.CapacityExtendedModels
 
         private ObservableCollection<LessonsModel> _Lessons;
         public ObservableCollection<LessonsModel> Lessons { get => _Lessons ??= new(); set => SetProperty(ref _Lessons, value); }
-    }
-    public class CapacityPeriodModel : BindableBase
-    {
-        private DateTime _dateFrom;
-        private DateTime _dateTo;
-        private ObservableCollection<CapacityCellModel> _cells;
-
-        public DateTime DateFrom
-        {
-            get => _dateFrom;
-            set => SetProperty(ref _dateFrom, value);
-        }
-        public DateTime DateTo
-        {
-            get => _dateTo;
-            set => SetProperty(ref _dateTo, value);
-        }
-        public ObservableCollection<CapacityCellModel> Cells
-        {
-            get => _cells;
-            set => SetProperty(ref _cells, value);
-        }
-
-        public string FullPeriod { get => $"Период : от {DateFrom:dd.MM.yyyy} до {DateTo:dd.MM.yyyy}"; }
     }
 }

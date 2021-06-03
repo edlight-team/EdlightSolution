@@ -28,6 +28,7 @@ namespace SqliteDataExecuter.Entities
                     model.IdAudience = new Guid(reader.GetString(6));
                     model.IdGroup = new Guid(reader.GetString(7));
                     model.CanceledReason = reader.GetValue(8).ToString();
+                    model.RecoursiveId = reader.GetInt32(9);
                     models.Add(model);
                 }
                 return models;
@@ -57,6 +58,8 @@ namespace SqliteDataExecuter.Entities
                     model.IdTypeClass = new Guid(reader.GetString(5));
                     model.IdAudience = new Guid(reader.GetString(6));
                     model.IdGroup = new Guid(reader.GetString(7));
+                    model.CanceledReason = reader.GetValue(8).ToString();
+                    model.RecoursiveId = reader.GetInt32(9);
                     models.Add(model);
                 }
                 return models;
@@ -74,7 +77,7 @@ namespace SqliteDataExecuter.Entities
                 SqliteCommand cmd = cnn.CreateCommand();
                 Guid generated = Guid.NewGuid();
                 cmd.CommandText = "insert into Lessons values " +
-                    "( @id,@Day,@IdTimeLessons,@IdTeacher,@IdAcademicDiscipline,@IdTypeClass,@IdAudience,@IdGroup,@CanceledReason );";
+                    "( @id,@Day,@IdTimeLessons,@IdTeacher,@IdAcademicDiscipline,@IdTypeClass,@IdAudience,@IdGroup,@CanceledReason,@RecoursiveId );";
                 cmd.Parameters.Add(new SqliteParameter("@id", generated.ToString()));
                 cmd.Parameters.Add(new SqliteParameter("@Day", model.Day.ToShortDateString()));
                 cmd.Parameters.Add(new SqliteParameter("@IdTimeLessons", model.IdTimeLessons.ToString()));
@@ -84,6 +87,7 @@ namespace SqliteDataExecuter.Entities
                 cmd.Parameters.Add(new SqliteParameter("@IdAudience", model.IdAudience.ToString()));
                 cmd.Parameters.Add(new SqliteParameter("@IdGroup", model.IdGroup.ToString()));
                 cmd.Parameters.Add(new SqliteParameter("@CanceledReason", model.CanceledReason ??= string.Empty));
+                cmd.Parameters.Add(new SqliteParameter("@RecoursiveId", model.RecoursiveId));
                 int result = cmd.ExecuteNonQuery();
                 model.Id = generated;
                 return model;
@@ -107,7 +111,8 @@ namespace SqliteDataExecuter.Entities
                     "\"IdTypeClass\" = @IdTypeClass, " +
                     "\"IdAudience\" = @IdAudience, " +
                     "\"IdGroup\" = @IdGroup, " +
-                    "\"CanceledReason\" = @CanceledReason " +
+                    "\"CanceledReason\" = @CanceledReason, " +
+                    "\"RecoursiveId\" = @RecoursiveId " +
                     "where ID = @id";
                 cmd.Parameters.Add(new SqliteParameter("@Day", model.Day.ToShortDateString()));
                 cmd.Parameters.Add(new SqliteParameter("@IdTimeLessons", model.IdTimeLessons.ToString()));
@@ -117,6 +122,7 @@ namespace SqliteDataExecuter.Entities
                 cmd.Parameters.Add(new SqliteParameter("@IdAudience", model.IdAudience.ToString()));
                 cmd.Parameters.Add(new SqliteParameter("@IdGroup", model.IdGroup.ToString()));
                 cmd.Parameters.Add(new SqliteParameter("@CanceledReason", model.CanceledReason ??= string.Empty));
+                cmd.Parameters.Add(new SqliteParameter("@RecoursiveId", model.RecoursiveId));
                 cmd.Parameters.Add(new SqliteParameter("@id", model.Id.ToString()));
                 int result = cmd.ExecuteNonQuery();
                 return model;

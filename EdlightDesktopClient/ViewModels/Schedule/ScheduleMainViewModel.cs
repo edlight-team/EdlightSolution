@@ -624,6 +624,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                     capacity.QuestionCount = reader[53]?.ToString().ToDouble();
                     capacity.HourAtWeek = reader[54]?.ToString().ToDouble();
 
+                    if (capacity.HourAtWeek <= 1) continue;
+                    if (double.IsNaN(capacity.AudithoryCapacity.Value)) continue;
+                    if (capacity.DateFrom == new DateTime() || capacity.DateFrom == null) continue;
+
                     capacities.Add(capacity);
                     //await Task.Delay(1);
                 }

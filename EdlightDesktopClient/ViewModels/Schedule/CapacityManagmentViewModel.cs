@@ -1,18 +1,23 @@
 ﻿using ApplicationModels;
+using ApplicationModels.Models;
+using ApplicationModels.Models.CapacityExtendedModels;
+using ApplicationServices.WebApiService;
+using ApplicationWPFServices.DebugService;
+using EdlightDesktopClient.Views.Schedule.CapacityWindows;
+using HandyControl.Controls;
+using OfficeOpenXml;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
-using System.Linq;
-using Styles.Models;
-using System.Collections.ObjectModel;
-using ApplicationModels.Models.CapacityExtendedModels;
-using ApplicationModels.Models;
-using System.Collections.Generic;
-using ApplicationServices.WebApiService;
 using Prism.Services.Dialogs;
-using EdlightDesktopClient.Views.Schedule.CapacityWindows;
+using Styles.Extensions;
+using Styles.Models;
 using System;
-using ApplicationWPFServices.DebugService;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 
 namespace EdlightDesktopClient.ViewModels.Schedule
 {
@@ -24,6 +29,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private readonly Dictionary<int, string> _StartTimes = new() { { 1, "8:30" }, { 2, "10:15" }, { 3, "12:30" }, { 4, "14:30" }, { 5, "16:00" }, { 6, "17:45" }, };
         private readonly Dictionary<int, string> _EndTimes = new() { { 1, "10:05" }, { 2, "11:50" }, { 3, "14:05" }, { 4, "15:50" }, { 5, "17:35" }, { 6, "19:20" }, };
         private readonly Dictionary<int, string> _BreakTimes = new() { { 1, "5" }, { 2, "5" }, { 3, "5" }, { 4, "5" }, { 5, "5" }, { 6, "0" }, };
+        private readonly Dictionary<int, TimeLessonsModel> _TimeLessons = new();
 
         #endregion
         #region services
@@ -39,6 +45,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private LoaderModel _loader;
         private ObservableCollection<CapacityModel> _capacities;
 
+        private ObservableCollection<LessonsModel> _lessons;
         private ObservableCollection<CapacityPeriodModel> _periods;
         private ObservableCollection<GroupsModel> _groups;
         private ObservableCollection<TypeClassesModel> _classTypes;
@@ -49,6 +56,9 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private ObservableCollection<ImportedDiscipline> _importedDisciplines;
         private bool _isAllTeachersConfirmed;
         private bool _isAllDisciplinesConfirmed;
+        private bool _isManualPeriodEnabled;
+        private DateTime _manualDateFrom;
+        private DateTime _manualDateTo;
 
         #endregion
         #region props
@@ -56,6 +66,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         public LoaderModel Loader { get => _loader; set => SetProperty(ref _loader, value); }
         public ObservableCollection<CapacityModel> Capacities { get => _capacities ??= new(); set => SetProperty(ref _capacities, value); }
 
+        public ObservableCollection<LessonsModel> Lessons { get => _lessons ??= new(); set => SetProperty(ref _lessons, value); }
         public ObservableCollection<CapacityPeriodModel> Periods { get => _periods ??= new(); set => SetProperty(ref _periods, value); }
         public ObservableCollection<GroupsModel> Groups { get => _groups ??= new(); set => SetProperty(ref _groups, value); }
         public ObservableCollection<TypeClassesModel> ClassTypes { get => _classTypes ??= new(); set => SetProperty(ref _classTypes, value); }
@@ -66,6 +77,9 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         public ObservableCollection<ImportedDiscipline> ImportedDisciplines { get => _importedDisciplines ??= new(); set => SetProperty(ref _importedDisciplines, value); }
         public bool IsAllTeachersConfirmed { get => _isAllTeachersConfirmed; set => SetProperty(ref _isAllTeachersConfirmed, value); }
         public bool IsAllDisciplinesConfirmed { get => _isAllDisciplinesConfirmed; set => SetProperty(ref _isAllDisciplinesConfirmed, value); }
+        public bool IsManualPeriodEnabled { get => _isManualPeriodEnabled; set => SetProperty(ref _isManualPeriodEnabled, value); }
+        public DateTime ManualDateFrom { get => _manualDateFrom; set => SetProperty(ref _manualDateFrom, value); }
+        public DateTime ManualDateTo { get => _manualDateTo; set => SetProperty(ref _manualDateTo, value); }
 
         #endregion
         #region commands
@@ -97,6 +111,12 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 .ObservesProperty(() => IsAllDisciplinesConfirmed)
                 .ObservesProperty(() => IsAllTeachersConfirmed);
             CreateScheduleCommand = new DelegateCommand(OnCreateSchedule);
+
+            _TimeLessons.Clear();
+            foreach (var key in _StartTimes.Keys)
+            {
+                _TimeLessons.Add(key, new TimeLessonsModel() { StartTime = _StartTimes[key], EndTime = _EndTimes[key], BreakTime = _BreakTimes[key] });
+            }
         }
 
         #endregion
@@ -163,11 +183,13 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 List<string> disciplines_disctinct = new();
                 foreach (var item in disciplines_group.ToList())
                 {
-                    if (!disciplines_disctinct.Any(dd => dd.StartsWith(item.Key.Trim())) && !item.Key.Trim().Contains("п/г"))
-                    {
-                        disciplines_disctinct.Add(item.Key);
-                    }
+                    if (string.IsNullOrEmpty(item.Key)) continue;
+                    string discipline_name = item.Key.Trim();
+                    int pg_index = discipline_name.IndexOf(", п/г ");
+                    if (pg_index != -1) discipline_name = discipline_name.Remove(pg_index);
+                    disciplines_disctinct.Add(discipline_name);
                 }
+                disciplines_disctinct = disciplines_disctinct.Distinct().ToList();
                 foreach (var item in disciplines_disctinct)
                 {
                     //Проверяем есть ли в преподавтелях найденные из нагрузки
@@ -292,98 +314,539 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #endregion
         #region Schedule
 
+        /// <summary>
+        /// Генерация расписания
+        /// </summary>
         private async void OnScheduleGenerating()
         {
-            Loader.SetDefaultLoadingInfo();
-            var date_froms = Capacities.GroupBy(g => g.DateFrom);
 
-            Periods.Clear();
-            ObservableCollection<CapacityCellModel> cells = new();
-
-            //Создаем сетку для занятий
-            foreach (var item in date_froms)
-            {
-                CapacityModel first = item.FirstOrDefault();
-                cells = CreateRangeCells(first.DateFrom, first.DateTo);
-                if (cells != null && cells.Count != 0)
-                    Periods.Add(new CapacityPeriodModel() { DateFrom = first.DateFrom.Value, DateTo = first.DateTo.Value, Cells = cells });
-            }
-
-            debug.Clear();
-            //Проходим по сетке и создаем временные занятия без учета времени
-            List<LessonsModel> temp_lessons = new();
-            foreach (var period in Periods)
-            {
-                foreach (var cell in period.Cells)
-                {
-                    foreach (var capacity in Capacities)
-                    {
-                        if (!capacity.DateFrom.HasValue || !capacity.DateTo.HasValue) continue;
-                        if (IsInRange(cell.CellDate, capacity.DateFrom.Value, capacity.DateTo.Value))
-                        {
-                            if (string.IsNullOrEmpty(capacity.TeacherFio)) continue;
-                            string teacher_initials = capacity.TeacherFio.Remove(0, 1);
-                            UserModel target_teacher = Teachers.FirstOrDefault(t => t.Initials == teacher_initials);
-
-                            string group_name = capacity.Group;
-                            GroupsModel target_group = Groups.FirstOrDefault(g => g.Group == group_name);
-
-                            string type_class_short = capacity.ClassType;
-                            TypeClassesModel target_type_class = ClassTypes.FirstOrDefault(t => t.ShortTitle == type_class_short);
-
-                            string discipline_name = capacity.DisciplineOrWorkType;
-                            AcademicDisciplinesModel target_discipline = Disciplines.FirstOrDefault(a => a.Title.Contains(discipline_name));
-
-                            debug.Log("Группа " + target_group?.Group + ", Тип " + target_type_class?.Title + ", Название " + target_discipline?.Title);
-                        }
-                    }
-                }
-            }
-
-            await Loader.Clear();
         }
-        private ObservableCollection<CapacityCellModel> CreateRangeCells(DateTime? from, DateTime? to)
+
+        //private async void OnScheduleGenerating()
+        //{
+        //    Loader.SetDefaultLoadingInfo();
+        //    var date_froms = Capacities.GroupBy(g => g.DateFrom);
+
+        //    Periods.Clear();
+        //    ObservableCollection<CapacityCellModel> cells = new();
+
+        //    //Создаем сетку для занятий
+        //    foreach (var item in date_froms)
+        //    {
+        //        CapacityModel first = item.FirstOrDefault();
+        //        cells = CreateRangeCells(first.DateFrom, first.DateTo);
+        //        if (cells != null && cells.Count != 0)
+        //            Periods.Add(new CapacityPeriodModel() { DateFrom = first.DateFrom.Value, DateTo = first.DateTo.Value, Cells = cells });
+        //    }
+
+        //    debug.Clear();
+
+        //    //Проходим по сетке и создаем временные занятия без учета времени
+        //    List<LessonsModel> temp_lessons = new();
+        //    foreach (var capacity in Capacities)
+        //    {
+        //        try
+        //        {
+        //            if (string.IsNullOrEmpty(capacity.TeacherFio)) continue;
+        //            string teacher_initials = capacity.TeacherFio.Remove(0, 1);
+        //            UserModel target_teacher = Teachers.FirstOrDefault(t => t.Initials == teacher_initials);
+
+        //            string group_name = capacity.Group;
+        //            GroupsModel target_group = Groups.FirstOrDefault(g => g.Group == group_name);
+
+        //            string type_class_short = capacity.ClassType;
+        //            TypeClassesModel target_type_class = ClassTypes.FirstOrDefault(t => t.ShortTitle == type_class_short);
+
+        //            string discipline_name = capacity.DisciplineOrWorkType.Trim();
+        //            int pg_index = discipline_name.IndexOf(", п/г ");
+        //            if (pg_index != -1) discipline_name = discipline_name.Remove(pg_index);
+        //            AcademicDisciplinesModel target_discipline = Disciplines.FirstOrDefault(a => a.Title.Contains(discipline_name));
+
+        //            AudiencesModel priority_audience = Audiences.FirstOrDefault(a => a.Id == target_discipline.IdPriorityAudience);
+
+        //            LessonsModel lm = new();
+        //            lm.AcademicDiscipline = target_discipline;
+        //            if (priority_audience != null) lm.Audience = priority_audience;
+
+        //            lm.Group = target_group;
+        //            lm.Teacher = target_teacher;
+        //            lm.TypeClass = target_type_class;
+        //            temp_lessons.Add(lm);
+
+        //            debug.Log("Группа " + target_group?.Group + ", Тип " + target_type_class?.Title + ", Название " + target_discipline?.Title);
+        //        }
+        //        catch (Exception)
+        //        {
+        //            continue;
+        //        }
+        //    }
+
+        //    foreach (var period in Periods)
+        //    {
+        //        foreach (var cell in period.Cells)
+        //        {
+        //            foreach (var capacity in Capacities)
+        //            {
+        //                if (!capacity.DateFrom.HasValue || !capacity.DateTo.HasValue) continue;
+        //                if (IsInRange(cell.CellDate, capacity.DateFrom.Value, capacity.DateTo.Value))
+        //                {
+
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    await Loader.Clear();
+        //}
+
+        //private async void OnScheduleGenerating()
+        //{
+        //    List<LessonsModelExtended> UpWeekLessons = new();
+        //    List<LessonsModelExtended> DownWeekLessons = new();
+        //    try
+        //    {
+        //        Loader.SetDefaultLoadingInfo();
+        //        #region Формирование сетки расписания
+
+        //        //Создаем общую сетку
+        //        ObservableCollection<CapacityCellModel> cells = new();
+        //        if (IsManualPeriodEnabled) //Ручной ввод периода
+        //        {
+        //            //если нет дат нужно указать период в ручную
+        //            cells = CreateRangeCells(ManualDateFrom, ManualDateTo);
+        //        }
+        //        else
+        //        {
+        //            //Ищем первую дату От
+        //            DateTime? first_date_from = Capacities.GroupBy(g => g.DateFrom)
+        //                                                  .ToList()
+        //                                                  .OrderBy(d => d.Key)
+        //                                                  .ToList()
+        //                                                  .Where(d => d.Key != null && d.Key != new DateTime())
+        //                                                  .FirstOrDefault()
+        //                                                  .Key;
+
+        //            //Ищем последнюю дату До
+        //            DateTime? last_date_to = Capacities.GroupBy(g => g.DateTo)
+        //                                                .ToList()
+        //                                                .OrderBy(d => d.Key)
+        //                                                .ToList()
+        //                                                .Where(d => d.Key != null && d.Key != new DateTime())
+        //                                                .LastOrDefault()
+        //                                                .Key;
+
+
+        //            //Создаем общую сетку от первой и до последней даты
+        //            cells = CreateRangeCells(first_date_from, last_date_to);
+        //        }
+
+        //        #endregion
+        //        #region Деление сетки на периоды по 1 неделе
+
+        //        //Делим сетку на периоды (недели)
+        //        Periods = CreatePeriodsBySplitting(cells);
+
+        //        #endregion
+        //        #region Заполнение дисциплин
+
+        //        #region Тестовые данные для просмотра
+
+        //        //Random rnd = new();
+        //        //foreach (var item in Periods)
+        //        //{
+        //        //    foreach (var cell in item.Cells)
+        //        //    {
+        //        //        foreach (var pair in cell.UpDay.Pairs)
+        //        //        {
+        //        //            for (int i = 0; i < rnd.Next(1, 4); i++)
+        //        //            {
+        //        //                LessonsModel lm = new();
+
+        //        //                lm.AcademicDiscipline = Disciplines[rnd.Next(0, Disciplines.Count)];
+        //        //                lm.Audience = Audiences[rnd.Next(0, Audiences.Count)];
+        //        //                lm.Group = Groups[rnd.Next(0, Groups.Count)];
+        //        //                lm.TypeClass = ClassTypes[rnd.Next(0, ClassTypes.Count)];
+        //        //                lm.Teacher = Teachers[rnd.Next(0, Teachers.Count)];
+        //        //                lm.TimeLessons = _TimeLessons[rnd.Next(1, 6)];
+
+        //        //                pair.Lessons.Add(lm);
+        //        //            }
+        //        //        }
+        //        //        foreach (var pair in cell.DownDay.Pairs)
+        //        //        {
+        //        //            for (int i = 0; i < rnd.Next(1, 4); i++)
+        //        //            {
+        //        //                LessonsModel lm = new();
+
+        //        //                lm.AcademicDiscipline = Disciplines[rnd.Next(0, Disciplines.Count)];
+        //        //                lm.Audience = Audiences[rnd.Next(0, Audiences.Count)];
+        //        //                lm.Group = Groups[rnd.Next(0, Groups.Count)];
+        //        //                lm.TypeClass = ClassTypes[rnd.Next(0, ClassTypes.Count)];
+        //        //                lm.Teacher = Teachers[rnd.Next(0, Teachers.Count)];
+        //        //                lm.TimeLessons = _TimeLessons[rnd.Next(1, 6)];
+
+        //        //                pair.Lessons.Add(lm);
+        //        //            }
+        //        //        }
+        //        //    }
+        //        //}
+
+        //        #endregion
+
+        //        foreach (var discipline_group in Capacities.GroupBy(c => c.DisciplineOrWorkType))
+        //        {
+        //            //Ищем преподавателя
+        //            string initials = discipline_group.FirstOrDefault().TeacherFio;
+        //            if (string.IsNullOrEmpty(initials)) continue;
+        //            initials = initials.Remove(0, 1);
+        //            UserModel teacher = Teachers.FirstOrDefault(t => t.Initials == initials);
+
+        //            //Ищем день с максимальным приоритетом
+        //            Dictionary<DayOfWeek, int> ordered_priorities = GetDayPriorities(teacher);
+
+        //            foreach (CapacityModel record in discipline_group)
+        //            {
+        //                string group_name = record.Group;
+        //                GroupsModel target_group = Groups.FirstOrDefault(g => g.Group == group_name);
+
+        //                string type_class_short = record.ClassType;
+        //                TypeClassesModel target_type_class = ClassTypes.FirstOrDefault(t => t.ShortTitle == type_class_short);
+
+        //                string discipline_name = record.DisciplineOrWorkType.Trim();
+        //                int pg_index = discipline_name.IndexOf(", п/г ");
+        //                if (pg_index != -1) discipline_name = discipline_name.Remove(pg_index);
+        //                AcademicDisciplinesModel target_discipline = Disciplines.FirstOrDefault(a => a.Title.Contains(discipline_name));
+
+        //                AudiencesModel priority_audience = Audiences.FirstOrDefault(a => a.Id == target_discipline.IdPriorityAudience);
+
+        //                //Считаем кол-во недель
+        //                int week_count = (int)record.WeekCount.Value;
+
+        //                //Создаем для каждой недели
+        //                for (int i = 0; i < week_count; i++)
+        //                {
+        //                    bool isUpWeek = record.ClassType.ToLower() == "Лек".ToLower();
+
+        //                    int lesson_count = (int)record.HoursOnStreamOrGroupOrStudent / 2;
+        //                    for (int l = 0; l < lesson_count; l++)
+        //                    {
+        //                        LessonsModelExtended lm = new();
+        //                        lm.Group = target_group;
+        //                        lm.TypeClass = target_type_class;
+        //                        lm.AcademicDiscipline = target_discipline;
+        //                        lm.Audience = priority_audience;
+        //                        lm.Teacher = teacher;
+        //                        lm.DateFrom = record.DateFrom;
+        //                        lm.DateTo = record.DateTo;
+
+        //                        if (isUpWeek)
+        //                        {
+        //                            UpWeekLessons.Add(lm);
+        //                        }
+        //                        else
+        //                        {
+        //                            DownWeekLessons.Add(lm);
+        //                        }
+
+        //                    //    int day_offset = 0;
+        //                    //change_day:
+        //                    //    DateTime day = GetPriorityDate(record.DateFrom, record.DateTo, ordered_priorities.GetNext(day_offset));
+        //                    //    lm.Day = day;
+        //                    //    var period = GetPeriodByDate(day);
+        //                    //    var cell = GetCellByDate(period, day);
+
+        //                    //    ObservableCollection<CapacityPairModel> pairs = isUpWeek ? cell.UpDay.Pairs : cell.DownDay.Pairs;
+
+        //                    //    int pair_number = 0;
+        //                    //change_pair:
+        //                    //    ObservableCollection<LessonsModel> pair_lessons = pairs.ElementAtOrDefault(pair_number).Lessons;
+        //                    //    if (pair_lessons.Any(pl => pl.Teacher.ID == lm.Teacher.ID))
+        //                    //    {
+        //                    //        pair_number++;
+        //                    //        if (pair_number > 5)
+        //                    //        {
+        //                    //            day_offset++;
+        //                    //            goto change_day;
+        //                    //        }
+        //                    //        else
+        //                    //        {
+        //                    //            goto change_pair;
+        //                    //        }
+        //                    //    }
+        //                    //    else
+        //                    //    {
+        //                    //        lm.TimeLessons = _TimeLessons[pair_number + 1];
+        //                    //        pair_lessons.Add(lm);
+        //                    //    }
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        #endregion
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        await Loader.Clear();
+        //    }
+        //    try
+        //    {
+        //        var up_periods = UpWeekLessons.GroupBy(g => g.DateFrom);
+        //        foreach (var up_lesson in up_periods)
+        //        {
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
+
+        /// <summary>
+        /// Общая сетка расписания от даты до даты
+        /// </summary>
+        /// <param name="from">От</param>
+        /// <param name="to">До</param>
+        /// <returns>Сплошная сетка</returns>
+        //private ObservableCollection<CapacityCellModel> CreateRangeCells(DateTime? from, DateTime? to)
+        //{
+        //    ObservableCollection<CapacityCellModel> result = new();
+
+        //    if (!to.HasValue || !from.HasValue) return null;
+
+        //    if ((to.Value - from.Value).TotalSeconds < 0)
+        //    {
+        //        return result;
+        //    }
+
+        //    int total_days = (int)Math.Round((to.Value - from.Value).TotalDays);
+        //    int days_offset = 0;
+        //    for (int i = 0; i < total_days; i++)
+        //    {
+        //        DateTime day = from.Value.AddDays(days_offset++);
+        //        if (day.DayOfWeek != DayOfWeek.Sunday)
+        //        {
+        //            CapacityCellModel cell = new();
+        //            cell.CellDate = day;
+        //            result.Add(cell);
+        //        }
+        //    }
+
+        //    return result;
+        //}
+        ///// <summary>
+        ///// Создать коллекцию периодов разделив по неделям года
+        ///// </summary>
+        ///// <param name="cells">Коллекция общей сетки</param>
+        ///// <returns></returns>
+        //private ObservableCollection<CapacityPeriodModel> CreatePeriodsBySplitting(ObservableCollection<CapacityCellModel> cells)
+        //{
+        //    ObservableCollection<CapacityPeriodModel> result = new();
+        //    GregorianCalendar calendar = new();
+
+        //    Dictionary<int, List<CapacityCellModel>> week_cells = new();
+        //    foreach (var item in cells)
+        //    {
+        //        int week_number = calendar.GetWeekOfYear(item.CellDate, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+        //        if (week_cells.ContainsKey(week_number))
+        //        {
+        //            week_cells[week_number].Add(item);
+        //        }
+        //        else
+        //        {
+        //            week_cells.Add(week_number, new List<CapacityCellModel>());
+        //            week_cells[week_number].Add(item);
+        //        }
+        //    }
+
+        //    foreach (var week in week_cells.Keys)
+        //    {
+        //        CapacityPeriodModel period = new();
+        //        period.Cells = new();
+        //        period.DateFrom = week_cells[week].FirstOrDefault().CellDate;
+        //        period.DateTo = week_cells[week].LastOrDefault().CellDate;
+
+        //        foreach (var value in week_cells[week])
+        //        {
+        //            period.Cells.Add(value);
+        //        }
+
+        //        result.Add(period);
+        //    }
+
+        //    return result;
+        //}
+        //private Dictionary<DayOfWeek, int> GetDayPriorities(UserModel user)
+        //{
+        //    Dictionary<DayOfWeek, int> priorities = new();
+
+        //    priorities.Add(DayOfWeek.Monday, user.DaysPriority[0]);
+        //    priorities.Add(DayOfWeek.Tuesday, user.DaysPriority[1]);
+        //    priorities.Add(DayOfWeek.Wednesday, user.DaysPriority[2]);
+        //    priorities.Add(DayOfWeek.Thursday, user.DaysPriority[3]);
+        //    priorities.Add(DayOfWeek.Friday, user.DaysPriority[4]);
+        //    priorities.Add(DayOfWeek.Saturday, user.DaysPriority[5]);
+
+        //    IOrderedEnumerable<KeyValuePair<DayOfWeek, int>> ordered = priorities.OrderByDescending(p => p.Value);
+
+        //    Dictionary<DayOfWeek, int> result = new();
+        //    foreach (var item in ordered)
+        //    {
+        //        if (item.Value == 0) continue;
+        //        result.Add(item.Key, item.Value);
+        //    }
+
+        //    return result;
+        //}
+        //private DateTime GetPriorityDate(DateTime? from, DateTime? to, DayOfWeek priority)
+        //{
+        //    int total_days = (int)Math.Round((to.Value - from.Value).TotalDays);
+        //    int days_offset = 0;
+
+        //    for (int i = 0; i < total_days; i++)
+        //    {
+        //        DateTime day = from.Value.AddDays(days_offset++);
+        //        if (day.DayOfWeek == priority) return day;
+        //    }
+        //    return to.Value;
+        //}
+        //private CapacityPeriodModel GetPeriodByDate(DateTime day)
+        //{
+        //    foreach (var period in Periods)
+        //    {
+        //        var cell = period.Cells.FirstOrDefault(c => c.CellDate == day);
+        //        if (cell != null) return period;
+        //    }
+        //    return null;
+        //}
+        //private CapacityPeriodModel GetPeriodByRange(DateTime? from, DateTime? to)
+        //{
+        //    foreach (var period in Periods)
+        //    {
+        //        if (period.DateFrom == from && period.DateTo == to)
+        //        {
+        //            return period;
+        //        }
+        //    }
+        //    return null;
+        //}
+        //public CapacityCellModel GetCellByDate(CapacityPeriodModel period, DateTime day)
+        //{
+        //    foreach (var cell in period?.Cells)
+        //    {
+        //        if (cell.CellDate == day)
+        //        {
+        //            return cell;
+        //        }
+        //    }
+        //    return null;
+        //}
+
+        //private bool IsInRange(DateTime target, DateTime start, DateTime end)
+        //{
+        //    if ((target - start).TotalDays < 0)
+        //    {
+        //        return false;
+        //    }
+        //    if ((end - target).TotalDays < 0)
+        //    {
+        //        return false;
+        //    }
+        //    return true;
+        //}
+
+        /// <summary>
+        /// Метод формирует Excel файл из сетки расписания
+        /// </summary>
+        private void OnCreateSchedule()
         {
-            ObservableCollection<CapacityCellModel> result = new();
-
-            if (!to.HasValue || !from.HasValue) return null;
-
-            if ((to.Value - from.Value).TotalSeconds < 0)
+            List<List<string>> rows = new();
+            //foreach (var period in Periods)
+            //{
+            //    foreach (var cell in period.Cells)
+            //    {
+            //        foreach (var pair in cell.UpDay.Pairs)
+            //        {
+            //            foreach (LessonsModel lesson in pair.Lessons)
+            //            {
+            //                 rows.Add(ConvertToListString(lesson));
+            //            }
+            //        }
+            //        foreach (var pair in cell.DownDay.Pairs)
+            //        {
+            //            foreach (LessonsModel lesson in pair.Lessons)
+            //            {
+            //                 rows.Add(ConvertToListString(lesson));
+            //            }
+            //        }
+            //    }
+            //}
+            foreach (var lesson in Lessons)
             {
-                return result;
+                rows.Add(ConvertToListString(lesson));
             }
+            ExportToExcelImportDocument(rows, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\tmp.xlsx");
+        }
+        private List<string> ConvertToListString(LessonsModel lesson)
+        {
+            List<string> result = new();
 
-            int total_days = (int)Math.Round((to.Value - from.Value).TotalDays);
-            int days_offset = 0;
-            for (int i = 0; i < total_days; i++)
-            {
-                DateTime day = from.Value.AddDays(days_offset++);
-                if (day.DayOfWeek != DayOfWeek.Sunday)
-                {
-                    CapacityCellModel cell = new();
-                    cell.CellDate = day;
-                    result.Add(cell);
-                }
-            }
+            result.Add(lesson.Teacher.Surname);
+            result.Add(lesson.Teacher.Name);
+            result.Add(lesson.Teacher.Patrnymic);
+            result.Add(lesson.AcademicDiscipline.Title);
+            result.Add(lesson.Audience.NumberAudience);
+            result.Add(lesson.TypeClass.Title);
+            result.Add(lesson.Group.Group);
+            result.Add(lesson.TimeLessons.StartTime);
+            result.Add(lesson.TimeLessons.EndTime);
+            result.Add(lesson.Day.ToShortDateString());
+            result.Add(lesson.TimeLessons.BreakTime);
 
             return result;
         }
-        private bool IsInRange(DateTime target, DateTime start, DateTime end)
+        private void ExportToExcelImportDocument(List<List<string>> rows, string excel_output_path)
         {
-            if ((target - start).TotalDays < 0)
-            {
-                return false;
-            }
-            if ((end - target).TotalDays < 0)
-            {
-                return false;
-            }
-            return true;
-        }
-        private void OnCreateSchedule()
-        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using ExcelPackage package = new(new FileInfo(excel_output_path));
 
+            ExcelWorksheet sheet = package.Workbook.Worksheets.Add("Sheet1");
+
+            sheet.Cells[1, 1].Value = @"№ П\П";
+            sheet.Cells[1, 2].Value = @"Преподаватель     Ф";
+            sheet.Cells[1, 3].Value = @"И";
+            sheet.Cells[1, 4].Value = @"О";
+            sheet.Cells[1, 5].Value = @"Дисциплина";
+            sheet.Cells[1, 6].Value = @"Аудитория";
+            sheet.Cells[1, 7].Value = @"Тип занятия";
+            sheet.Cells[1, 8].Value = @"Группа";
+            sheet.Cells[1, 9].Value = @"Начало занятия";
+            sheet.Cells[1, 10].Value = @"Конец занятия";
+            sheet.Cells[1, 11].Value = @"Дата занятия";
+            sheet.Cells[1, 12].Value = @"Перерыв(мин)";
+
+            int pp = 2;
+            foreach (var list in rows)
+            {
+                sheet.Cells[pp, 1].Value = pp - 1;
+                int column = 2;
+                foreach (var item in list)
+                {
+                    sheet.Cells[pp, column].Value = item;
+                    column++;
+                }
+                pp++;
+            }
+
+            package.Save();
+            Growl.Info("Экспорт успешно завершен", "Global");
         }
+
 
         #endregion
 
@@ -397,7 +860,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             }
         }
         public void OnNavigatedFrom(NavigationContext navigationContext) { }
-        public bool IsNavigationTarget(NavigationContext navigationContext) => true; 
+        public bool IsNavigationTarget(NavigationContext navigationContext) => true;
         #endregion
     }
 }

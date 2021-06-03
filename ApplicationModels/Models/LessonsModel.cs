@@ -23,6 +23,7 @@ namespace ApplicationModels.Models
         private AudiencesModel audience;
         private GroupsModel group;
         private string canceledReason;
+        private int recoursiveId;
         private bool isSelected;
         private bool isCanceled;
 
@@ -84,6 +85,12 @@ namespace ApplicationModels.Models
         public string CanceledReason { get => canceledReason ??= string.Empty; set => SetProperty(ref canceledReason, value); }
 
         /// <summary>
+        /// ИД если занятие относится к рекурсии
+        /// </summary>
+        [JsonProperty(nameof(RecoursiveId))]
+        public int RecoursiveId { get => recoursiveId; set => SetProperty(ref recoursiveId, value); }
+
+        /// <summary>
         /// Занятие
         /// </summary>
         [JsonIgnore]
@@ -132,5 +139,21 @@ namespace ApplicationModels.Models
         public bool IsCanceled { get => isCanceled; set => SetProperty(ref isCanceled, value); }
 
         #endregion
+    }
+    public class LessonsModelExtended : LessonsModel
+    {
+        private DateTime? _dateFrom;
+        public DateTime? DateFrom
+        {
+            get => _dateFrom;
+            set => SetProperty(ref _dateFrom, value);
+        }
+
+        private DateTime? _dateTo;
+        public DateTime? DateTo
+        {
+            get => _dateTo;
+            set => SetProperty(ref _dateTo, value);
+        }
     }
 }

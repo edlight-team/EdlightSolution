@@ -41,5 +41,11 @@ namespace ApplicationModels.Models
         public string BreakTime { get => breakTime ??= string.Empty; set => SetProperty(ref breakTime, value); }
 
         #endregion
+        #region extended
+
+        [JsonIgnore]
+        public string FullTimeString { get => $"С {StartTime} По {EndTime}, Перерыв {BreakTime} мин."; }
+
+        #endregion
     }
 }

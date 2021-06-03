@@ -128,7 +128,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
                     List<StudentsGroupsModel> studentsGroup = await api.GetModels<StudentsGroupsModel>(WebApiTableNames.StudentsGroups, $"IdStudent = '{currentUser.ID}'");
                     SelectedGroup = Groups.FirstOrDefault(g => g.Id == studentsGroup[0].IdGroup);
                 }
-                if(await permission.IsInRole(teacher_role))
+                if (await permission.IsInRole(teacher_role))
                 {
                     FilteredTestCards.Filter += CardsFilter;
                     SelectedGroup = allTests;
@@ -264,7 +264,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
             {
                 { "iscreate", true }
             };
-            manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddTestView),parameter);
+            manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddTestView), parameter);
         }
 
         private void OnUpdateTest()

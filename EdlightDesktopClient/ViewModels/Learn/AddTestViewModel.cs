@@ -95,7 +95,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
             this.memory = memory;
             this.aggregator = aggregator;
 
-            TestTypes = new[] { "Контрольна работа", "Экзамен", "Зачёт", "Тест"};
+            TestTypes = new[] { "Контрольна работа", "Экзамен", "Зачёт", "Тест" };
 
             currentUser = currentUser = memory.GetItem<UserModel>(MemoryAlliases.CurrentUser);
 
@@ -147,7 +147,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
             }
         }
 
-        private void OnCloseModal()=> manager.Regions[BaseMethods.RegionNames.ModalRegion].RemoveAll();
+        private void OnCloseModal() => manager.Regions[BaseMethods.RegionNames.ModalRegion].RemoveAll();
 
         #region Questions command method
         private void OnAddQuestion()
@@ -328,7 +328,7 @@ namespace EdlightDesktopClient.ViewModels.Learn
         {
             isCreateTest = navigationContext.Parameters.GetValue<bool>("iscreate");
             if (!isCreateTest)
-                testID= navigationContext.Parameters.GetValue<Guid>("testid");
+                testID = navigationContext.Parameters.GetValue<Guid>("testid");
         }
         public bool IsNavigationTarget(NavigationContext navigationContext) => true;
 

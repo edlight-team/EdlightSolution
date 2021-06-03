@@ -61,6 +61,12 @@ namespace ServerModels.Models
         [JsonProperty(nameof(CanceledReason))]
         public string CanceledReason { get; set; }
 
+        /// <summary>
+        /// Ид если занятие относится к рекурсивному
+        /// </summary>
+        [JsonProperty(nameof(RecoursiveId))]
+        public int RecoursiveId { get; set; }
+
         #endregion
     }
 }

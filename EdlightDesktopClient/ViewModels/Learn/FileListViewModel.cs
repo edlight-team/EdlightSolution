@@ -1,5 +1,4 @@
-﻿using ApplicationEventsWPF.Events;
-using ApplicationEventsWPF.Events.LearnEvents;
+﻿using ApplicationEventsWPF.Events.LearnEvents;
 using ApplicationModels;
 using ApplicationModels.Models;
 using ApplicationServices.PermissionService;
@@ -8,7 +7,6 @@ using ApplicationWPFServices.MemoryService;
 using ApplicationWPFServices.NotificationService;
 using EdlightDesktopClient.AccessConfigurations;
 using EdlightDesktopClient.Views.Learn;
-using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -19,9 +17,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Forms;
 

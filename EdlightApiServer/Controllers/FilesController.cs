@@ -9,13 +9,14 @@ namespace EdlightApiServer.Controllers
     public class FilesController : ControllerBase
     {
         private static readonly string FilesFolderPath = Environment.CurrentDirectory + "\\Files\\";
+        private static readonly string PlansFolderPath = Environment.CurrentDirectory + "\\Plans\\";
 
         [HttpGet]
-        public object GetFile([FromHeader] string Path)
+        public object GetFile([FromHeader] string Path, [FromHeader] string IsPlanFile)
         {
             if (string.IsNullOrEmpty(Path)) return BadRequest("Параметры запроса заданы неверно");
 
-            if (!System.IO.File.Exists(FilesFolderPath + Path)) return NotFound("Запрашиваемый файл не найден");
+            if (!System.IO.File.Exists((IsPlanFile == true.ToString() ? PlansFolderPath : FilesFolderPath) + Path)) return NotFound("Запрашиваемый файл не найден");
 
             byte[] data = System.IO.File.ReadAllBytes(FilesFolderPath + Path);
 
@@ -24,7 +25,7 @@ namespace EdlightApiServer.Controllers
             return jsonFile;
         }
         [HttpPost]
-        public object PostFile([FromHeader] string Path, [FromBody] JsonFileModel fileModel)
+        public object PostFile([FromHeader] string Path, [FromHeader] string IsPlanFile, [FromBody] JsonFileModel fileModel)
         {
             if (string.IsNullOrEmpty(Path) || fileModel == null) return BadRequest("Параметры запроса заданы неверно");
 
@@ -32,7 +33,7 @@ namespace EdlightApiServer.Controllers
             {
                 System.IO.Directory.CreateDirectory(FilesFolderPath + Path);
 
-                System.IO.File.WriteAllBytes(FilesFolderPath + Path + fileModel.FileName, fileModel.Data);
+                System.IO.File.WriteAllBytes((IsPlanFile == true.ToString() ? PlansFolderPath : FilesFolderPath) + Path + fileModel.FileName, fileModel.Data);
             }
             catch (Exception ex)
             {
@@ -42,7 +43,7 @@ namespace EdlightApiServer.Controllers
             return Ok("Файл успешно сохранен");
         }
         [HttpDelete]
-        public object DeleteFile([FromHeader] string Path)
+        public object DeleteFile([FromHeader] string Path, [FromHeader] string IsPlanFile)
         {
             if (string.IsNullOrEmpty(Path)) return BadRequest("Параметры запроса заданы неверно");
 
@@ -50,11 +51,11 @@ namespace EdlightApiServer.Controllers
 
             if (regex.IsMatch(Path))
             {
-                if (!System.IO.File.Exists(FilesFolderPath + Path)) return NotFound("Запрашиваемый файл не найден");
+                if (!System.IO.File.Exists((IsPlanFile == true.ToString() ? PlansFolderPath : FilesFolderPath) + Path)) return NotFound("Запрашиваемый файл не найден");
 
                 try
                 {
-                    System.IO.File.Delete(FilesFolderPath + Path);
+                    System.IO.File.Delete((IsPlanFile == true.ToString() ? PlansFolderPath : FilesFolderPath) + Path);
                 }
                 catch (Exception ex)
                 {
@@ -65,11 +66,11 @@ namespace EdlightApiServer.Controllers
             }
             else
             {
-                if (!System.IO.Directory.Exists(FilesFolderPath + Path)) return NotFound("Запрашиваемая папка не найдена");
+                if (!System.IO.Directory.Exists((IsPlanFile == true.ToString() ? PlansFolderPath : FilesFolderPath) + Path)) return NotFound("Запрашиваемая папка не найдена");
 
                 try
                 {
-                    System.IO.Directory.Delete(FilesFolderPath + Path, true);
+                    System.IO.Directory.Delete((IsPlanFile == true.ToString() ? PlansFolderPath : FilesFolderPath) + Path, true);
                 }
                 catch (Exception ex)
                 {

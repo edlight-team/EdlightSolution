@@ -51,6 +51,7 @@ namespace EdlightApiServer
             CultureInfo.CurrentCulture = new CultureInfo("ru-RU");
 
             if (!Directory.Exists(Environment.CurrentDirectory + "\\Files")) Directory.CreateDirectory(Environment.CurrentDirectory + "\\Files");
+            if (!Directory.Exists(Environment.CurrentDirectory + "\\Plans")) Directory.CreateDirectory(Environment.CurrentDirectory + "\\Plans");
 
             Console.WriteLine("EntityChangedHub configured");
             Console.WriteLine("Files folder exist/created");

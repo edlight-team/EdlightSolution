@@ -231,18 +231,35 @@
                             Style="{DynamicResource SplitButtonPrimary}">
                 <hc:SplitButton.DropDownContent>
                     <StackPanel>
-                        <MenuItem Background="{DynamicResource InnerElementBackgroundBrush}"
-                                  Command="{Binding AddCardCommand}"
+                        <MenuItem Name="CreateMenu"
+                                  Background="{DynamicResource InnerElementBackgroundBrush}"
+                                  Cursor="Hand"
                                   Foreground="{DynamicResource ElementFontBrush}"
                                   Header="Новая запись"
-                                  Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}" />
+                                  MouseEnter="CreateMenuMouseEnter"
+                                  Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}">
+                            <MenuItem Background="{DynamicResource InnerElementBackgroundBrush}"
+                                      Command="{Binding AddCardCommand}"
+                                      Cursor="Hand"
+                                      Foreground="{DynamicResource ElementFontBrush}"
+                                      Header="Один день"
+                                      Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}" />
+                            <MenuItem Background="{DynamicResource InnerElementBackgroundBrush}"
+                                      Command="{Binding AddRecursiveCardCommand}"
+                                      Cursor="Hand"
+                                      Foreground="{DynamicResource ElementFontBrush}"
+                                      Header="Рекурсивно"
+                                      Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}" />
+                        </MenuItem>
                         <MenuItem Background="{DynamicResource InnerElementBackgroundBrush}"
                                   Command="{Binding ImportCardsCommand}"
+                                  Cursor="Hand"
                                   Foreground="{DynamicResource ElementFontBrush}"
                                   Header="Импорт"
                                   Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}" />
                         <MenuItem Background="{DynamicResource InnerElementBackgroundBrush}"
                                   Command="{Binding CapacityManagingCommand}"
+                                  Cursor="Hand"
                                   Foreground="{DynamicResource ElementFontBrush}"
                                   Header="Нагрузка"
                                   Visibility="{Binding Config.CanCreateScheduleRecord, UpdateSourceTrigger=PropertyChanged}" />

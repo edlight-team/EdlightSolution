@@ -23,5 +23,7 @@ namespace EdlightDesktopClient.Views.Schedule
             RegionManager.SetRegionName(regionTarget, regionName);
             RegionManager.SetRegionManager(regionTarget, regionManager);
         }
+
+        private void CreateMenuMouseEnter(object sender, System.Windows.Input.MouseEventArgs e) => CreateMenu.IsSubmenuOpen = true;
     }
 }

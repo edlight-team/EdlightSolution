@@ -124,6 +124,8 @@ namespace ApplicationServices.WebApiService
         {
             WebRequest request = CreateRequest("Files", WebRequestMethods.Http.Get);
             request.Headers.Add("Path", path);
+            request.Headers.Add("IsPlanFile", false.ToString());
+
             WebResponse response = await request.GetResponseAsync();
             using Stream response_stream = response.GetResponseStream();
             using StreamReader reader = new(response_stream);
@@ -137,6 +139,7 @@ namespace ApplicationServices.WebApiService
         {
             WebRequest request = CreateRequest("Files", WebRequestMethods.Http.Post);
             request.Headers.Add("Path", path);
+            request.Headers.Add("IsPlanFile", false.ToString());
 
             string data = JsonConvert.SerializeObject(FileModel);
             byte[] data_bytes = Encoding.UTF8.GetBytes(data);
@@ -159,6 +162,63 @@ namespace ApplicationServices.WebApiService
         {
             WebRequest request = CreateRequest("Files", "DELETE");
             request.Headers.Add("Path", path);
+            request.Headers.Add("IsPlanFile", false.ToString());
+
+            WebResponse response = await request.GetResponseAsync();
+            using Stream response_stream = response.GetResponseStream();
+            using StreamReader reader = new(response_stream);
+            string result = string.Empty;
+            result = await reader.ReadToEndAsync();
+            reader.Close();
+            return result;
+        }
+
+        public async Task<object> GetLearnPlan(string path)
+        {
+            WebRequest request = CreateRequest("Files", WebRequestMethods.Http.Get);
+            request.Headers.Add("Path", path);
+            request.Headers.Add("IsPlanFile", true.ToString());
+
+            WebResponse response = await request.GetResponseAsync();
+            using Stream response_stream = response.GetResponseStream();
+            using StreamReader reader = new(response_stream);
+            string result = string.Empty;
+            result = await reader.ReadToEndAsync();
+            reader.Close();
+
+            return JsonConvert.DeserializeObject<JsonFileModel>(result);
+        }
+
+        public async Task<string> PushLearnPlan(string path, JsonFileModel FileModel)
+        {
+            WebRequest request = CreateRequest("Files", WebRequestMethods.Http.Post);
+            request.Headers.Add("Path", path);
+            request.Headers.Add("IsPlanFile", true.ToString());
+
+            string data = JsonConvert.SerializeObject(FileModel);
+            byte[] data_bytes = Encoding.UTF8.GetBytes(data);
+            request.ContentType = "application/json";
+            request.ContentLength = data_bytes.Length;
+
+            using Stream requestStream = await request.GetRequestStreamAsync();
+            await requestStream.WriteAsync(data_bytes, 0, data_bytes.Length);
+            requestStream.Close();
+
+            WebResponse response = await request.GetResponseAsync();
+            using Stream response_stream = response.GetResponseStream();
+            using StreamReader reader = new(response_stream);
+            string result = string.Empty;
+            result = await reader.ReadToEndAsync();
+            reader.Close();
+            return result;
+        }
+
+        public async Task<string> DeleteLearnPlan(string path)
+        {
+            WebRequest request = CreateRequest("Files", "DELETE");
+            request.Headers.Add("Path", path);
+            request.Headers.Add("IsPlanFile", true.ToString());
+
             WebResponse response = await request.GetResponseAsync();
             using Stream response_stream = response.GetResponseStream();
             using StreamReader reader = new(response_stream);

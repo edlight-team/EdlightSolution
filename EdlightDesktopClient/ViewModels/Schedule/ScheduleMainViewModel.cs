@@ -151,6 +151,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #region Schedule managing
 
         public DelegateCommand AddCardCommand { get; private set; }
+        public DelegateCommand AddRecursiveCardCommand { get; private set; }
         public DelegateCommand ImportCardsCommand { get; private set; }
         public DelegateCommand CapacityManagingCommand { get; private set; }
         public DelegateCommand EditCardCommand { get; private set; }
@@ -211,6 +212,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             #region Schedule managing
 
             AddCardCommand = new DelegateCommand(OnAddScheduleCard);
+            AddRecursiveCardCommand = new DelegateCommand(OnAddRecursiveCard);
             ImportCardsCommand = new DelegateCommand(OnImportCards);
             CapacityManagingCommand = new DelegateCommand(OnCapacityManagment);
             EditCardCommand = new DelegateCommand(OnEditScheduleCard);
@@ -396,6 +398,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 { nameof(CurrentDate), CurrentDate },
                 { nameof(SelectedGroup), SelectedGroup }
             });
+        private void OnAddRecursiveCard()
+        {
+
+        }
         private void OnEditScheduleCard() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddScheduleView), new NavigationParameters()
             {
                 { "EditModel", Models.FirstOrDefault(m=>m.IsSelected) }

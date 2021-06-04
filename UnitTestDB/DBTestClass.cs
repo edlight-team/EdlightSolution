@@ -194,6 +194,39 @@ namespace UnitTestDB
             Assert.AreEqual(models.Count, 0);
         }
         [TestMethod]
+        public void TestLearnPlanes()
+        {
+            DBConnector.UseTestBase = true;
+            LearnPlanesModel model = new();
+            model.Name = TestStrings[0];
+            model.Path = TestStrings[1];
+
+            LearnPlanes db = new();
+            LearnPlanesModel posted = db.PostModel(model);
+
+            Assert.AreEqual(posted.Name, TestStrings[0]);
+            Assert.AreEqual(posted.Path, TestStrings[1]);
+
+            System.Collections.Generic.List<LearnPlanesModel> models = db.GetModels().ToList();
+
+            Assert.AreEqual(models.FirstOrDefault().Name, TestStrings[0]);
+            Assert.AreEqual(models.FirstOrDefault().Path, TestStrings[1]);
+
+            posted.Name = TestStrings[2];
+            posted.Path = TestStrings[3];
+
+            LearnPlanesModel putted = db.PutModel(posted);
+
+            Assert.AreEqual(putted.Name, TestStrings[2]);
+            Assert.AreEqual(putted.Path, TestStrings[3]);
+
+            db.DeleteModel(posted.Id);
+
+            models = db.GetModels().ToList();
+
+            Assert.AreEqual(models.Count, 0);
+        }
+        [TestMethod]
         public void TestLessons()
         {
             DBConnector.UseTestBase = true;

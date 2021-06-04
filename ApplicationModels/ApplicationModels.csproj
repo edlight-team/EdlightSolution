@@ -60,6 +60,7 @@
     <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Models\DialogsModel.cs" />
     <Compile Include="Models\GroupsModel.cs" />
+    <Compile Include="Models\LearnPlanesModel.cs" />
     <Compile Include="Models\LessonsModel.cs" />
     <Compile Include="Models\ManualsFilesModel.cs" />
     <Compile Include="Models\MaterialsModel.cs" />

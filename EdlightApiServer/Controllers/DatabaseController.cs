@@ -21,6 +21,7 @@ namespace EdlightApiServer.Controllers
                     count += new Comments().DeleteAll();
                     count += new Dialogs().DeleteAll();
                     count += new Groups().DeleteAll();
+                    count += new LearnPlanes().DeleteAll();
                     count += new Lessons().DeleteAll();
                     count += new Materials().DeleteAll();
                     count += new Messages().DeleteAll();
@@ -49,6 +50,7 @@ namespace EdlightApiServer.Controllers
                         nameof(Comments) => new Comments().DeleteAll(),
                         nameof(Dialogs) => new Dialogs().DeleteAll(),
                         nameof(Groups) => new Groups().DeleteAll(),
+                        nameof(LearnPlanes) => new LearnPlanes().DeleteAll(),
                         nameof(Lessons) => new Lessons().DeleteAll(),
                         nameof(Materials) => new Materials().DeleteAll(),
                         nameof(Messages) => new Messages().DeleteAll(),

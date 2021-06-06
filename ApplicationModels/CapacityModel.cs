@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using Prism.Commands;
+using Prism.Mvvm;
 using System;
 
 namespace ApplicationModels
@@ -286,6 +287,23 @@ namespace ApplicationModels
         /// Часов в неделю
         /// </summary>
         public double? HourAtWeek { get => _hourAtWeek; set => SetProperty(ref _hourAtWeek, value); }
+
+        #endregion
+        #region commands
+
+        private bool _isScheduleCreated;
+        public bool IsScheduleCreated
+        {
+            get => _isScheduleCreated;
+            set => SetProperty(ref _isScheduleCreated, value);
+        }
+
+        private DelegateCommand<object> _createRecoursiveScheduleCommand;
+        public DelegateCommand<object> CreateRecoursiveScheduleCommand
+        {
+            get => _createRecoursiveScheduleCommand;
+            set => SetProperty(ref _createRecoursiveScheduleCommand, value);
+        }
 
         #endregion
     }

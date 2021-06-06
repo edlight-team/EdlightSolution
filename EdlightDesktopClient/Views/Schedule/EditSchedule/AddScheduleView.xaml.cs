@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace EdlightDesktopClient.Views.Schedule
+namespace EdlightDesktopClient.Views.Schedule.EditSchedule
 {
     /// <summary>
     /// Логика взаимодействия для AddScheduleView.xaml

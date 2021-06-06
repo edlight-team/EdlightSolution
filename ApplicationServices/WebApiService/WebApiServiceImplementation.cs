@@ -1,4 +1,5 @@
 ﻿using ApplicationModels;
+using ApplicationServices.HashingService;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,13 +12,15 @@ namespace ApplicationServices.WebApiService
 {
     public class WebApiServiceImplementation : IWebApiService
     {
+        private readonly IHashingService hashing;
 #if DEBUG
-        private static readonly string WebApiBaseURL = "http://62.173.154.96:600/api/";
+        //private static readonly string WebApiBaseURL = "http://62.173.154.96:600/api/";
         //private static readonly string WebApiBaseURL = "http://192.168.0.164:600/api/";
-        //private static readonly string WebApiBaseURL = "http://192.168.0.100:600/api/";
+        private static readonly string WebApiBaseURL = "http://192.168.0.100:600/api/";
 #else
         private static readonly string WebApiBaseURL = "http://62.173.154.96:600/api/";
 #endif
+        public WebApiServiceImplementation(IHashingService hashing) => this.hashing = hashing;
         private WebRequest CreateRequest(string api, string method)
         {
             WebRequest request = WebRequest.CreateHttp(WebApiBaseURL + api);
@@ -123,7 +126,7 @@ namespace ApplicationServices.WebApiService
         public async Task<object> GetFile(string path)
         {
             WebRequest request = CreateRequest("Files", WebRequestMethods.Http.Get);
-            request.Headers.Add("Path", path);
+            request.Headers.Add("Path", hashing.EncodeString(path));
             request.Headers.Add("IsPlanFile", false.ToString());
 
             WebResponse response = await request.GetResponseAsync();
@@ -161,8 +164,16 @@ namespace ApplicationServices.WebApiService
         public async Task<string> DeleteFile(string path)
         {
             WebRequest request = CreateRequest("Files", "DELETE");
-            request.Headers.Add("Path", path);
             request.Headers.Add("IsPlanFile", false.ToString());
+
+            string data = JsonConvert.SerializeObject(new JsonFileModel() { FileName = path, Data = null });
+            byte[] data_bytes = Encoding.UTF8.GetBytes(data);
+            request.ContentType = "application/json";
+            request.ContentLength = data_bytes.Length;
+
+            using Stream requestStream = await request.GetRequestStreamAsync();
+            await requestStream.WriteAsync(data_bytes, 0, data_bytes.Length);
+            requestStream.Close();
 
             WebResponse response = await request.GetResponseAsync();
             using Stream response_stream = response.GetResponseStream();
@@ -176,7 +187,7 @@ namespace ApplicationServices.WebApiService
         public async Task<object> GetLearnPlan(string path)
         {
             WebRequest request = CreateRequest("Files", WebRequestMethods.Http.Get);
-            request.Headers.Add("Path", path);
+            request.Headers.Add("Path", hashing.EncodeString(path));
             request.Headers.Add("IsPlanFile", true.ToString());
 
             WebResponse response = await request.GetResponseAsync();
@@ -188,7 +199,6 @@ namespace ApplicationServices.WebApiService
 
             return JsonConvert.DeserializeObject<JsonFileModel>(result);
         }
-
         public async Task<string> PushLearnPlan(string path, JsonFileModel FileModel)
         {
             WebRequest request = CreateRequest("Files", WebRequestMethods.Http.Post);
@@ -212,12 +222,19 @@ namespace ApplicationServices.WebApiService
             reader.Close();
             return result;
         }
-
         public async Task<string> DeleteLearnPlan(string path)
         {
             WebRequest request = CreateRequest("Files", "DELETE");
-            request.Headers.Add("Path", path);
             request.Headers.Add("IsPlanFile", true.ToString());
+
+            string data = JsonConvert.SerializeObject(new JsonFileModel() { FileName = path, Data = null });
+            byte[] data_bytes = Encoding.UTF8.GetBytes(data);
+            request.ContentType = "application/json";
+            request.ContentLength = data_bytes.Length;
+
+            using Stream requestStream = await request.GetRequestStreamAsync();
+            await requestStream.WriteAsync(data_bytes, 0, data_bytes.Length);
+            requestStream.Close();
 
             WebResponse response = await request.GetResponseAsync();
             using Stream response_stream = response.GetResponseStream();

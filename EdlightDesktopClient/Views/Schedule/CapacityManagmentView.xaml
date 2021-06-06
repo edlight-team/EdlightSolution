@@ -88,7 +88,6 @@
                     <StackPanel Margin="0,0,20,0" Orientation="Vertical">
                         <!--#region Импорт преподавателей-->
 
-                        <!--  IsExpanded="{Binding IsAllTeachersConfirmed, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RevertBoolean}}">  -->
                         <Expander Margin="10"
                                   VerticalAlignment="Top"
                                   IsExpanded="{Binding IsAllTeachersConfirmed, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RevertBoolean}}">
@@ -237,7 +236,6 @@
                         <!--#endregion-->
                         <!--#region Импорт дисциплин-->
 
-                        <!--  IsExpanded="{Binding IsAllDisciplinesConfirmed, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RevertBoolean}}">  -->
                         <Expander Margin="10"
                                   VerticalAlignment="Top"
                                   IsExpanded="{Binding IsAllDisciplinesConfirmed, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RevertBoolean}}">
@@ -384,172 +382,74 @@
                         </Expander>
 
                         <!--#endregion-->
-                        <!--#region Генерация предварительного расписания-->
-
-                        <StackPanel HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Orientation="Horizontal">
-                            <CheckBox BorderBrush="{DynamicResource InnerElementBorderBrush}"
-                                      BorderThickness="2"
-                                      Content="Ручной ввод периода"
-                                      IsChecked="{Binding IsManualPeriodEnabled, UpdateSourceTrigger=PropertyChanged}" />
-                            <hc:DatePicker Margin="5,0,0,0"
-                                           BorderBrush="{DynamicResource InnerElementBorderBrush}"
-                                           BorderThickness="2"
-                                           IsEnabled="{Binding IsManualPeriodEnabled}"
-                                           SelectedDate="{Binding ManualDateFrom, UpdateSourceTrigger=PropertyChanged}" />
-                            <hc:DatePicker Margin="5,0,0,0"
-                                           BorderBrush="{DynamicResource InnerElementBorderBrush}"
-                                           BorderThickness="2"
-                                           IsEnabled="{Binding IsManualPeriodEnabled}"
-                                           SelectedDate="{Binding ManualDateTo, UpdateSourceTrigger=PropertyChanged}" />
-                            <Button Width="180"
-                                    Height="35"
-                                    Margin="5,0,0,0"
-                                    Command="{Binding GenerateScheduleCommand}"
-                                    Style="{DynamicResource SimpleButtonWithBorder}">
-                                <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Генерация расписания" />
-                            </Button>
-                        </StackPanel>
-
-                        <!--#endregion-->
-                        <!--#region Предварительное расписание-->
+                        <!--#region Импорт занятий-->
 
                         <Expander Margin="10"
                                   VerticalAlignment="Top"
                                   IsExpanded="True"
-                                  Visibility="{Binding Periods.Count, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntVisibility}, ConverterParameter=0}">
-                            <Expander.Header>
-                                <TextBlock VerticalAlignment="Center" Text="Предварительный просмотр" />
-                            </Expander.Header>
-                            <Grid>
-                                <hc:ScrollViewer Height="500"
-                                                 IsInertiaEnabled="True"
-                                                 VerticalScrollBarVisibility="Visible">
-                                    <StackPanel Orientation="Vertical">
-                                        <ItemsControl Margin="5,5,20,5"
-                                                      hc:ScrollViewer.VerticalScrollBarVisibility="Visible"
-                                                      ItemsSource="{Binding Periods}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Expander IsExpanded="False">
-                                                        <Expander.Header>
-                                                            <TextBlock Style="{DynamicResource SimpleTextBlock}" Text="{Binding FullPeriod}" />
-                                                        </Expander.Header>
-                                                        <ItemsControl Margin="10" ItemsSource="{Binding Cells}">
-                                                            <ItemsControl.ItemTemplate>
-                                                                <DataTemplate>
-                                                                    <Expander IsExpanded="False">
-                                                                        <Expander.Header>
-                                                                            <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
-                                                                                <TextBlock Margin="0"
-                                                                                           Style="{DynamicResource SimpleTextBlock}"
-                                                                                           Text="{Binding CellDate, StringFormat=ddd : Дата : dd.MM.yyyy}" />
-                                                                            </StackPanel>
-                                                                        </Expander.Header>
-                                                                        <StackPanel Orientation="Vertical">
-                                                                            <Expander Margin="5,5,5,0" IsExpanded="False">
-                                                                                <Expander.Header>
-                                                                                    <TextBlock HorizontalAlignment="Left"
-                                                                                               Style="{DynamicResource SimpleTextBlock}"
-                                                                                               Text="Верхняя неделя:" />
-                                                                                </Expander.Header>
-                                                                                <ItemsControl ItemsSource="{Binding UpDay.Pairs}">
-                                                                                    <ItemsControl.ItemTemplate>
-                                                                                        <DataTemplate>
-                                                                                            <StackPanel Orientation="Vertical">
-                                                                                                <TextBlock Margin="5"
-                                                                                                           HorizontalAlignment="Center"
-                                                                                                           Style="{DynamicResource SimpleTextBlock}"
-                                                                                                           Text="{Binding PairName}" />
-                                                                                                <ListView ItemsSource="{Binding Lessons}">
-                                                                                                    <ListView.View>
-                                                                                                        <GridView AllowsColumnReorder="False">
-                                                                                                            <GridViewColumn Width="100"
-                                                                                                                            DisplayMemberBinding="{Binding TypeClass.ShortTitle}"
-                                                                                                                            Header="Тип занятия" />
-                                                                                                            <GridViewColumn Width="250"
-                                                                                                                            DisplayMemberBinding="{Binding Teacher.FullName}"
-                                                                                                                            Header="Преподаватель" />
-                                                                                                            <GridViewColumn Width="100"
-                                                                                                                            DisplayMemberBinding="{Binding Group.Group}"
-                                                                                                                            Header="Группа" />
-                                                                                                            <GridViewColumn Width="200"
-                                                                                                                            DisplayMemberBinding="{Binding TimeLessons.FullTimeString}"
-                                                                                                                            Header="Время" />
-                                                                                                            <GridViewColumn Width="auto"
-                                                                                                                            DisplayMemberBinding="{Binding AcademicDiscipline.Title}"
-                                                                                                                            Header="Дисциплина" />
-                                                                                                        </GridView>
-                                                                                                    </ListView.View>
-                                                                                                </ListView>
-                                                                                            </StackPanel>
-                                                                                        </DataTemplate>
-                                                                                    </ItemsControl.ItemTemplate>
-                                                                                </ItemsControl>
-                                                                            </Expander>
-                                                                            <Expander Margin="5,0,5,5" IsExpanded="False">
-                                                                                <Expander.Header>
-                                                                                    <TextBlock HorizontalAlignment="Left"
-                                                                                               Style="{DynamicResource SimpleTextBlock}"
-                                                                                               Text="Нижняя неделя:" />
-                                                                                </Expander.Header>
-                                                                                <ItemsControl ItemsSource="{Binding DownDay.Pairs}">
-                                                                                    <ItemsControl.ItemTemplate>
-                                                                                        <DataTemplate>
-                                                                                            <StackPanel Orientation="Vertical">
-                                                                                                <TextBlock Margin="5"
-                                                                                                           HorizontalAlignment="Center"
-                                                                                                           Style="{DynamicResource SimpleTextBlock}"
-                                                                                                           Text="{Binding PairName}" />
-                                                                                                <ListView ItemsSource="{Binding Lessons}">
-                                                                                                    <ListView.View>
-                                                                                                        <GridView AllowsColumnReorder="False">
-                                                                                                            <GridViewColumn Width="100"
-                                                                                                                            DisplayMemberBinding="{Binding TypeClass.ShortTitle}"
-                                                                                                                            Header="Тип занятия" />
-                                                                                                            <GridViewColumn Width="250"
-                                                                                                                            DisplayMemberBinding="{Binding Teacher.FullName}"
-                                                                                                                            Header="Преподаватель" />
-                                                                                                            <GridViewColumn Width="100"
-                                                                                                                            DisplayMemberBinding="{Binding Group.Group}"
-                                                                                                                            Header="Группа" />
-                                                                                                            <GridViewColumn Width="200"
-                                                                                                                            DisplayMemberBinding="{Binding TimeLessons.FullTimeString}"
-                                                                                                                            Header="Время" />
-                                                                                                            <GridViewColumn Width="auto"
-                                                                                                                            DisplayMemberBinding="{Binding AcademicDiscipline.Title}"
-                                                                                                                            Header="Дисциплина" />
-                                                                                                        </GridView>
-                                                                                                    </ListView.View>
-                                                                                                </ListView>
-                                                                                            </StackPanel>
-                                                                                        </DataTemplate>
-                                                                                    </ItemsControl.ItemTemplate>
-                                                                                </ItemsControl>
-                                                                            </Expander>
-                                                                        </StackPanel>
-                                                                    </Expander>
-                                                                </DataTemplate>
-                                                            </ItemsControl.ItemTemplate>
-                                                        </ItemsControl>
-                                                    </Expander>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                        <!--#region Создание файла для импорта-->
+                                  Header="Импорт занятий"
+                                  Visibility="{Binding IsLessonsImportEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
+                            <hc:ScrollViewer Height="400"
+                                             IsInertiaEnabled="True"
+                                             VerticalScrollBarVisibility="Visible">
+                                <StackPanel Orientation="Vertical">
 
-                                        <Button Width="180"
-                                                Height="35"
-                                                Command="{Binding CreateScheduleCommand}"
-                                                Style="{DynamicResource SimpleButtonWithBorder}">
-                                            <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Создать расписание" />
-                                        </Button>
-
-                                        <!--#endregion-->
-                                    </StackPanel>
-                                </hc:ScrollViewer>
-                            </Grid>
+                                    <ItemsControl VerticalAlignment="Top" ItemsSource="{Binding Capacities, UpdateSourceTrigger=PropertyChanged}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <hc:Card Height="80"
+                                                         Margin="10,3,10,3"
+                                                         Background="{DynamicResource InactiveBackgroundTabHeaderBtush}">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition />
+                                                            <RowDefinition />
+                                                        </Grid.RowDefinitions>
+                                                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                                            <TextBlock Margin="5,0,0,0"
+                                                                       Style="{DynamicResource ElementTextBlock}"
+                                                                       Text="{Binding ClassType}" />
+                                                            <TextBlock Margin="5,0,0,0"
+                                                                       Style="{DynamicResource ElementTextBlock}"
+                                                                       Text="{Binding DisciplineOrWorkType}" />
+                                                            <TextBlock Margin="5,0,0,0"
+                                                                       Style="{DynamicResource ElementTextBlock}"
+                                                                       Text="{Binding TeacherFio}" />
+                                                            <TextBlock Margin="5,0,0,0"
+                                                                       Style="{DynamicResource ElementTextBlock}"
+                                                                       Text="Часов на группу:" />
+                                                            <TextBlock Margin="5,0,0,0"
+                                                                       Style="{DynamicResource ElementTextBlock}"
+                                                                       Text="{Binding HoursOnStreamOrGroupOrStudent}" />
+                                                            <TextBlock Margin="5,0,0,0"
+                                                                       Style="{DynamicResource ElementTextBlock}"
+                                                                       Text="Недель:" />
+                                                            <TextBlock Margin="5,0,0,0"
+                                                                       Style="{DynamicResource ElementTextBlock}"
+                                                                       Text="{Binding WeekCount}" />
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                                            <Button Width="150"
+                                                                    Margin="5,0,0,0"
+                                                                    Command="{Binding CreateRecoursiveScheduleCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Создать запись" />
+                                                            </Button>
+                                                            <CheckBox Margin="10,0,0,0"
+                                                                      IsChecked="{Binding IsScheduleCreated}"
+                                                                      IsEnabled="False"
+                                                                      Opacity="1">
+                                                                <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Выполнен импорт" />
+                                                            </CheckBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </hc:Card>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </hc:ScrollViewer>
                         </Expander>
 
                         <!--#endregion-->

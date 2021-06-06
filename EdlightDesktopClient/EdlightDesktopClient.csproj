@@ -69,6 +69,7 @@
     <Compile Include="ViewModels\Dictionaries\DictionariesMainViewModel.cs" />
     <Compile Include="ViewModels\Dictionaries\EditAudienceViewModel.cs" />
     <Compile Include="ViewModels\Dictionaries\EditDisciplinesViewModel.cs" />
+    <Compile Include="ViewModels\Dictionaries\EditLearnPlanViewModel.cs" />
     <Compile Include="ViewModels\Dictionaries\EditTeacherViewModel.cs" />
     <Compile Include="ViewModels\Groups\AddDeleteGroupViewModel.cs" />
     <Compile Include="ViewModels\Groups\GroupsMainViewModel.cs" />
@@ -83,7 +84,9 @@
     <Compile Include="ViewModels\Learn\PassingTestViewModel.cs" />
     <Compile Include="ViewModels\Learn\ResultsTestViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileMainViewModel.cs" />
-    <Compile Include="ViewModels\Schedule\AddScheduleViewModel.cs" />
+    <Compile Include="ViewModels\Schedule\CapacityWindows\CreateRecoursiveScheduleWindowViewModel.cs" />
+    <Compile Include="ViewModels\Schedule\EditSchedule\AddRecoursiveScheduleViewModel.cs" />
+    <Compile Include="ViewModels\Schedule\EditSchedule\AddScheduleViewModel.cs" />
     <Compile Include="ViewModels\Schedule\CancelScheduleRecordViewModel.cs" />
     <Compile Include="ViewModels\Schedule\CapacityManagmentViewModel.cs" />
     <Compile Include="ViewModels\Schedule\CapacityWindows\CreateDisciplineWindowViewModel.cs" />
@@ -99,6 +102,9 @@
     </Compile>
     <Compile Include="Views\Dictionaries\EditDisciplinesView.xaml.cs">
       <DependentUpon>EditDisciplinesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dictionaries\EditLearnPlanView.xaml.cs">
+      <DependentUpon>EditLearnPlanView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dictionaries\EditTeacherView.xaml.cs">
       <DependentUpon>EditTeacherView.xaml</DependentUpon>
@@ -142,7 +148,13 @@
     <Compile Include="Views\Profile\ProfileMainView.xaml.cs">
       <DependentUpon>ProfileMainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Schedule\AddScheduleView.xaml.cs">
+    <Compile Include="Views\Schedule\CapacityWindows\CreateRecoursiveScheduleWindow.xaml.cs">
+      <DependentUpon>CreateRecoursiveScheduleWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Schedule\EditSchedule\AddRecoursiveScheduleView.xaml.cs">
+      <DependentUpon>AddRecoursiveScheduleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Schedule\EditSchedule\AddScheduleView.xaml.cs">
       <DependentUpon>AddScheduleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Schedule\CancelScheduleRecordView.xaml.cs">
@@ -179,6 +191,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dictionaries\EditDisciplinesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dictionaries\EditLearnPlanView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -256,7 +272,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Schedule\AddScheduleView.xaml">
+    <Page Include="Views\Schedule\CapacityWindows\CreateRecoursiveScheduleWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Schedule\EditSchedule\AddRecoursiveScheduleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Schedule\EditSchedule\AddScheduleView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

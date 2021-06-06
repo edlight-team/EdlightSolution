@@ -9,6 +9,7 @@ using ApplicationWPFServices.MemoryService;
 using ApplicationWPFServices.NotificationService;
 using EdlightDesktopClient.AccessConfigurations;
 using EdlightDesktopClient.Views.Schedule;
+using EdlightDesktopClient.Views.Schedule.EditSchedule;
 using HandyControl.Controls;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -21,6 +22,7 @@ using Styles.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,6 +46,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #endregion
         #region fields
 
+        private readonly GregorianCalendar _calendar = new();
         private bool _firstRun = true;
         private bool _isCardActionsEnabled;
         private bool _isCardCancelingEnabled;
@@ -94,10 +97,12 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 DateTime springDateStart = new(value.Year, 02, 09);
                 IsFirstHalfYearTime = value.DayOfYear < autumnDateStart.DayOfYear;
 
-                int week = value.DayOfYear / 7;
-                int autumnWeekStart = autumnDateStart.DayOfYear / 7;
-                int springWeekStart = springDateStart.DayOfYear / 7;
+                //Считаем неделю
+                int week = _calendar.GetWeekOfYear(value, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+                int autumnWeekStart = _calendar.GetWeekOfYear(autumnDateStart, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+                int springWeekStart = _calendar.GetWeekOfYear(springDateStart, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
 
+                //Проверяем какой семестр
                 if (IsFirstHalfYearTime)
                 {
                     IsUpWeek = (week - springWeekStart) % 2 == 0;
@@ -331,6 +336,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                     lm.Group = Groups.FirstOrDefault(d => d.Id == lesson.IdGroup);
                     lm.TimeLessons = TimeLessons.FirstOrDefault(d => d.Id == lesson.IdTimeLessons);
                     lm.CanceledReason = lesson.CanceledReason;
+                    lm.RecoursiveId = lesson.RecoursiveId;
 
                     Models.Add(lm);
                 }
@@ -398,22 +404,43 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 { nameof(CurrentDate), CurrentDate },
                 { nameof(SelectedGroup), SelectedGroup }
             });
-        private void OnAddRecursiveCard()
-        {
-
-        }
-        private void OnEditScheduleCard() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddScheduleView), new NavigationParameters()
+        private void OnAddRecursiveCard() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddRecoursiveScheduleView), new NavigationParameters()
             {
-                { "EditModel", Models.FirstOrDefault(m=>m.IsSelected) }
+                { nameof(CurrentDate), CurrentDate },
+                { nameof(SelectedGroup), SelectedGroup }
             });
+        private void OnEditScheduleCard()
+        {
+            LessonsModel edit = Models.FirstOrDefault(m => m.IsSelected);
+            if (edit.RecoursiveId != 0)
+            {
+                bool? result = notification.ShowQuestion("Изменить только одну запись (да) или всю серию (нет)?");
+                if (!result.HasValue) return;
+
+                manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddScheduleView), new NavigationParameters()
+                {
+                    { "EditModel", Models.FirstOrDefault(m=>m.IsSelected) },
+                    { "EditSingleRecord", result.Value }
+                });
+            }
+            else
+            {
+                manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(AddScheduleView), new NavigationParameters()
+                {
+                    { "EditModel", Models.FirstOrDefault(m=>m.IsSelected) },
+                    { "EditSingleRecord", null }
+                });
+            }
+        }
+
         private void OnCancelCard() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(CancelScheduleRecordView), new NavigationParameters()
             {
                 { "RecordId", Models.FirstOrDefault(m=>m.IsSelected).Id }
             });
         private async void OnDeleteCard()
         {
-            bool confirm = notification.ShowQuestion("Восстановить запись невозможно, продолжить действие?");
-            if (!confirm) return;
+            bool? confirm = notification.ShowQuestion("Восстановить запись невозможно, продолжить действие?");
+            if (!confirm.HasValue || !confirm.Value) return;
             try
             {
                 Loader.SetDefaultLoadingInfo();
@@ -777,8 +804,8 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private bool CanDeleteMaterial(object material) => Config.CanDeleteMaterial == Visibility.Visible;
         private async void OnDeleteMaterial(object material)
         {
-            bool confirm = notification.ShowQuestion("Восстановить материал невозможно, продолжить действие?");
-            if (!confirm) return;
+            bool? confirm = notification.ShowQuestion("Восстановить материал невозможно, продолжить действие?");
+            if (!confirm.HasValue || !confirm.Value) return;
             if (material is MaterialsModel mm)
             {
                 try

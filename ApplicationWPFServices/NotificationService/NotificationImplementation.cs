@@ -6,9 +6,10 @@ namespace ApplicationWPFServices.NotificationService
     {
         public void ShowError(string message) => MessageBox.Show(message, "Ошбика", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
         public void ShowGlobalError(string message) => Growl.Error(message, "Global");
-        public bool ShowQuestion(string message)
+        public bool? ShowQuestion(string message)
         {
-            System.Windows.MessageBoxResult result = MessageBox.Show(message, "Подтвердите выбор", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
+            System.Windows.MessageBoxResult result = MessageBox.Show(message, "Подтвердите выбор", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question);
+            if (result == System.Windows.MessageBoxResult.Cancel) return null;
             return result == System.Windows.MessageBoxResult.Yes;
         }
         public void ShowInformation(string message) => MessageBox.Show(message, "Сообщение", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);

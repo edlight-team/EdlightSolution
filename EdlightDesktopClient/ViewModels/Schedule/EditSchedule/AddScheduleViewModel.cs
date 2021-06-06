@@ -1,6 +1,7 @@
 ﻿using ApplicationEventsWPF.Events.ScheduleEvents;
 using ApplicationEventsWPF.Events.Signal;
 using ApplicationModels.Models;
+using ApplicationServices.IdentificatorService;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.MemoryService;
 using HandyControl.Controls;
@@ -16,7 +17,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EdlightDesktopClient.ViewModels.Schedule
+namespace EdlightDesktopClient.ViewModels.Schedule.EditSchedule
 {
     [RegionMemberLifetime(KeepAlive = false)]
     public class AddScheduleViewModel : BindableBase, INavigationAware
@@ -32,6 +33,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         #region fields
 
         private NavigationParameters _onNavigatedToParameters;
+        private bool? _editSingleRecord;
         private LoaderModel _loader;
         private LessonsModel _fromNavigationModel;
         private ObservableCollection<UserModel> _teachers;
@@ -172,6 +174,10 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                     SelectedTypeClass = TypeClasses.FirstOrDefault(t => t.Id == lm.TypeClass.Id);
 
                     SaveButtonText = "Сохранить запись";
+                    if (_onNavigatedToParameters.ContainsKey("EditSingleRecord"))
+                    {
+                        _editSingleRecord = (bool?)_onNavigatedToParameters["EditSingleRecord"];
+                    }
                 }
                 else
                 {
@@ -247,34 +253,106 @@ namespace EdlightDesktopClient.ViewModels.Schedule
             }
             else
             {
-                TimeLessonsModel tlm = new();
-                tlm.Id = FromNavigationModel.TimeLessons.Id;
-                tlm.StartTime = TimeZonesFrom[IndexTimeZonesFrom];
-                tlm.EndTime = TimeZonesTo[IndexTimeZonesTo];
-                tlm.BreakTime = BreakTime.ToString();
-                TimeLessonsModel postedTLM = await api.PutModel(tlm, WebApiTableNames.TimeLessons);
-
-                LessonsModel lm = new();
-                lm.Id = FromNavigationModel.Id;
-                lm.Day = CurrentDate;
-                lm.IdAcademicDiscipline = SelectedDiscipline.Id;
-                lm.IdAudience = SelectedAudience.Id;
-                lm.IdGroup = SelectedGroup.Id;
-                lm.IdTeacher = SelectedTeacher.ID;
-                lm.IdTypeClass = SelectedTypeClass.Id;
-                lm.IdTimeLessons = postedTLM.Id;
-
-                LessonsModel postedLM = await api.PutModel(lm, WebApiTableNames.Lessons);
-
-                aggregator.GetEvent<DateChangedEvent>().Publish();
-                aggregator.GetEvent<SignalEntitySendEvent>().Publish(new EntitySignalModel()
+                if (_editSingleRecord.HasValue && _editSingleRecord.Value)
                 {
-                    SendType = "PUT",
-                    ModelType = typeof(LessonsModel),
-                    SerializedModel = JsonConvert.SerializeObject(postedLM)
-                });
-                Growl.Info("Запись успешно сохранена", "Global");
-                OnCloseModal();
+                    TimeLessonsModel tlm = new();
+                    tlm.Id = FromNavigationModel.TimeLessons.Id;
+                    tlm.StartTime = TimeZonesFrom[IndexTimeZonesFrom];
+                    tlm.EndTime = TimeZonesTo[IndexTimeZonesTo];
+                    tlm.BreakTime = BreakTime.ToString();
+                    TimeLessonsModel postedTLM = await api.PutModel(tlm, WebApiTableNames.TimeLessons);
+
+                    LessonsModel lm = new();
+                    lm.Id = FromNavigationModel.Id;
+                    lm.Day = CurrentDate;
+                    lm.IdAcademicDiscipline = SelectedDiscipline.Id;
+                    lm.IdAudience = SelectedAudience.Id;
+                    lm.IdGroup = SelectedGroup.Id;
+                    lm.IdTeacher = SelectedTeacher.ID;
+                    lm.IdTypeClass = SelectedTypeClass.Id;
+                    lm.RecoursiveId = 0;
+                    lm.IdTimeLessons = postedTLM.Id;
+
+                    LessonsModel postedLM = await api.PutModel(lm, WebApiTableNames.Lessons);
+
+                    aggregator.GetEvent<DateChangedEvent>().Publish();
+                    aggregator.GetEvent<SignalEntitySendEvent>().Publish(new EntitySignalModel()
+                    {
+                        SendType = "PUT",
+                        ModelType = typeof(LessonsModel),
+                        SerializedModel = JsonConvert.SerializeObject(postedLM)
+                    });
+                    Growl.Info("Запись успешно сохранена", "Global");
+                    OnCloseModal();
+                }
+                else if (_editSingleRecord.HasValue && !_editSingleRecord.Value)
+                {
+                    Loader.SetDefaultLoadingInfo();
+                    List<LessonsModel> changed_models = await api.GetModels<LessonsModel>(WebApiTableNames.Lessons, $"RecoursiveId = '{FromNavigationModel.RecoursiveId}'");
+
+                    int loader_count = 0;
+                    foreach (var lm in changed_models)
+                    {
+                        Loader.SetCountLoadingInfo(loader_count++, changed_models.Count);
+
+                        TimeLessonsModel tlm = new();
+                        tlm.Id = FromNavigationModel.TimeLessons.Id;
+                        tlm.StartTime = TimeZonesFrom[IndexTimeZonesFrom];
+                        tlm.EndTime = TimeZonesTo[IndexTimeZonesTo];
+                        tlm.BreakTime = BreakTime.ToString();
+                        TimeLessonsModel postedTLM = await api.PutModel(tlm, WebApiTableNames.TimeLessons);
+
+                        lm.Id = FromNavigationModel.Id;
+                        lm.IdAcademicDiscipline = SelectedDiscipline.Id;
+                        lm.IdAudience = SelectedAudience.Id;
+                        lm.IdGroup = SelectedGroup.Id;
+                        lm.IdTeacher = SelectedTeacher.ID;
+                        lm.IdTypeClass = SelectedTypeClass.Id;
+                        lm.IdTimeLessons = postedTLM.Id;
+
+                        LessonsModel postedLM = await api.PutModel(lm, WebApiTableNames.Lessons);
+                        aggregator.GetEvent<DateChangedEvent>().Publish();
+                        aggregator.GetEvent<SignalEntitySendEvent>().Publish(new EntitySignalModel()
+                        {
+                            SendType = "PUT",
+                            ModelType = typeof(LessonsModel),
+                            SerializedModel = JsonConvert.SerializeObject(postedLM)
+                        });
+                    }
+                    Growl.Info($"Успешно изменено {loader_count} записей", "Global");
+                    OnCloseModal();
+                }
+                else
+                {
+                    TimeLessonsModel tlm = new();
+                    tlm.Id = FromNavigationModel.TimeLessons.Id;
+                    tlm.StartTime = TimeZonesFrom[IndexTimeZonesFrom];
+                    tlm.EndTime = TimeZonesTo[IndexTimeZonesTo];
+                    tlm.BreakTime = BreakTime.ToString();
+                    TimeLessonsModel postedTLM = await api.PutModel(tlm, WebApiTableNames.TimeLessons);
+
+                    LessonsModel lm = new();
+                    lm.Id = FromNavigationModel.Id;
+                    lm.Day = CurrentDate;
+                    lm.IdAcademicDiscipline = SelectedDiscipline.Id;
+                    lm.IdAudience = SelectedAudience.Id;
+                    lm.IdGroup = SelectedGroup.Id;
+                    lm.IdTeacher = SelectedTeacher.ID;
+                    lm.IdTypeClass = SelectedTypeClass.Id;
+                    lm.IdTimeLessons = postedTLM.Id;
+
+                    LessonsModel postedLM = await api.PutModel(lm, WebApiTableNames.Lessons);
+
+                    aggregator.GetEvent<DateChangedEvent>().Publish();
+                    aggregator.GetEvent<SignalEntitySendEvent>().Publish(new EntitySignalModel()
+                    {
+                        SendType = "PUT",
+                        ModelType = typeof(LessonsModel),
+                        SerializedModel = JsonConvert.SerializeObject(postedLM)
+                    });
+                    Growl.Info("Запись успешно сохранена", "Global");
+                    OnCloseModal();
+                }
             }
         }
         private void OnCloseModal() => manager.Regions[BaseMethods.RegionNames.ModalRegion].RemoveAll();

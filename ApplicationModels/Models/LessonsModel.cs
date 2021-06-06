@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
 
 namespace ApplicationModels.Models
 {
@@ -140,20 +141,99 @@ namespace ApplicationModels.Models
 
         #endregion
     }
-    public class LessonsModelExtended : LessonsModel
+    public class RecoursiveModel : BindableBase
     {
-        private DateTime? _dateFrom;
-        public DateTime? DateFrom
-        {
-            get => _dateFrom;
-            set => SetProperty(ref _dateFrom, value);
-        }
+        #region fields
 
-        private DateTime? _dateTo;
-        public DateTime? DateTo
+        private DateTime _startDate;
+        private bool _isMondaySelect;
+        private bool _isTuesdaySelect;
+        private bool _isWednesdaySelect;
+        private bool _isThursdaySelect;
+        private bool _isFridaySelect;
+        private bool _isSaturdaySelect;
+        private int _weekCount;
+        private WeekCheckingMode _weekChecking;
+
+        #endregion
+        #region props
+
+        /// <summary>
+        /// Дата начала рекурсии
+        /// </summary>
+        public DateTime StartDate { get => _startDate; set => SetProperty(ref _startDate, value); }
+        /// <summary>
+        /// Понедельник
+        /// </summary>
+        public bool IsMondaySelect { get => _isMondaySelect; set => SetProperty(ref _isMondaySelect, value); }
+        /// <summary>
+        /// Вторник
+        /// </summary>
+        public bool IsTuesdaySelect { get => _isTuesdaySelect; set => SetProperty(ref _isTuesdaySelect, value); }
+        /// <summary>
+        /// Среда
+        /// </summary>
+        public bool IsWednesdaySelect { get => _isWednesdaySelect; set => SetProperty(ref _isWednesdaySelect, value); }
+        /// <summary>
+        /// Четверг
+        /// </summary>
+        public bool IsThursdaySelect { get => _isThursdaySelect; set => SetProperty(ref _isThursdaySelect, value); }
+        /// <summary>
+        /// Пятница
+        /// </summary>
+        public bool IsFridaySelect { get => _isFridaySelect; set => SetProperty(ref _isFridaySelect, value); }
+        /// <summary>
+        /// Суббота
+        /// </summary>
+        public bool IsSaturdaySelect { get => _isSaturdaySelect; set => SetProperty(ref _isSaturdaySelect, value); }
+        /// <summary>
+        /// Количество недель
+        /// </summary>
+        public int WeekCount { get => _weekCount; set => SetProperty(ref _weekCount, value); }
+        /// <summary>
+        /// Режим проверки недели
+        /// </summary>
+        public WeekCheckingMode WeekChecking { get => _weekChecking; set => SetProperty(ref _weekChecking, value); }
+
+        #endregion
+        #region additional
+
+        /// <summary>
+        /// Все дни в состоянии выключен
+        /// </summary>
+        public bool IsAllDeselected => !IsMondaySelect && !IsTuesdaySelect && !IsWednesdaySelect && !IsThursdaySelect && !IsFridaySelect && !IsSaturdaySelect;
+        /// <summary>
+        /// Получить список дней по выбранным галочкам
+        /// </summary>
+        /// <returns></returns>
+        public List<DayOfWeek> GetDaysList()
         {
-            get => _dateTo;
-            set => SetProperty(ref _dateTo, value);
+            List<DayOfWeek> days = new();
+            if (IsMondaySelect) days.Add(DayOfWeek.Monday);
+            if (IsTuesdaySelect) days.Add(DayOfWeek.Tuesday);
+            if (IsWednesdaySelect) days.Add(DayOfWeek.Wednesday);
+            if (IsThursdaySelect) days.Add(DayOfWeek.Thursday);
+            if (IsFridaySelect) days.Add(DayOfWeek.Friday);
+            if (IsSaturdaySelect) days.Add(DayOfWeek.Saturday);
+            return days;
         }
+        public enum WeekCheckingMode
+        {
+            None, UpWeek, DownWeek
+        } 
+
+        #endregion
+    }
+    public class PairTimeModel : BindableBase
+    {
+        private string _pairName;
+        private string _startTime;
+        private string _endTime;
+        private string _breakTime;
+
+        public string PairName { get => _pairName; set => SetProperty(ref _pairName, value); }
+        public string StartTime { get => _startTime; set => SetProperty(ref _startTime, value); }
+        public string EndTime { get => _endTime; set => SetProperty(ref _endTime, value); }
+        public string BreakTime { get => _breakTime; set => SetProperty(ref _breakTime, value); }
     }
 }

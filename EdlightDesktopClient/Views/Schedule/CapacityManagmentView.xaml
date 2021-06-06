@@ -386,8 +386,8 @@
 
                         <Expander Margin="10"
                                   VerticalAlignment="Top"
-                                  IsExpanded="True"
                                   Header="Импорт занятий"
+                                  IsExpanded="True"
                                   Visibility="{Binding IsLessonsImportEnabled, Converter={StaticResource BooleanToVisibility}, ConverterParameter=true}">
                             <hc:ScrollViewer Height="400"
                                              IsInertiaEnabled="True"
@@ -435,6 +435,13 @@
                                                                     CommandParameter="{Binding}"
                                                                     Style="{DynamicResource SimpleButtonWithBorder}">
                                                                 <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Создать запись" />
+                                                            </Button>
+                                                            <Button Width="175"
+                                                                    Margin="5,0,0,0"
+                                                                    Command="{Binding OpenLearnPlanCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Style="{DynamicResource SimpleButtonWithBorder}">
+                                                                <TextBlock Style="{DynamicResource ElementTextBlock}" Text="Открыть учебный план" />
                                                             </Button>
                                                             <CheckBox Margin="10,0,0,0"
                                                                       IsChecked="{Binding IsScheduleCreated}"

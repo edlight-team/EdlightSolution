@@ -148,8 +148,10 @@ namespace EdlightDesktopClient.ViewModels.Learn
             try
             {
                 if (!testTimeOver)
-                    if (!notification.ShowQuestion("Вы уверены что хотите завершить тест"))
-                        return;
+                {
+                    bool? confirm = notification.ShowQuestion("Вы уверены что хотите завершить тест");
+                    if (!confirm.HasValue || !confirm.Value) return;
+                }
 
                 TestResult.CorrectAnswers = CountNumberCorrectAnswers();
                 TestResult.TestCompleted = true;

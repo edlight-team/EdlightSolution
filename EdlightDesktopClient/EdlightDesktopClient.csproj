@@ -83,7 +83,8 @@
     <Compile Include="ViewModels\Learn\PassingTestViewModel.cs" />
     <Compile Include="ViewModels\Learn\ResultsTestViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileMainViewModel.cs" />
-    <Compile Include="ViewModels\Schedule\AddScheduleViewModel.cs" />
+    <Compile Include="ViewModels\Schedule\EditSchedule\AddRecoursiveScheduleViewModel.cs" />
+    <Compile Include="ViewModels\Schedule\EditSchedule\AddScheduleViewModel.cs" />
     <Compile Include="ViewModels\Schedule\CancelScheduleRecordViewModel.cs" />
     <Compile Include="ViewModels\Schedule\CapacityManagmentViewModel.cs" />
     <Compile Include="ViewModels\Schedule\CapacityWindows\CreateDisciplineWindowViewModel.cs" />
@@ -142,7 +143,10 @@
     <Compile Include="Views\Profile\ProfileMainView.xaml.cs">
       <DependentUpon>ProfileMainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Schedule\AddScheduleView.xaml.cs">
+    <Compile Include="Views\Schedule\EditSchedule\AddRecoursiveScheduleView.xaml.cs">
+      <DependentUpon>AddRecoursiveScheduleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Schedule\EditSchedule\AddScheduleView.xaml.cs">
       <DependentUpon>AddScheduleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Schedule\CancelScheduleRecordView.xaml.cs">
@@ -256,7 +260,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Schedule\AddScheduleView.xaml">
+    <Page Include="Views\Schedule\EditSchedule\AddRecoursiveScheduleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Schedule\EditSchedule\AddScheduleView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -184,6 +184,8 @@
   <ItemGroup>
     <Compile Include="HashingService\HashingImplementation.cs" />
     <Compile Include="HashingService\IHashingService.cs" />
+    <Compile Include="IdentificatorService\IdentificatorImplementation.cs" />
+    <Compile Include="IdentificatorService\IIdentificatorService.cs" />
     <Compile Include="PermissionService\IPermissionService.cs" />
     <Compile Include="PermissionService\PermissionImplementation.cs" />
     <Compile Include="PermissionService\PermissionNames.cs" />

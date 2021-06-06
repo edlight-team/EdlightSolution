@@ -147,8 +147,8 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         }
         private async void OnDeleteDiscipline(object disciplineModel)
         {
-            bool confirm = notification.ShowQuestion("Восстановить дисциплину невозможно, продолжить действие?");
-            if (!confirm) return;
+            bool? confirm = notification.ShowQuestion("Восстановить дисциплину невозможно, продолжить действие?");
+            if (!confirm.HasValue || !confirm.Value) return;
             try
             {
                 Loader.SetDefaultLoadingInfo();
@@ -179,8 +179,8 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         }
         private async void OnDeleteAudience(object audienceModel)
         {
-            bool confirm = notification.ShowQuestion("Восстановить аудиторию невозможно, продолжить действие?");
-            if (!confirm) return;
+            bool? confirm = notification.ShowQuestion("Восстановить аудиторию невозможно, продолжить действие?");
+            if (!confirm.HasValue || !confirm.Value) return;
             try
             {
                 Loader.SetDefaultLoadingInfo();
@@ -211,8 +211,8 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         }
         private async void OnDeleteTeacher(object userModel)
         {
-            bool confirm = notification.ShowQuestion("Восстановить пользователя невозможно, продолжить действие?");
-            if (!confirm) return;
+            bool? confirm = notification.ShowQuestion("Восстановить пользователя невозможно, продолжить действие?");
+            if (!confirm.HasValue || !confirm.Value) return;
             try
             {
                 Loader.SetDefaultLoadingInfo();

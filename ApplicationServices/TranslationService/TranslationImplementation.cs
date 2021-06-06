@@ -4,7 +4,7 @@ namespace ApplicationServices.TranslationService
 {
     public class TranslationImplementation : ITranslationService
     {
-        private Dictionary<char, string> translate_chars;
+        private readonly Dictionary<char, string> translate_chars;
         public TranslationImplementation()
         {
             translate_chars = new();

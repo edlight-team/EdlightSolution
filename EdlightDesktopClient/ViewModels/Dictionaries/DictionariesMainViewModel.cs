@@ -1,4 +1,5 @@
 ﻿using ApplicationEventsWPF.Events;
+using ApplicationModels;
 using ApplicationModels.Models;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.NotificationService;
@@ -12,6 +13,7 @@ using Styles.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace EdlightDesktopClient.ViewModels.Dictionaries
@@ -32,6 +34,7 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         private ObservableCollection<UserModel> _teachers;
         private ObservableCollection<AcademicDisciplinesModel> _disciplines;
         private ObservableCollection<AudiencesModel> _audiences;
+        private ObservableCollection<LearnPlanesModel> _planes;
 
         #endregion
         #region props
@@ -39,8 +42,9 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         public LoaderModel Loader { get => _loader; set => SetProperty(ref _loader, value); }
 
         public ObservableCollection<UserModel> Teachers { get => _teachers ??= new(); set => SetProperty(ref _teachers, value); }
-        public ObservableCollection<AcademicDisciplinesModel> Disciplines { get => _disciplines; set => SetProperty(ref _disciplines, value); }
-        public ObservableCollection<AudiencesModel> Audiences { get => _audiences; set => SetProperty(ref _audiences, value); }
+        public ObservableCollection<AcademicDisciplinesModel> Disciplines { get => _disciplines ??= new(); set => SetProperty(ref _disciplines, value); }
+        public ObservableCollection<AudiencesModel> Audiences { get => _audiences ??= new(); set => SetProperty(ref _audiences, value); }
+        public ObservableCollection<LearnPlanesModel> Planes { get => _planes ??= new(); set => SetProperty(ref _planes, value); }
 
         #endregion
         #region commands
@@ -49,6 +53,7 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
         public DelegateCommand AddDisciplineCommand { get; private set; }
         public DelegateCommand AddAudienceCommand { get; private set; }
         public DelegateCommand AddTeacherCommand { get; private set; }
+        public DelegateCommand AddLearnPlanCommand { get; private set; }
 
         #endregion
         #region ctor and loading
@@ -65,6 +70,7 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
             AddDisciplineCommand = new DelegateCommand(OnAddDiscipline);
             AddAudienceCommand = new DelegateCommand(OnAddAudience);
             AddTeacherCommand = new DelegateCommand(OnAddTeacher);
+            AddLearnPlanCommand = new DelegateCommand(OnAddLearnPlan);
         }
         private async void OnLoaded()
         {
@@ -95,6 +101,15 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
                 Teachers.Add(user);
             }
 
+            Planes.Clear();
+            List<LearnPlanesModel> planes = await api.GetModels<LearnPlanesModel>(WebApiTableNames.LearnPlanes);
+            foreach (var item in planes)
+            {
+                item.OpenPlanCommand = new DelegateCommand<object>(OnOpenLearnPlan);
+                item.DeletePlanCommand = new DelegateCommand<object>(OnDeleteLearnPlan);
+                Planes.Add(item);
+            }
+
             await Loader.Clear();
         }
 
@@ -108,6 +123,12 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
                 discipline.EditCommand = new DelegateCommand<object>(OnEditDiscipline);
                 discipline.DeleteCommand = new DelegateCommand<object>(OnDeleteDiscipline);
                 Disciplines.Add(discipline);
+            }
+            else if (record is LearnPlanesModel learnPlan)
+            {
+                learnPlan.OpenPlanCommand = new DelegateCommand<object>(OnOpenLearnPlan);
+                learnPlan.DeletePlanCommand = new DelegateCommand<object>(OnDeleteLearnPlan);
+                Planes.Add(learnPlan);
             }
             else if (record is AudiencesModel audience)
             {
@@ -223,6 +244,45 @@ namespace EdlightDesktopClient.ViewModels.Dictionaries
                     await api.DeleteModel(userRole.Id, WebApiTableNames.UsersRoles);
                     Teachers.Remove(model);
                     Growl.Info("Пользователь успешно удален", "Global");
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                await Loader.Clear();
+            }
+        }
+
+        private void OnAddLearnPlan() => manager.RequestNavigate(BaseMethods.RegionNames.ModalRegion, nameof(EditLearnPlanView));
+        private async void OnOpenLearnPlan(object planModel)
+        {
+            if (planModel is LearnPlanesModel model)
+            {
+                var file = await api.GetLearnPlan(model.Path);
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + model.Name + ".xlsx";
+                if (file is JsonFileModel jfm)
+                {
+                    System.IO.File.WriteAllBytes(path, jfm.Data);
+                    Process.Start(path);
+                }
+            }
+        }
+        private async void OnDeleteLearnPlan(object planModel)
+        {
+            bool? confirm = notification.ShowQuestion("Восстановить учебный план невозможно, продолжить действие?");
+            if (!confirm.HasValue || !confirm.Value) return;
+            try
+            {
+                Loader.SetDefaultLoadingInfo();
+                if (planModel is LearnPlanesModel model)
+                {
+                    await api.DeleteLearnPlan(model.Path);
+                    await api.DeleteModel(model.Id, WebApiTableNames.LearnPlanes);
+                    Planes.Remove(model);
+                    Growl.Info("Учебный план успешно удален", "Global");
                 }
             }
             catch (Exception)

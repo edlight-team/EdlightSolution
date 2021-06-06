@@ -68,6 +68,7 @@ namespace EdlightDesktopClient
             ViewModelLocationProvider.Register<EditDisciplinesView, EditDisciplinesViewModel>();
             ViewModelLocationProvider.Register<EditAudienceView, EditAudienceViewModel>();
             ViewModelLocationProvider.Register<EditTeacherView, EditTeacherViewModel>();
+            ViewModelLocationProvider.Register<EditLearnPlanView, EditLearnPlanViewModel>();
             ViewModelLocationProvider.Register<TestListView, TestListViewModel>();
             ViewModelLocationProvider.Register<AddTestView, AddTestViewModel>();
             ViewModelLocationProvider.Register<PassingTestView, PassingTestViewModel>();
@@ -80,6 +81,7 @@ namespace EdlightDesktopClient
 
             ViewModelLocationProvider.Register<CreateTeacherWindow, CreateTeacherWindowViewModel>();
             ViewModelLocationProvider.Register<CreateDisciplineWindow, CreateDisciplineWindowViewModel>();
+            ViewModelLocationProvider.Register<CreateRecoursiveScheduleWindow, CreateRecoursiveScheduleWindowViewModel>();
         }
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
@@ -98,6 +100,7 @@ namespace EdlightDesktopClient
             containerRegistry.RegisterForNavigation<EditDisciplinesView>();
             containerRegistry.RegisterForNavigation<EditAudienceView>();
             containerRegistry.RegisterForNavigation<EditTeacherView>();
+            containerRegistry.RegisterForNavigation<EditLearnPlanView>();
             containerRegistry.RegisterForNavigation<TestListView>();
             containerRegistry.RegisterForNavigation<AddTestView>();
             containerRegistry.RegisterForNavigation<PassingTestView>();
@@ -110,6 +113,7 @@ namespace EdlightDesktopClient
 
             containerRegistry.RegisterDialog<CreateTeacherWindow, CreateTeacherWindowViewModel>(nameof(CreateTeacherWindow));
             containerRegistry.RegisterDialog<CreateDisciplineWindow, CreateDisciplineWindowViewModel>(nameof(CreateDisciplineWindow));
+            containerRegistry.RegisterDialog<CreateRecoursiveScheduleWindow, CreateRecoursiveScheduleWindowViewModel>(nameof(CreateRecoursiveScheduleWindow));
 
             containerRegistry.RegisterSingleton<IHashingService, HashingImplementation>();
             containerRegistry.RegisterSingleton<IIdentificatorService, IdentificatorImplementation>();

@@ -1,4 +1,5 @@
 using EdlightApiServer.Hubs;
+using EdlightApiServer.Services.HashingService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ namespace EdlightApiServer
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(typeof(IHashingService), typeof(HashingImplementation));
             services.AddControllers();
             services.AddSignalR();
         }

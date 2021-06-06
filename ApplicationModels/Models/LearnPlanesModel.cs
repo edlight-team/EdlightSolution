@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
 
@@ -18,5 +19,14 @@ namespace ApplicationModels.Models
 
         [JsonProperty(nameof(Path))]
         public string Path { get => path ??= string.Empty; set => SetProperty(ref path, value); }
+
+        private DelegateCommand<object> _openPlanCommand;
+        private DelegateCommand<object> _deletePlanCommand;
+
+        [JsonIgnore]
+        public DelegateCommand<object> OpenPlanCommand { get => _openPlanCommand; set => SetProperty(ref _openPlanCommand, value); }
+
+        [JsonIgnore]
+        public DelegateCommand<object> DeletePlanCommand { get => _deletePlanCommand; set => SetProperty(ref _deletePlanCommand, value); }
     }
 }

@@ -4,6 +4,7 @@ using ApplicationModels.Models.CapacityExtendedModels;
 using ApplicationServices.WebApiService;
 using ApplicationWPFServices.DebugService;
 using EdlightDesktopClient.Views.Schedule.CapacityWindows;
+using HandyControl.Controls;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
@@ -12,6 +13,7 @@ using Styles.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace EdlightDesktopClient.ViewModels.Schedule
@@ -39,6 +41,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         private LoaderModel _loader;
         private ObservableCollection<CapacityModel> _capacities;
+        private ObservableCollection<LearnPlanesModel> _planes;
 
         private ObservableCollection<LessonsModel> _lessons;
         private ObservableCollection<CapacityPeriodModel> _periods;
@@ -59,6 +62,7 @@ namespace EdlightDesktopClient.ViewModels.Schedule
 
         public LoaderModel Loader { get => _loader; set => SetProperty(ref _loader, value); }
         public ObservableCollection<CapacityModel> Capacities { get => _capacities ??= new(); set => SetProperty(ref _capacities, value); }
+        public ObservableCollection<LearnPlanesModel> Planes { get => _planes ??= new(); set => SetProperty(ref _planes, value); }
 
         public ObservableCollection<LessonsModel> Lessons { get => _lessons ??= new(); set => SetProperty(ref _lessons, value); }
         public ObservableCollection<CapacityPeriodModel> Periods { get => _periods ??= new(); set => SetProperty(ref _periods, value); }
@@ -206,6 +210,15 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                 {
                     cp.IsScheduleCreated = false;
                     cp.CreateRecoursiveScheduleCommand = new DelegateCommand<object>(OnCreateRecoursiveSchedule);
+                    cp.OpenLearnPlanCommand = new DelegateCommand<object>(OnOpenLearnPlan);
+                }
+
+
+                Planes.Clear();
+                List<LearnPlanesModel> planes = await api.GetModels<LearnPlanesModel>(WebApiTableNames.LearnPlanes);
+                foreach (var item in planes)
+                {
+                    Planes.Add(item);
                 }
             }
             catch (Exception)
@@ -322,6 +335,27 @@ namespace EdlightDesktopClient.ViewModels.Schedule
                     new DialogParameters() { { nameof(CapacityModel), capacity } },
                     null
                     );
+            }
+        }
+        private async void OnOpenLearnPlan(object capacityObject)
+        {
+            if (capacityObject is CapacityModel model)
+            {
+                List<LearnPlanesModel> planes = await api.GetModels<LearnPlanesModel>(WebApiTableNames.LearnPlanes);
+                LearnPlanesModel plan = planes.FirstOrDefault(p => p.Name == model.Syllabus);
+                if (plan == null)
+                {
+                    Growl.Error("Учебный план из нагрузки не найден в БД.", "Global");
+                    return;
+                }
+
+                var file = await api.GetLearnPlan(plan.Path);
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + plan.Name + ".xlsx";
+                if (file is JsonFileModel jfm)
+                {
+                    System.IO.File.WriteAllBytes(path, jfm.Data);
+                    Process.Start(path);
+                }
             }
         }
 

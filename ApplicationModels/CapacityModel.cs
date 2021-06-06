@@ -305,6 +305,13 @@ namespace ApplicationModels
             set => SetProperty(ref _createRecoursiveScheduleCommand, value);
         }
 
+        private DelegateCommand<object> _openLearnPlanCommand;
+        public DelegateCommand<object> OpenLearnPlanCommand
+        {
+            get => _openLearnPlanCommand;
+            set => SetProperty(ref _openLearnPlanCommand, value);
+        }
+
         #endregion
     }
 }

@@ -579,11 +579,11 @@ namespace EdlightDesktopClient.ViewModels.Schedule
         private async void OnCapacityManagment()
         {
             OpenFileDialog ofd = new();
-            //ofd.Filter = "Edlight capacity table (*.xls)|*.xls";
-            //bool? result = ofd.ShowDialog();
-            //if (!result.Value) return;
+            ofd.Filter = "Edlight capacity table (*.xls)|*.xls";
+            bool? result = ofd.ShowDialog();
+            if (!result.Value) return;
 
-            ofd.FileName = Environment.CurrentDirectory + "\\Нагрузка.xls";
+            //ofd.FileName = Environment.CurrentDirectory + "\\Нагрузка.xls";
 
             ObservableCollection<CapacityModel> capacities = new();
             ExcelDataReader.IExcelDataReader reader = null;
